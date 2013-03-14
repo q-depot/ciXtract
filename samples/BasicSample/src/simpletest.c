@@ -1,11 +1,29 @@
-#include "cinder/app/AppBasic.h"
-#include "cinder/gl/gl.h"
+/*
+ * Copyright (C) 2012 Jamie Bullock
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ */
 
 #include "libxtract.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "simpletest.h"
 
 #define BLOCKSIZE 1024
 #define SAMPLERATE 44100
@@ -14,28 +32,8 @@
 #define MFCC_FREQ_MIN 20
 #define MFCC_FREQ_MAX 20000
 
-using namespace ci;
-using namespace ci::app;
-using namespace std;
-
-
-class BasicSampleApp : public AppBasic {
-  public:
-	void setup();
-	void mouseDown( MouseEvent event );	
-	void update();
-	void draw();
-//    void test();
-};
-
-void BasicSampleApp::setup()
+void testC()
 {
-//   test();
-}
-void BasicSampleApp::mouseDown( MouseEvent event )
-{
-    testC();
-    return;
     
     double mean = 0.f;
     double input[BLOCKSIZE];
@@ -52,7 +50,7 @@ void BasicSampleApp::mouseDown( MouseEvent event )
     }
     
     /* get the mean of the input */
-    xtract[XTRACT_MEAN]( input, BLOCKSIZE, NULL, &mean);
+    xtract[XTRACT_MEAN]((void *)&input, BLOCKSIZE, NULL, (void *)&mean);
     printf("\nInput mean = %.2f\n\n", mean);
     
     /* get the spectrum */
@@ -62,7 +60,7 @@ void BasicSampleApp::mouseDown( MouseEvent event )
     argd[3] = 0.f; /* No Normalisation */
     
     xtract_init_fft(BLOCKSIZE, XTRACT_SPECTRUM);
-    xtract[XTRACT_SPECTRUM]( input, BLOCKSIZE, argd, spectrum );
+    xtract[XTRACT_SPECTRUM]((void *)&input, BLOCKSIZE, &argd[0], (void *)&spectrum[0]);
     
     /* print the spectral bins */
     printf("\nSpectral bins:\n");
@@ -99,17 +97,5 @@ void BasicSampleApp::mouseDown( MouseEvent event )
         free(mel_filters.filters[n]);
     }
     free(mel_filters.filters);
+    
 }
-
-void BasicSampleApp::update()
-{
-}
-
-void BasicSampleApp::draw()
-{
-	// clear out the window with black
-	gl::clear( Color( 0, 0, 0 ) ); 
-}
-
-
-CINDER_APP_BASIC( BasicSampleApp, RendererGl )
