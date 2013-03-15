@@ -32,6 +32,12 @@
 #define MFCC_FREQ_MIN 20
 #define MFCC_FREQ_MAX 20000
 
+void initC()
+{    
+    xtract_init_fft(BLOCKSIZE, XTRACT_SPECTRUM);
+}
+
+
 void testC()
 {
     
@@ -59,7 +65,6 @@ void testC()
     argd[2] = 0.f; /* No DC component */
     argd[3] = 0.f; /* No Normalisation */
     
-    xtract_init_fft(BLOCKSIZE, XTRACT_SPECTRUM);
     xtract[XTRACT_SPECTRUM]((void *)&input, BLOCKSIZE, &argd[0], (void *)&spectrum[0]);
     
     /* print the spectral bins */
