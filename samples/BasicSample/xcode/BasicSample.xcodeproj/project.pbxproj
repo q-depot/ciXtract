@@ -12,6 +12,7 @@
 		00B784B40FF439BC000DE1D7 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B00FF439BC000DE1D7 /* AudioToolbox.framework */; };
 		00B784B50FF439BC000DE1D7 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B10FF439BC000DE1D7 /* AudioUnit.framework */; };
 		00B784B60FF439BC000DE1D7 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B20FF439BC000DE1D7 /* CoreAudio.framework */; };
+		101F654E16F7640400951B41 /* ciLibXtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 101F654D16F7640400951B41 /* ciLibXtract.cpp */; };
 		1051539116F38CCB00EA0C5A /* delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 1051534516F38CCB00EA0C5A /* delta.c */; };
 		1051539216F38CCB00EA0C5A /* descriptors.c in Sources */ = {isa = PBXBuildFile; fileRef = 1051534616F38CCB00EA0C5A /* descriptors.c */; };
 		1051539316F38CCB00EA0C5A /* fini.c in Sources */ = {isa = PBXBuildFile; fileRef = 1051534816F38CCB00EA0C5A /* fini.c */; };
@@ -37,6 +38,8 @@
 		00B784B10FF439BC000DE1D7 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		00B784B20FF439BC000DE1D7 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		04E1EEF35B6D4971907E8D88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		101F654B16F762CE00951B41 /* ciLibXtract.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ciLibXtract.h; sourceTree = "<group>"; };
+		101F654D16F7640400951B41 /* ciLibXtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ciLibXtract.cpp; sourceTree = "<group>"; };
 		1051534516F38CCB00EA0C5A /* delta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = delta.c; sourceTree = "<group>"; };
 		1051534616F38CCB00EA0C5A /* descriptors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = descriptors.c; sourceTree = "<group>"; };
 		1051534716F38CCB00EA0C5A /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
@@ -119,6 +122,8 @@
 		1051534416F38CCB00EA0C5A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				101F654B16F762CE00951B41 /* ciLibXtract.h */,
+				101F654D16F7640400951B41 /* ciLibXtract.cpp */,
 				1051534516F38CCB00EA0C5A /* delta.c */,
 				1051534616F38CCB00EA0C5A /* descriptors.c */,
 				1051534716F38CCB00EA0C5A /* fft.h */,
@@ -307,6 +312,7 @@
 				1051539816F38CCB00EA0C5A /* scalar.c in Sources */,
 				1051539916F38CCB00EA0C5A /* vector.c in Sources */,
 				1051539A16F38CCB00EA0C5A /* window.c in Sources */,
+				101F654E16F7640400951B41 /* ciLibXtract.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
