@@ -16,12 +16,12 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define BLOCKSIZE 1024
-#define SAMPLERATE 44100
-#define PERIOD 100
-#define MFCC_FREQ_BANDS 32
-#define MFCC_FREQ_MIN 20
-#define MFCC_FREQ_MAX 20000
+//#define BLOCKSIZE 1024
+//#define SAMPLERATE 44100
+//#define PERIOD 100
+//#define MFCC_FREQ_BANDS 32
+//#define MFCC_FREQ_MIN 20
+//#define MFCC_FREQ_MAX 20000
 
 
 class BasicSampleApp : public AppNative {
@@ -35,8 +35,7 @@ class BasicSampleApp : public AppNative {
     void shutdown();
     
 
-    
-
+    void drawMfccs();
     
 	void drawWaveForm();
 	void drawFft();
@@ -50,12 +49,15 @@ class BasicSampleApp : public AppNative {
     
     params::InterfaceGl mParams;
     
-    float           mVolume;
-    float           mFftGain;
+    float               mFftGain;
+    float               mVolumeGain;
+    float               mDumping;
+    bool                mRenderCinderFft;
     
     ciLibXtract         mXtract;
     double              mMean;
     shared_ptr<double>  mSpectrum;
+    shared_ptr<double>  mMfccs;
 };
 
 
@@ -73,13 +75,14 @@ void BasicSampleApp::setup()
     mXtract.init();
     
     mMean       = 0.0f;
-    
-    mVolume     = 0.0f;
     mFftGain    = 2.0f;
+    mVolumeGain = 2.0f;
+    mDumping    = 0.98f;
     
     const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
-	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter ) {
-		console() << (*iter)->getName() << std::endl;
+	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter )
+    {
+//		console() << (*iter)->getName() << std::endl;
         if ( (*iter)->getName() == "Soundflower (2ch)" )
         {
             mInput = audio::Input( *iter );
@@ -88,11 +91,15 @@ void BasicSampleApp::setup()
             
             break;
         }
-            
 	}
     
     mParams = params::InterfaceGl( "Params", Vec2f( 0, 0 ) );
-    mParams.addParam( "Fft gain", &mFftGain, "min=0.0 max=1000.0 step=0.1" );
+    mParams.addParam( "Fft gain",       &mFftGain,      "min=0.0 max=1000.0 step=0.1" );
+    mParams.addParam( "Volume gain",    &mVolumeGain,   "min=0.0 max=1000.0 step=0.1" );
+    mParams.addParam( "Dumping",        &mDumping,      "min=0.5 max=1.0 step=0.01" );
+    mParams.addParam( "ci Fft",         &mRenderCinderFft );
+    
+    
 }
 
 
@@ -102,8 +109,8 @@ void BasicSampleApp::keyDown( KeyEvent event )
     
     if ( c == ' ' )
     {
-        mVolume = ( mVolume == 0.0f ) ? 1.0f : 0.0f;
-        mTrack->setVolume( mVolume );
+//        mVolume = ( mVolume == 0.0f ) ? 1.0f : 0.0f;
+//        mTrack->setVolume( mVolume );
     }
 }
 
@@ -118,14 +125,27 @@ void BasicSampleApp::update()
     mPcmBuffer = mInput.getPcmBuffer();
 	if( ! mPcmBuffer )
 		return;
+	
+    uint32_t bufferLength = mPcmBuffer->getSampleCount();
+	audio::Buffer32fRef leftBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
+//	audio::Buffer32fRef rightBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_RIGHT );
 
-	mXtract.setPcmData( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ) );
+//    console() << mPcmBuffer->isInterleaved() << endl;
+//    console() << leftBuffer->mNumberChannels << " ";
+//    console() << leftBuffer->mDataByteSize << " ";
+//    console() << leftBuffer->mSampleCount << endl;
+
     
-    mMean       = mXtract.getMean();
-    mSpectrum   = mXtract.getSpectrum();
+	mXtract.setPcmData( leftBuffer );
     
-//    uint16_t bandCount = 512;
-//	mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ), bandCount );
+    float val = mXtract.getMean();
+    mMean = val > mMean ? mVolumeGain * val : mMean * mDumping;
+    
+    mSpectrum = mXtract.getSpectrum();
+    
+    mMfccs = mXtract.getMfcc();
+    
+	mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ), BLOCKSIZE );
 }
 
 
@@ -134,12 +154,12 @@ void BasicSampleApp::draw()
 	gl::clear( Color( 0, 0, 0 ) );
     gl::color( Color::white() );
 
-    glPushMatrix();
-    glTranslatef( 0.0, 0.0, 0.0 );
     drawWaveForm();
-    glTranslatef( 0.0, 200.0, 0.0 );
+    
     drawFft();
-	glPopMatrix();
+    
+    drawMfccs();
+    
 
     
     float meanWidth = 300;
@@ -189,29 +209,86 @@ void BasicSampleApp::drawWaveForm()
 
 void BasicSampleApp::drawFft()
 {
+
+    
     mPcmBuffer = mInput.getPcmBuffer();
 	
     if( ! mPcmBuffer )
 		return;
     
     uint16_t    bandCount   = mPcmBuffer->getSampleCount();
-	float       ht          = 1000.0f;
-	float       bottom      = 150.0f;
-	
+	float       ht          = 100.0f;
+    
+    gl::pushMatrices();
+    
+    gl::translate( 0.0, 300.0, 0.0 );
+
+    
+    // LibXtract
 	double * spectrum = mSpectrum.get();
 	
-	for( int i = 0; i < ( bandCount ); i++ ) {
-        
-		float barY = spectrum[i] * mFftGain;
+	for( int i = 0; i < ( bandCount / 2 ); i++ )
+    {
+		float barY = spectrum[i] * ht * mFftGain;
 		glBegin( GL_QUADS );
         glColor3f( 255.0f, 255.0f, 0.0f );
-        glVertex2f( i, bottom );
-        glVertex2f( i + 1, bottom );
+        glVertex2f( i, 0.0f );
+        glVertex2f( i + 1, 0.0f );
         glColor3f( 0.0f, 255.0f, 0.0f );
-        glVertex2f( i + 1, bottom - barY );
-        glVertex2f( i, bottom - barY );
+        glVertex2f( i + 1, 0.0f - barY );
+        glVertex2f( i, 0.0f - barY );
 		glEnd();
 	}
+
+    if ( mFftDataRef && mRenderCinderFft )
+    {
+        gl::translate( 0.0, 300.0, 0.0 );
+        
+        // Cinder fft
+        ht      = 50.0f;
+        float * ciSpectrum  = mFftDataRef.get();
+        
+        for( int i = 0; i < ( bandCount / 2 ); i++ )
+        {
+            float barY = ciSpectrum[i] * ht * 0.1f;
+            glBegin( GL_QUADS );
+            glColor3f( 255.0f, 255.0f, 0.0f );
+            glVertex2f( i, 0.0f );
+            glVertex2f( i + 1, 0.0f );
+            glColor3f( 0.0f, 255.0f, 0.0f );
+            glVertex2f( i + 1, - barY );
+            glVertex2f( i, - barY );
+            glEnd();
+        }
+    }
+
+    gl::popMatrices();
+}
+
+
+void BasicSampleApp::drawMfccs()
+{
+	double * mffcs = mMfccs.get();
+    
+    glPushMatrix();
+    
+    glTranslatef( 600.0, 300.0, 0.0 );
+
+    
+    for( int i = 0; i < MFCC_FREQ_BANDS; i++ )
+    {
+		float barY = - mffcs[i];
+		glBegin( GL_QUADS );
+        gl::color( Color( 1.0f, 0.4f, 0.6f ) );
+        glVertex2f( i, 0.0f );
+        glVertex2f( i + 1, 0.0f );
+        gl::color( Color( 0.0f, 1.0f, 0.6f ) );
+        glVertex2f( i + 1, 0.0f - barY );
+        glVertex2f( i, 0.0f - barY );
+		glEnd();
+	}
+    
+    gl::popMatrices();
 }
 
 

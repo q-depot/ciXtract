@@ -9,7 +9,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define BLOCKSIZE 1024
+#define BLOCKSIZE 2048
 #define SAMPLERATE 44100
 #define PERIOD 100
 #define MFCC_FREQ_BANDS 32
@@ -31,7 +31,7 @@ public:
     
     std::shared_ptr<double> getSpectrum();
     
-    void getMfcc( ci::audio::Buffer32fRef pcmBufferRef );
+    std::shared_ptr<double> getMfcc();
     
     void setPcmData( ci::audio::Buffer32fRef pcmBufferRef );
     
@@ -41,8 +41,9 @@ private:
     size_t                  mPcmDataSampleCount;
     
     std::shared_ptr<double> mSpectrum;
+    std::shared_ptr<double> mMfccs;
     
-    double mMfccs[MFCC_FREQ_BANDS];
+//    double mMfccs[MFCC_FREQ_BANDS];
     double mArgd[4];
     
     xtract_mel_filter mel_filters;
