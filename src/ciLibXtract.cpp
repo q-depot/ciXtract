@@ -8,14 +8,12 @@ using namespace std;
 
 ciLibXtract::ciLibXtract()
 {
-    xtract_function_descriptor_t *descriptors = xtract_make_descriptors();
-    
-    
-    console() << "Descriptor:\n";
-    console() << descriptors[XTRACT_MEAN].algo.p_name << endl;
-    console() << descriptors[XTRACT_MEAN].algo.p_desc << endl;
-    console() << descriptors[XTRACT_MEAN].argv.min << " --- " << descriptors[XTRACT_MEAN].argv.max << endl;
-
+//    xtract_function_descriptor_t *descriptors = xtract_make_descriptors();
+//    
+//    console() << "Descriptor:\n";
+//    console() << descriptors[XTRACT_MEAN].algo.p_name << endl;
+//    console() << descriptors[XTRACT_MEAN].algo.p_desc << endl;
+//    console() << descriptors[XTRACT_MEAN].argv.min << " --- " << descriptors[XTRACT_MEAN].argv.max << endl;
 }
 
 
@@ -30,62 +28,58 @@ void ciLibXtract::init()
 {
     xtract_init_fft( BLOCKSIZE, XTRACT_SPECTRUM );
     
-    mArgd[0] = SAMPLERATE / (double)BLOCKSIZE;
-    mArgd[1] = XTRACT_MAGNITUDE_SPECTRUM;
-    
-    mArgd[2] = 0.f;                                 // No DC component
-    mArgd[3] = 0.f;                                 // No Normalisation
+    mPcmData        = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    mSpectrum       = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    mBarks          = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    mMfccs          = std::shared_ptr<double>( new double[ MFCC_FREQ_BANDS ] );
+    mBarkBandLimits = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
 
-    mPcmDataSampleCount = 0;
-    
-//    for(int n = 0; n < BLOCKSIZE; ++n)
-//        mInputData[n] = 0.0f;
-    
     mel_filters.n_filters = MFCC_FREQ_BANDS;
-    
     mel_filters.filters   = (double **)malloc(MFCC_FREQ_BANDS * sizeof(double *));
-    
     for( int n = 0; n < MFCC_FREQ_BANDS; ++n )
         mel_filters.filters[n] = (double *)malloc(BLOCKSIZE * sizeof(double));
-    
+
     xtract_init_mfcc( BLOCKSIZE >> 1, SAMPLERATE >> 1, XTRACT_EQUAL_GAIN, MFCC_FREQ_MIN, MFCC_FREQ_MAX, mel_filters.n_filters, mel_filters.filters );
     
-    mMfccs = shared_ptr<double>( new double[ MFCC_FREQ_BANDS ] );
+    xtract_init_bark( BLOCKSIZE >> 2, SAMPLERATE >> 1, mBarkBandLimits.get() );
 }
 
 
 void ciLibXtract::setPcmData( audio::Buffer32fRef pcmBufferRef )
 {
-    mPcmData.reset();
-    mSpectrum.reset();
-    
-    mPcmDataSampleCount = pcmBufferRef->mSampleCount;
-    
-    mPcmData    = shared_ptr<double>( new double[ mPcmDataSampleCount ] );
-    mSpectrum   = shared_ptr<double>( new double[ mPcmDataSampleCount ] );
-    //    double mMfccs[MFCC_FREQ_BANDS];
-    double *data        = mPcmData.get();
-    double *spectrum    = mSpectrum.get();
-    
-    for( size_t k=0; k < mPcmDataSampleCount; k++ )
-    {
-        (*mPcmData)[k]     = pcmBufferRef->mData[k];
-        spectrum[k] = 0.0f;
-    }
+    for( size_t k=0; k < BLOCKSIZE; k++ )
+        mPcmData.get()[k] = pcmBufferRef->mData[k];
+}
+
+
+void ciLibXtract::setSpectrum( std::shared_ptr<float> fftDataRef )
+{
+    for( size_t k=0; k < BLOCKSIZE >> 2; k++ )
+        mSpectrum.get()[k] = fftDataRef.get()[k];
 }
 
 
 float ciLibXtract::getMean()
 {
     double mean = 0.0f;
-    xtract[XTRACT_MEAN]( mPcmData.get(), mPcmDataSampleCount, NULL, &mean );
+    xtract[XTRACT_MEAN]( mPcmData.get(), BLOCKSIZE / 2, NULL, &mean );
     return mean;
 }
 
 
 shared_ptr<double> ciLibXtract::getSpectrum()
 {
-    xtract[XTRACT_SPECTRUM]( mPcmData.get(), mPcmDataSampleCount, mArgd, mSpectrum.get() );
+    
+    return mSpectrum;
+    
+    
+    
+    mArgd[0] = SAMPLERATE / (double)BLOCKSIZE;
+    mArgd[1] = XTRACT_MAGNITUDE_SPECTRUM;           //  XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
+    mArgd[2] = 0.f;                                 // No DC component
+    mArgd[3] = 1.f;                                 // No Normalisation
+    
+    xtract[XTRACT_SPECTRUM]( mPcmData.get(), BLOCKSIZE / 2, mArgd, mSpectrum.get() );
 
     return mSpectrum;
 }
@@ -93,59 +87,16 @@ shared_ptr<double> ciLibXtract::getSpectrum()
 
 shared_ptr<double> ciLibXtract::getMfcc()
 {
-    /* compute the MFCCs */
-    mel_filters.n_filters = MFCC_FREQ_BANDS;
-    mel_filters.filters   = (double **)malloc(MFCC_FREQ_BANDS * sizeof(double *));
-    for( int n = 0; n < MFCC_FREQ_BANDS; ++n )
-    {
-        mel_filters.filters[n] = (double *)malloc(BLOCKSIZE * sizeof(double));
-    }
-
-    xtract_init_mfcc( BLOCKSIZE >> 1, SAMPLERATE >> 1, XTRACT_EQUAL_GAIN, MFCC_FREQ_MIN, MFCC_FREQ_MAX, mel_filters.n_filters, mel_filters.filters );
-    
-    xtract_mfcc( mSpectrum.get(), BLOCKSIZE >> 1, &mel_filters, mMfccs.get() );
-    
-//    double *mfccs = mMfccs.get();
-    /* print the MFCCs */
-//    printf("MFCCs:\n");
-//    for( int n = 0; n < MFCC_FREQ_BANDS; ++n )
-//    {
-//        printf("band: %d\t", n);
-//        if(n < 10) {
-//            printf("\t");
-//        }
-//        printf("coeff: %f\n", mfccs[n]);
-//    }
+    xtract_mfcc( mSpectrum.get(), BLOCKSIZE >> 2, &mel_filters, mMfccs.get() );
 
     return mMfccs;
 }
 
 
-//	float * fftBuffer = mFftDataRef.get();
-//
-//
-//    int c =0;
-//	for( size_t k=0; k < BLOCKSIZE; k++ )
-//        mFftBuffer[k] = fftBuffer[k];
-//
-//    double mean = 0.0f;
-//    //    xtract[XTRACT_MEAN]( mInputData, BLOCKSIZE, NULL, &mean );
-//
-//    if ( mean > mMean )
-//        mMean = mean;
-//    else
-//        mMean *= 0.9f;
-//
-//    mPcmBuffer = mInput.getPcmBuffer();
-//	if( ! mPcmBuffer )
-//		return;
-//    audio::Buffer32fRef leftBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
-//
-//    for( size_t k=0; k < BLOCKSIZE; k++ )
-//        mInputData[k] = leftBuffer->mData[k];
-//
-//    xtract[XTRACT_SPECTRUM]( mInputData, BLOCKSIZE, mArgd, mSpectrum );
-//
-//    xtract_mfcc( mSpectrum, BLOCKSIZE >> 1, &mel_filters, mMfccs );
-//}
+std::shared_ptr<double> ciLibXtract::getBarks()
+{
+    xtract_bark_coefficients( mSpectrum.get(), BLOCKSIZE >> 2, mBarkBandLimits.get(), mBarks.get() );
+
+    return mBarks;
+}
 

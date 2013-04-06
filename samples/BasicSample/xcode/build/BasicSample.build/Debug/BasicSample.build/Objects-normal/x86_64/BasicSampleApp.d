@@ -162,6 +162,9 @@ dependencies: \
   ../../../../../include/cinder/audio/FftProcessor.h \
   ../../../../../include/cinder/params/Params.h \
   ../../../../../include/cinder/audio/Input.h \
+  ../../../../../include/cinder/gl/TextureFont.h \
+  ../../../../../include/cinder/Text.h \
+  ../../../../../include/cinder/gl/Texture.h \
   /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/ciLibXtract.h \
   /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/libxtract.h \
   /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_scalar.h \

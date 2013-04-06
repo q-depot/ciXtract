@@ -9,19 +9,13 @@
 #include "cinder/params/Params.h"
 #include "cinder/audio/FftProcessor.h"
 #include "cinder/audio/Input.h"
+#include "cinder/gl/TextureFont.h"
 
 #include "ciLibXtract.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
-
-//#define BLOCKSIZE 1024
-//#define SAMPLERATE 44100
-//#define PERIOD 100
-//#define MFCC_FREQ_BANDS 32
-//#define MFCC_FREQ_MIN 20
-//#define MFCC_FREQ_MAX 20000
 
 
 class BasicSampleApp : public AppNative {
@@ -34,12 +28,12 @@ class BasicSampleApp : public AppNative {
 	void draw();
     void shutdown();
     
-
-    void drawMfccs();
-    
 	void drawWaveForm();
-	void drawFft();
 	
+    void drawData( double *data, int N, Vec2i pos, float height, int step, Color col );
+    
+    void drawData( float *data, int N, Vec2i pos, float height, int step, Color col );
+    
 	audio::TrackRef mTrack;
 	audio::PcmBuffer32fRef mPcmBuffer;
     
@@ -51,13 +45,16 @@ class BasicSampleApp : public AppNative {
     
     float               mFftGain;
     float               mVolumeGain;
-    float               mDumping;
     bool                mRenderCinderFft;
     
     ciLibXtract         mXtract;
     double              mMean;
     shared_ptr<double>  mSpectrum;
     shared_ptr<double>  mMfccs;
+    shared_ptr<double>  mBarks;
+    
+    gl::TextureFontRef  mFontSmall;
+
 };
 
 
@@ -77,7 +74,6 @@ void BasicSampleApp::setup()
     mMean       = 0.0f;
     mFftGain    = 2.0f;
     mVolumeGain = 2.0f;
-    mDumping    = 0.98f;
     
     const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
 	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter )
@@ -96,10 +92,9 @@ void BasicSampleApp::setup()
     mParams = params::InterfaceGl( "Params", Vec2f( 0, 0 ) );
     mParams.addParam( "Fft gain",       &mFftGain,      "min=0.0 max=1000.0 step=0.1" );
     mParams.addParam( "Volume gain",    &mVolumeGain,   "min=0.0 max=1000.0 step=0.1" );
-    mParams.addParam( "Dumping",        &mDumping,      "min=0.5 max=1.0 step=0.01" );
     mParams.addParam( "ci Fft",         &mRenderCinderFft );
     
-    
+    mFontSmall = gl::TextureFont::create( Font( "Helvetica", 12 ) );
 }
 
 
@@ -126,26 +121,26 @@ void BasicSampleApp::update()
 	if( ! mPcmBuffer )
 		return;
 	
-    uint32_t bufferLength = mPcmBuffer->getSampleCount();
 	audio::Buffer32fRef leftBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
 //	audio::Buffer32fRef rightBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_RIGHT );
-
-//    console() << mPcmBuffer->isInterleaved() << endl;
-//    console() << leftBuffer->mNumberChannels << " ";
-//    console() << leftBuffer->mDataByteSize << " ";
-//    console() << leftBuffer->mSampleCount << endl;
-
     
+    
+	mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ), BLOCKSIZE >> 2 );
+	
+    if ( !mFftDataRef )
+        return;
+    
+    mXtract.setSpectrum( mFftDataRef );
+
 	mXtract.setPcmData( leftBuffer );
     
-    float val = mXtract.getMean();
-    mMean = val > mMean ? mVolumeGain * val : mMean * mDumping;
+    mMean       = mXtract.getMean();
     
-    mSpectrum = mXtract.getSpectrum();
+    mSpectrum   = mXtract.getSpectrum();
     
-    mMfccs = mXtract.getMfcc();
+    mMfccs      = mXtract.getMfcc();
     
-	mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ), BLOCKSIZE );
+    mBarks      = mXtract.getBarks();
 }
 
 
@@ -153,14 +148,18 @@ void BasicSampleApp::draw()
 {
 	gl::clear( Color( 0, 0, 0 ) );
     gl::color( Color::white() );
-
+    gl::enableAlphaBlending();
+    
     drawWaveForm();
-    
-    drawFft();
-    
-    drawMfccs();
-    
+  
+    if ( mFftDataRef && mRenderCinderFft )
+        drawData( mFftDataRef.get(), BLOCKSIZE / 4, Vec2i( 10, 600 ), 1.0f, 1, Color( 1.0f, 1.0f, 1.0f ) );
 
+    drawData( mSpectrum.get(),  BLOCKSIZE / 4,      Vec2i( 10, 300 ),   1.0f,   1,  Color( 1.0f, 1.0f, 1.0f ) );
+    drawData( mMfccs.get(),     MFCC_FREQ_BANDS,    Vec2i( 600, 300 ),  1.0f,   10, Color( 1.0f, 1.0f, 1.0f ) );
+    drawData( mBarks.get(),     XTRACT_BARK_BANDS,  Vec2i( 600, 600 ),  1.0f,   10, Color( 1.0f, 1.0f, 1.0f ) );
+    
+    
     
     float meanWidth = 300;
     gl::color( Color::white() );
@@ -200,96 +199,66 @@ void BasicSampleApp::drawWaveForm()
 		y = ( ( rightBuffer->mData[i] - 1 ) * - 100 );
 		rightBufferLine.push_back( Vec2f( x , y) );
 	}
-	gl::color( Color( 1.0f, 0.5f, 0.25f ) );
+    
+	gl::color( Color( 0.0f, 0.69f, 0.78f ) );
 	gl::draw( leftBufferLine );
 	gl::draw( rightBufferLine );
-	
 }
 
 
-void BasicSampleApp::drawFft()
+void BasicSampleApp::drawData( double *data, int N, Vec2i pos, float height, int step, Color col )
 {
-
-    
-    mPcmBuffer = mInput.getPcmBuffer();
-	
-    if( ! mPcmBuffer )
-		return;
-    
-    uint16_t    bandCount   = mPcmBuffer->getSampleCount();
-	float       ht          = 100.0f;
-    
-    gl::pushMatrices();
-    
-    gl::translate( 0.0, 300.0, 0.0 );
-
-    
-    // LibXtract
-	double * spectrum = mSpectrum.get();
-	
-	for( int i = 0; i < ( bandCount / 2 ); i++ )
-    {
-		float barY = spectrum[i] * ht * mFftGain;
-		glBegin( GL_QUADS );
-        glColor3f( 255.0f, 255.0f, 0.0f );
-        glVertex2f( i, 0.0f );
-        glVertex2f( i + 1, 0.0f );
-        glColor3f( 0.0f, 255.0f, 0.0f );
-        glVertex2f( i + 1, 0.0f - barY );
-        glVertex2f( i, 0.0f - barY );
-		glEnd();
-	}
-
-    if ( mFftDataRef && mRenderCinderFft )
-    {
-        gl::translate( 0.0, 300.0, 0.0 );
-        
-        // Cinder fft
-        ht      = 50.0f;
-        float * ciSpectrum  = mFftDataRef.get();
-        
-        for( int i = 0; i < ( bandCount / 2 ); i++ )
-        {
-            float barY = ciSpectrum[i] * ht * 0.1f;
-            glBegin( GL_QUADS );
-            glColor3f( 255.0f, 255.0f, 0.0f );
-            glVertex2f( i, 0.0f );
-            glVertex2f( i + 1, 0.0f );
-            glColor3f( 0.0f, 255.0f, 0.0f );
-            glVertex2f( i + 1, - barY );
-            glVertex2f( i, - barY );
-            glEnd();
-        }
-    }
-
-    gl::popMatrices();
-}
-
-
-void BasicSampleApp::drawMfccs()
-{
-	double * mffcs = mMfccs.get();
-    
     glPushMatrix();
     
-    glTranslatef( 600.0, 300.0, 0.0 );
-
+    gl::translate( pos );
     
-    for( int i = 0; i < MFCC_FREQ_BANDS; i++ )
+    for( int i = 0; i < N; i++ )
     {
-		float barY = - mffcs[i];
-		glBegin( GL_QUADS );
-        gl::color( Color( 1.0f, 0.4f, 0.6f ) );
-        glVertex2f( i, 0.0f );
-        glVertex2f( i + 1, 0.0f );
-        gl::color( Color( 0.0f, 1.0f, 0.6f ) );
-        glVertex2f( i + 1, 0.0f - barY );
-        glVertex2f( i, 0.0f - barY );
-		glEnd();
+		float barY = data[i] * height;
+		
+        glBegin( GL_QUADS );
+        
+        gl::color( col );
+        glVertex2f( i * step,           0.0f );
+        glVertex2f( ( i + 1 ) * step,   0.0f );
+        
+        gl::color( col + Color( (float)i / (float)N, 0.0f, 1.0f - (float)i / (float)N ) );
+        glVertex2f( ( i + 1 ) * step,   -barY );
+        glVertex2f( i * step,           -barY );
+		
+        glEnd();
 	}
     
     gl::popMatrices();
 }
+
+
+void BasicSampleApp::drawData( float *data, int N, Vec2i pos, float height, int step, Color col )
+{
+    glPushMatrix();
+    
+    gl::translate( pos );
+    
+    for( int i = 0; i < N; i++ )
+    {
+		float barY = data[i] * height;
+		
+        glBegin( GL_QUADS );
+        
+        gl::color( col );
+        glVertex2f( i * step,           0.0f );
+        glVertex2f( ( i + 1 ) * step,   0.0f );
+        
+        gl::color( col + Color( (float)i / (float)N, 0.0f, 1.0f - (float)i / (float)N ) );
+        glVertex2f( ( i + 1 ) * step,   -barY );
+        glVertex2f( i * step,           -barY );
+		
+        glEnd();
+	}
+    
+    gl::popMatrices();
+}
+
 
 
 CINDER_APP_NATIVE( BasicSampleApp, RendererGl )
