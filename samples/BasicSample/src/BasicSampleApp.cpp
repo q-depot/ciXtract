@@ -44,14 +44,16 @@ class BasicSampleApp : public AppNative {
     params::InterfaceGl mParams;
     
     float               mFftGain;
-    float               mVolumeGain;
+    float               mPeakThreshold;
     bool                mRenderCinderFft;
     
     ciLibXtract         mXtract;
     double              mMean;
     shared_ptr<double>  mSpectrum;
+    shared_ptr<double>  mPeakSpectrum;
     shared_ptr<double>  mMfccs;
     shared_ptr<double>  mBarks;
+    
     
     gl::TextureFontRef  mFontSmall;
 
@@ -73,7 +75,7 @@ void BasicSampleApp::setup()
     
     mMean       = 0.0f;
     mFftGain    = 2.0f;
-    mVolumeGain = 2.0f;
+    mPeakThreshold  = 0.5f;
     
     const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
 	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter )
@@ -90,8 +92,9 @@ void BasicSampleApp::setup()
 	}
     
     mParams = params::InterfaceGl( "Params", Vec2f( 0, 0 ) );
-    mParams.addParam( "Fft gain",       &mFftGain,      "min=0.0 max=1000.0 step=0.1" );
-    mParams.addParam( "Volume gain",    &mVolumeGain,   "min=0.0 max=1000.0 step=0.1" );
+//    mParams.addParam( "Fft gain",       &mFftGain,      "min=0.0 max=1000.0 step=0.1" );
+    mParams.addParam( "Peak threshold",    &mPeakThreshold,   "min=0.0 max=1000.0 step=0.1" );
+    
     mParams.addParam( "ci Fft",         &mRenderCinderFft );
     
     mFontSmall = gl::TextureFont::create( Font( "Helvetica", 12 ) );
@@ -137,6 +140,8 @@ void BasicSampleApp::update()
     mMean       = mXtract.getMean();
     
     mSpectrum   = mXtract.getSpectrum();
+
+    mPeakSpectrum   = mXtract.getPeakSpectrum( mPeakThreshold );
     
     mMfccs      = mXtract.getMfcc();
     
@@ -152,14 +157,15 @@ void BasicSampleApp::draw()
     
     drawWaveForm();
   
-    if ( mFftDataRef && mRenderCinderFft )
-        drawData( mFftDataRef.get(), BLOCKSIZE / 4, Vec2i( 10, 600 ), 1.0f, 1, Color( 1.0f, 1.0f, 1.0f ) );
+//    if ( mFftDataRef && mRenderCinderFft )
+//        drawData( mFftDataRef.get(), BLOCKSIZE >> 2, Vec2i( 10, 600 ), 1.0f, 1, Color( 1.0f, 1.0f, 1.0f ) );
 
-    drawData( mSpectrum.get(),  BLOCKSIZE / 4,      Vec2i( 10, 300 ),   1.0f,   1,  Color( 1.0f, 1.0f, 1.0f ) );
-    drawData( mMfccs.get(),     MFCC_FREQ_BANDS,    Vec2i( 600, 300 ),  1.0f,   10, Color( 1.0f, 1.0f, 1.0f ) );
-    drawData( mBarks.get(),     XTRACT_BARK_BANDS,  Vec2i( 600, 600 ),  1.0f,   10, Color( 1.0f, 1.0f, 1.0f ) );
+    drawData( mSpectrum.get(),      BLOCKSIZE >> 2,     Vec2i( 10, 300 ),   1.0f,   1,  Color( 1.0f, 1.0f, 1.0f ) );
     
+    drawData( mPeakSpectrum.get(),  BLOCKSIZE >> 2,     Vec2i( 10, 500 ),   1.0f,   1,  Color( 1.0f, 0.0f, 0.0f ) );
     
+    drawData( mMfccs.get(),         MFCC_FREQ_BANDS,    Vec2i( 600, 300 ),  1.0f,   10, Color( 1.0f, 1.0f, 1.0f ) );
+    drawData( mBarks.get(),         XTRACT_BARK_BANDS,  Vec2i( 600, 600 ),  1.0f,   10, Color( 1.0f, 1.0f, 1.0f ) );
     
     float meanWidth = 300;
     gl::color( Color::white() );

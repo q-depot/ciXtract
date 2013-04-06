@@ -30,6 +30,7 @@ void ciLibXtract::init()
     
     mPcmData        = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
     mSpectrum       = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    mPeakSpectrum   = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
     mBarks          = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
     mMfccs          = std::shared_ptr<double>( new double[ MFCC_FREQ_BANDS ] );
     mBarkBandLimits = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
@@ -79,9 +80,22 @@ shared_ptr<double> ciLibXtract::getSpectrum()
     mArgd[2] = 0.f;                                 // No DC component
     mArgd[3] = 1.f;                                 // No Normalisation
     
-    xtract[XTRACT_SPECTRUM]( mPcmData.get(), BLOCKSIZE / 2, mArgd, mSpectrum.get() );
+    xtract[XTRACT_SPECTRUM]( mPcmData.get(), BLOCKSIZE >> 1, mArgd, mSpectrum.get() );
 
     return mSpectrum;
+}
+
+
+shared_ptr<double> ciLibXtract::getPeakSpectrum( double threshold )
+{
+    mArgd[0] = SAMPLERATE / (double)( BLOCKSIZE >> 2 );     // samplerate / N
+    mArgd[1] = threshold;                                   // peak threshold as percentage of the magnitude of the maximum peak found
+    mArgd[2] = 0.f;
+    mArgd[3] = 0.f;
+    
+    xtract_peak_spectrum( mSpectrum.get(), BLOCKSIZE >> 2, mArgd, mPeakSpectrum.get() );
+    
+    return mPeakSpectrum;
 }
 
 

@@ -35,6 +35,8 @@ public:
     
     std::shared_ptr<double> getSpectrum();
     
+    std::shared_ptr<double> getPeakSpectrum( double threshold = 0.3f );
+    
     std::shared_ptr<double> getMfcc();
     
     std::shared_ptr<double> getBarks();
@@ -44,6 +46,7 @@ private:
     
     std::shared_ptr<double> mPcmData;
     std::shared_ptr<double> mSpectrum;
+    std::shared_ptr<double> mPeakSpectrum;
     std::shared_ptr<double> mMfccs;
     std::shared_ptr<double> mBarks;
 
