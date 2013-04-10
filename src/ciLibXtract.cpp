@@ -28,12 +28,15 @@ void ciLibXtract::init()
 {
     xtract_init_fft( BLOCKSIZE, XTRACT_SPECTRUM );
     
-    mPcmData        = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
-    mSpectrum       = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
-    mPeakSpectrum   = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
-    mBarks          = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
-    mMfccs          = std::shared_ptr<double>( new double[ MFCC_FREQ_BANDS ] );
-    mBarkBandLimits = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
+    mPcmData            = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    mSpectrum           = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    mPeakSpectrum       = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    mBarks              = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    mHarmonicSpectrum   = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    mAutocorrelationFft = std::shared_ptr<double>( new double[ BLOCKSIZE ] );
+    
+    mMfccs              = std::shared_ptr<double>( new double[ MFCC_FREQ_BANDS ] );
+    mBarkBandLimits     = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
 
     mel_filters.n_filters = MFCC_FREQ_BANDS;
     mel_filters.filters   = (double **)malloc(MFCC_FREQ_BANDS * sizeof(double *));
@@ -60,7 +63,7 @@ void ciLibXtract::setSpectrum( std::shared_ptr<float> fftDataRef )
 }
 
 
-float ciLibXtract::getMean()
+double ciLibXtract::getMean()
 {
     double mean = 0.0f;
     xtract[XTRACT_MEAN]( mPcmData.get(), BLOCKSIZE / 2, NULL, &mean );
@@ -69,21 +72,33 @@ float ciLibXtract::getMean()
 
 
 shared_ptr<double> ciLibXtract::getSpectrum()
-{
-    
-    return mSpectrum;
-    
-    
-    
-    mArgd[0] = SAMPLERATE / (double)BLOCKSIZE;
-    mArgd[1] = XTRACT_MAGNITUDE_SPECTRUM;           //  XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
-    mArgd[2] = 0.f;                                 // No DC component
-    mArgd[3] = 1.f;                                 // No Normalisation
-    
-    xtract[XTRACT_SPECTRUM]( mPcmData.get(), BLOCKSIZE >> 1, mArgd, mSpectrum.get() );
+{    
+//    mArgd[0] = SAMPLERATE / (double)BLOCKSIZE;
+//    mArgd[1] = XTRACT_MAGNITUDE_SPECTRUM;           //  XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
+//    mArgd[2] = 0.f;                                 // No DC component
+//    mArgd[3] = 1.f;                                 // No Normalisation
+//    
+//    xtract[XTRACT_SPECTRUM]( mPcmData.get(), BLOCKSIZE >> 1, mArgd, mSpectrum.get() );
 
     return mSpectrum;
 }
+
+
+shared_ptr<double> ciLibXtract::getAutocorrelationFft()
+{
+//    void *argd = NULL;
+//    xtract_autocorrelation_fft( mPcmData.get(), BLOCKSIZE >> 2, argd, mAutocorrelationFft.get() );
+    return mAutocorrelationFft;
+}
+
+
+shared_ptr<double> ciLibXtract::getMfcc()
+{
+    xtract_mfcc( mSpectrum.get(), BLOCKSIZE >> 2, &mel_filters, mMfccs.get() );
+    
+    return mMfccs;
+}
+
 
 
 shared_ptr<double> ciLibXtract::getPeakSpectrum( double threshold )
@@ -99,18 +114,45 @@ shared_ptr<double> ciLibXtract::getPeakSpectrum( double threshold )
 }
 
 
-shared_ptr<double> ciLibXtract::getMfcc()
-{
-    xtract_mfcc( mSpectrum.get(), BLOCKSIZE >> 2, &mel_filters, mMfccs.get() );
-
-    return mMfccs;
-}
 
 
-std::shared_ptr<double> ciLibXtract::getBarks()
+std::shared_ptr<double> ciLibXtract::getBarkCoefficients()
 {
     xtract_bark_coefficients( mSpectrum.get(), BLOCKSIZE >> 2, mBarkBandLimits.get(), mBarks.get() );
 
     return mBarks;
+}
+
+
+std::shared_ptr<double> ciLibXtract::getHarmonicSpectrum()
+{
+    mArgd[0] = mF0;
+    mArgd[1] = 0.3f;
+
+    xtract_harmonic_spectrum( mPeakSpectrum.get(), BLOCKSIZE >> 2, mArgd, mHarmonicSpectrum.get() );
+
+    return mHarmonicSpectrum;
+}
+
+
+// TODO doesn't work!
+
+double ciLibXtract::getF0()
+{
+    double sr = SAMPLERATE / (double)BLOCKSIZE;
+    
+    xtract_f0( mPcmData.get(), BLOCKSIZE >> 1, &sr, &mF0 );
+    
+    return mF0;
+}
+
+
+double ciLibXtract::getSpectralCentroid()
+{
+    void *argd = NULL;
+    
+    xtract_spectral_centroid( mSpectrum.get(), BLOCKSIZE >> 2, argd, &mSpectralCentroid );
+    
+    return mSpectralCentroid;
 }
 
