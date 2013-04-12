@@ -1,6 +1,5 @@
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/gl.h"
-//#include "libxtract.h"
 #include "cinder/Utilities.h"
 #include "cinder/audio/Io.h"
 #include "cinder/audio/Output.h"
@@ -20,13 +19,13 @@ using namespace std;
 
 class BasicSampleApp : public AppNative {
   public:
+    void shutdown();
     void prepareSettings( Settings *settings );
 	void setup();
 	void mouseDown( MouseEvent event );
     void keyDown( KeyEvent event );
 	void update();
 	void draw();
-    void shutdown();
     
 	void drawWaveForm();
 	
@@ -35,7 +34,7 @@ class BasicSampleApp : public AppNative {
     void drawData( float *data, int N, Vec2i pos, float height, int step, Color col );
     
     void drawData( double *data, int N, Rectf rect, Color col = Color::white(), bool clamp = true );
-    
+
 	audio::TrackRef mTrack;
 	audio::PcmBuffer32fRef mPcmBuffer;
     
@@ -64,13 +63,15 @@ class BasicSampleApp : public AppNative {
 };
 
 
+void BasicSampleApp::shutdown()
+{
+}
+
+
 void BasicSampleApp::prepareSettings( Settings *settings )
 {
     settings->setWindowSize( 1200, 800 );
 }
-
-
-void BasicSampleApp::shutdown() {}
 
 
 void BasicSampleApp::setup()
@@ -84,7 +85,6 @@ void BasicSampleApp::setup()
     const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
 	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter )
     {
-//		console() << (*iter)->getName() << std::endl;
         if ( (*iter)->getName() == "Soundflower (2ch)" )
         {
             mInput = audio::Input( *iter );
@@ -96,7 +96,6 @@ void BasicSampleApp::setup()
 	}
     
     mParams = params::InterfaceGl( "Params", Vec2f( 0, 0 ) );
-//    mParams.addParam( "Fft gain",       &mFftGain,      "min=0.0 max=1000.0 step=0.1" );
     mParams.addParam( "Peak threshold",    &mPeakThreshold,   "min=0.0 max=1000.0 step=0.1" );
     
     mParams.addParam( "ci Fft",         &mRenderCinderFft );
@@ -150,31 +149,35 @@ void BasicSampleApp::update()
     mHarmonicSpectrum   = mXtract.getHarmonicSpectrum();
     
     mXtract.getAutocorrelationFft();
+    
+    
 }
 
 
 void BasicSampleApp::draw()
 {
-	gl::clear( Color( 0.85f, 0.85f, 0.85f ) );
+//	gl::clear( Color( 0.85f, 0.85f, 0.85f ) );
+    gl::clear( Color::white() * 0.25f );
     gl::color( Color::white() );
     gl::enableAlphaBlending();
     
+    
     drawWaveForm();
-  
+    
 //    if ( mFftDataRef && mRenderCinderFft )
 //        drawData( mFftDataRef.get(), BLOCKSIZE >> 2, Vec2i( 10, 600 ), 1.0f, 1, Color( 1.0f, 1.0f, 1.0f ) );
     
-    Rectf rect( 15, 200, 15 + ( getWindowWidth() - 35 ) / 2, 350 );
+    Rectf rect( 15, 15, 15 + ( getWindowWidth() - 35 ) / 2, 150 );
     
     drawData( mSpectrum.get(),          BLOCKSIZE >> 2, rect, Color( 0.2f, 0.7f, 1.0f ) );      rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
     drawData( mPeakSpectrum.get(),      BLOCKSIZE >> 2, rect, Color( 1.0f, 0.2f, 0.15f )  );
-
-    rect = Rectf( 15, 200, 15 + ( getWindowWidth() - 35 ) / 2, 350 );
+    
+    rect = Rectf( 15, 15, 15 + ( getWindowWidth() - 35 ) / 2, 150 );
     rect.offset( Vec2i ( 0, rect.getHeight() + 5 ) );
     drawData( mHarmonicSpectrum.get(),  BLOCKSIZE >> 2, rect, Color( 0.7f, 0.2f, 1.0f )  );     rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
     drawData( mMfccs.get(),             MFCC_FREQ_BANDS, rect );
     
-    rect = Rectf( 15, 200, 15 + ( getWindowWidth() - 35 ) / 2, 350 );
+    rect = Rectf( 15, 15, 15 + ( getWindowWidth() - 35 ) / 2, 150 );
     rect.offset( 2 * Vec2i ( 0, rect.getHeight() + 5 ) );
     drawData( mBarks.get(),             XTRACT_BARK_BANDS, rect );                              
 //    drawData( mXtract.getAutocorrelationFft().get(),  XTRACT_BARK_BANDS,  rect );
@@ -218,7 +221,7 @@ void BasicSampleApp::draw()
     gl::popMatrices();
     
     
-    mParams.draw();
+//    mParams.draw();
 }
 
 
@@ -227,10 +230,10 @@ void BasicSampleApp::drawWaveForm()
 	if( ! mPcmBuffer )
 		return;
 	
-	uint32_t bufferLength = mPcmBuffer->getSampleCount();
+	int bufferLength = mPcmBuffer->getSampleCount();
 	audio::Buffer32fRef leftBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
 	audio::Buffer32fRef rightBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_RIGHT );
-    
+
 	int displaySize = getWindowWidth();
 	float scale = displaySize / (float)bufferLength;
 	

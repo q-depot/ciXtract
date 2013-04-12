@@ -40,6 +40,43 @@
 		04E1EEF35B6D4971907E8D88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		101F654B16F762CE00951B41 /* ciLibXtract.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ciLibXtract.h; sourceTree = "<group>"; };
 		101F654D16F7640400951B41 /* ciLibXtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ciLibXtract.cpp; sourceTree = "<group>"; };
+		103C2D2A1717387C0002DEE7 /* ciUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUI.h; sourceTree = "<group>"; };
+		103C2D2B1717387C0002DEE7 /* ciUI2DPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUI2DPad.h; sourceTree = "<group>"; };
+		103C2D2C1717387C0002DEE7 /* ciUIBiLabelSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIBiLabelSlider.h; sourceTree = "<group>"; };
+		103C2D2D1717387C0002DEE7 /* ciUIButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIButton.h; sourceTree = "<group>"; };
+		103C2D2E1717387C0002DEE7 /* ciUICanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUICanvas.h; sourceTree = "<group>"; };
+		103C2D2F1717387C0002DEE7 /* ciUICircleSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUICircleSlider.h; sourceTree = "<group>"; };
+		103C2D301717387C0002DEE7 /* ciUIDropDownList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIDropDownList.h; sourceTree = "<group>"; };
+		103C2D311717387C0002DEE7 /* ciUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIEvent.h; sourceTree = "<group>"; };
+		103C2D321717387C0002DEE7 /* ciUIFPS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIFPS.h; sourceTree = "<group>"; };
+		103C2D331717387C0002DEE7 /* ciUIFPSSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIFPSSlider.h; sourceTree = "<group>"; };
+		103C2D341717387C0002DEE7 /* ciUIImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIImage.h; sourceTree = "<group>"; };
+		103C2D351717387C0002DEE7 /* ciUIImageButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIImageButton.h; sourceTree = "<group>"; };
+		103C2D361717387C0002DEE7 /* ciUIImageSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIImageSampler.h; sourceTree = "<group>"; };
+		103C2D371717387C0002DEE7 /* ciUIImageSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIImageSlider.h; sourceTree = "<group>"; };
+		103C2D381717387C0002DEE7 /* ciUIImageToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIImageToggle.h; sourceTree = "<group>"; };
+		103C2D391717387C0002DEE7 /* ciUILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUILabel.h; sourceTree = "<group>"; };
+		103C2D3A1717387C0002DEE7 /* ciUILabelButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUILabelButton.h; sourceTree = "<group>"; };
+		103C2D3B1717387C0002DEE7 /* ciUILabelToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUILabelToggle.h; sourceTree = "<group>"; };
+		103C2D3C1717387C0002DEE7 /* ciUIMinimalSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIMinimalSlider.h; sourceTree = "<group>"; };
+		103C2D3D1717387C0002DEE7 /* ciUIMovingGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIMovingGraph.h; sourceTree = "<group>"; };
+		103C2D3E1717387C0002DEE7 /* ciUIMultiImageButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIMultiImageButton.h; sourceTree = "<group>"; };
+		103C2D3F1717387C0002DEE7 /* ciUIMultiImageToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIMultiImageToggle.h; sourceTree = "<group>"; };
+		103C2D401717387C0002DEE7 /* ciUINumberDialer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUINumberDialer.h; sourceTree = "<group>"; };
+		103C2D411717387C0002DEE7 /* ciUIRadio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIRadio.h; sourceTree = "<group>"; };
+		103C2D421717387C0002DEE7 /* ciUIRangeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIRangeSlider.h; sourceTree = "<group>"; };
+		103C2D431717387C0002DEE7 /* ciUIRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIRectangle.h; sourceTree = "<group>"; };
+		103C2D441717387C0002DEE7 /* ciUIRotarySlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIRotarySlider.h; sourceTree = "<group>"; };
+		103C2D451717387C0002DEE7 /* ciUIScrollableCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIScrollableCanvas.h; sourceTree = "<group>"; };
+		103C2D461717387C0002DEE7 /* ciUISlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUISlider.h; sourceTree = "<group>"; };
+		103C2D471717387C0002DEE7 /* ciUISpacer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUISpacer.h; sourceTree = "<group>"; };
+		103C2D481717387C0002DEE7 /* ciUISpectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUISpectrum.h; sourceTree = "<group>"; };
+		103C2D491717387C0002DEE7 /* ciUITextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUITextInput.h; sourceTree = "<group>"; };
+		103C2D4A1717387C0002DEE7 /* ciUIToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIToggle.h; sourceTree = "<group>"; };
+		103C2D4B1717387C0002DEE7 /* ciUIToggleMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIToggleMatrix.h; sourceTree = "<group>"; };
+		103C2D4C1717387C0002DEE7 /* ciUIWaveform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIWaveform.h; sourceTree = "<group>"; };
+		103C2D4D1717387C0002DEE7 /* ciUIWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIWidget.h; sourceTree = "<group>"; };
+		103C2D4E1717387C0002DEE7 /* ciUIWidgetWithLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciUIWidgetWithLabel.h; sourceTree = "<group>"; };
 		1051534516F38CCB00EA0C5A /* delta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = delta.c; sourceTree = "<group>"; };
 		1051534616F38CCB00EA0C5A /* descriptors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = descriptors.c; sourceTree = "<group>"; };
 		1051534716F38CCB00EA0C5A /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
@@ -97,6 +134,7 @@
 		01B97315FEAEA392516A2CEA /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				103C2BCB1717387A0002DEE7 /* ciUI */,
 				105152FD16F38CCA00EA0C5A /* ciLibXtract */,
 			);
 			name = Blocks;
@@ -108,6 +146,59 @@
 				88D61D9573D84451A7962325 /* BasicSampleApp.cpp */,
 			);
 			name = Source;
+			sourceTree = "<group>";
+		};
+		103C2BCB1717387A0002DEE7 /* ciUI */ = {
+			isa = PBXGroup;
+			children = (
+				103C2D291717387C0002DEE7 /* src */,
+			);
+			name = ciUI;
+			path = ../../../../ciUI;
+			sourceTree = "<group>";
+		};
+		103C2D291717387C0002DEE7 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				103C2D2A1717387C0002DEE7 /* ciUI.h */,
+				103C2D2B1717387C0002DEE7 /* ciUI2DPad.h */,
+				103C2D2C1717387C0002DEE7 /* ciUIBiLabelSlider.h */,
+				103C2D2D1717387C0002DEE7 /* ciUIButton.h */,
+				103C2D2E1717387C0002DEE7 /* ciUICanvas.h */,
+				103C2D2F1717387C0002DEE7 /* ciUICircleSlider.h */,
+				103C2D301717387C0002DEE7 /* ciUIDropDownList.h */,
+				103C2D311717387C0002DEE7 /* ciUIEvent.h */,
+				103C2D321717387C0002DEE7 /* ciUIFPS.h */,
+				103C2D331717387C0002DEE7 /* ciUIFPSSlider.h */,
+				103C2D341717387C0002DEE7 /* ciUIImage.h */,
+				103C2D351717387C0002DEE7 /* ciUIImageButton.h */,
+				103C2D361717387C0002DEE7 /* ciUIImageSampler.h */,
+				103C2D371717387C0002DEE7 /* ciUIImageSlider.h */,
+				103C2D381717387C0002DEE7 /* ciUIImageToggle.h */,
+				103C2D391717387C0002DEE7 /* ciUILabel.h */,
+				103C2D3A1717387C0002DEE7 /* ciUILabelButton.h */,
+				103C2D3B1717387C0002DEE7 /* ciUILabelToggle.h */,
+				103C2D3C1717387C0002DEE7 /* ciUIMinimalSlider.h */,
+				103C2D3D1717387C0002DEE7 /* ciUIMovingGraph.h */,
+				103C2D3E1717387C0002DEE7 /* ciUIMultiImageButton.h */,
+				103C2D3F1717387C0002DEE7 /* ciUIMultiImageToggle.h */,
+				103C2D401717387C0002DEE7 /* ciUINumberDialer.h */,
+				103C2D411717387C0002DEE7 /* ciUIRadio.h */,
+				103C2D421717387C0002DEE7 /* ciUIRangeSlider.h */,
+				103C2D431717387C0002DEE7 /* ciUIRectangle.h */,
+				103C2D441717387C0002DEE7 /* ciUIRotarySlider.h */,
+				103C2D451717387C0002DEE7 /* ciUIScrollableCanvas.h */,
+				103C2D461717387C0002DEE7 /* ciUISlider.h */,
+				103C2D471717387C0002DEE7 /* ciUISpacer.h */,
+				103C2D481717387C0002DEE7 /* ciUISpectrum.h */,
+				103C2D491717387C0002DEE7 /* ciUITextInput.h */,
+				103C2D4A1717387C0002DEE7 /* ciUIToggle.h */,
+				103C2D4B1717387C0002DEE7 /* ciUIToggleMatrix.h */,
+				103C2D4C1717387C0002DEE7 /* ciUIWaveform.h */,
+				103C2D4D1717387C0002DEE7 /* ciUIWidget.h */,
+				103C2D4E1717387C0002DEE7 /* ciUIWidgetWithLabel.h */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		105152FD16F38CCA00EA0C5A /* ciLibXtract */ = {
