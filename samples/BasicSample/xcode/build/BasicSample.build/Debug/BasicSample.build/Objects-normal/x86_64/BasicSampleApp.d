@@ -5,20 +5,20 @@ dependencies: \
   ../../../../../boost/boost/lexical_cast.hpp \
   ../../../../../boost/boost/detail/lcast_precision.hpp \
   ../../../../../boost/boost/array.hpp \
-  ../../../../../boost/boost/assert.hpp \
-  ../../../../../boost/boost/functional/hash_fwd.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/assert.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/functional/hash_fwd.hpp \
   ../../../../../boost/boost/numeric/conversion/cast.hpp \
   ../../../../../boost/boost/numeric/conversion/converter.hpp \
   ../../../../../boost/boost/numeric/conversion/conversion_traits.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/conversion_traits.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/meta.hpp \
   ../../../../../boost/boost/mpl/equal_to.hpp \
-  ../../../../../boost/boost/mpl/aux_/comparison_op.hpp \
-  ../../../../../boost/boost/mpl/aux_/numeric_op.hpp \
-  ../../../../../boost/boost/mpl/apply_wrap.hpp \
-  ../../../../../boost/boost/mpl/aux_/include_preprocessed.hpp \
-  ../../../../../boost/boost/preprocessor/cat.hpp \
-  ../../../../../boost/boost/preprocessor/stringize.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/aux_/comparison_op.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/aux_/numeric_op.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/apply_wrap.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/aux_/include_preprocessed.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/cat.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/stringize.hpp \
   ../../../../../boost/boost/mpl/aux_/preprocessed/gcc/equal_to.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/int_float_mixture.hpp \
   ../../../../../boost/boost/numeric/conversion/int_float_mixture_enum.hpp \
@@ -38,16 +38,16 @@ dependencies: \
   ../../../../../boost/boost/numeric/conversion/bounds.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/bounds.hpp \
   ../../../../../boost/boost/numeric/conversion/numeric_cast_traits.hpp \
-  ../../../../../boost/boost/cstdint.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/cstdint.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/numeric_cast_traits.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/preprocessed/numeric_cast_traits_common.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/preprocessed/numeric_cast_traits_long_long.hpp \
   ../../../../../boost/boost/type_traits/has_left_shift.hpp \
   ../../../../../boost/boost/type_traits/detail/has_binary_operator.hpp \
   ../../../../../boost/boost/type_traits/is_fundamental.hpp \
-  ../../../../../boost/boost/type_traits/detail/bool_trait_def.hpp \
-  ../../../../../boost/boost/type_traits/detail/template_arity_spec.hpp \
-  ../../../../../boost/boost/type_traits/detail/bool_trait_undef.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/type_traits/detail/bool_trait_def.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/type_traits/detail/template_arity_spec.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/type_traits/detail/bool_trait_undef.hpp \
   ../../../../../boost/boost/type_traits/has_right_shift.hpp \
   ../../../../../boost/boost/math/special_functions/sign.hpp \
   ../../../../../boost/boost/math/tools/config.hpp \
@@ -62,10 +62,10 @@ dependencies: \
   ../../../../../boost/boost/mpl/aux_/contains_impl.hpp \
   ../../../../../boost/boost/mpl/find.hpp \
   ../../../../../boost/boost/mpl/remove_if.hpp \
-  ../../../../../boost/boost/mpl/apply.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/apply.hpp \
   ../../../../../boost/boost/mpl/vector.hpp \
   ../../../../../boost/boost/mpl/limits/vector.hpp \
-  ../../../../../boost/boost/preprocessor/inc.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/inc.hpp \
   ../../../../../boost/boost/mpl/vector/vector20.hpp \
   ../../../../../boost/boost/mpl/vector/vector10.hpp \
   ../../../../../boost/boost/mpl/vector/vector0.hpp \
@@ -119,42 +119,42 @@ dependencies: \
   ../../../../../include/cinder/audio/PcmBuffer.h \
   ../../../../../boost/boost/preprocessor/seq.hpp \
   ../../../../../boost/boost/preprocessor/seq/cat.hpp \
-  ../../../../../boost/boost/preprocessor/arithmetic/dec.hpp \
-  ../../../../../boost/boost/preprocessor/config/config.hpp \
-  ../../../../../boost/boost/preprocessor/control/if.hpp \
-  ../../../../../boost/boost/preprocessor/seq/fold_left.hpp \
-  ../../../../../boost/boost/preprocessor/seq/seq.hpp \
-  ../../../../../boost/boost/preprocessor/seq/size.hpp \
-  ../../../../../boost/boost/preprocessor/tuple/eat.hpp \
-  ../../../../../boost/boost/preprocessor/seq/elem.hpp \
-  ../../../../../boost/boost/preprocessor/seq/enum.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/arithmetic/dec.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/config/config.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/control/if.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/fold_left.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/seq.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/size.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/tuple/eat.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/elem.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/enum.hpp \
   ../../../../../boost/boost/preprocessor/seq/filter.hpp \
-  ../../../../../boost/boost/preprocessor/control/expr_if.hpp \
-  ../../../../../boost/boost/preprocessor/facilities/empty.hpp \
-  ../../../../../boost/boost/preprocessor/tuple/elem.hpp \
-  ../../../../../boost/boost/preprocessor/tuple/rem.hpp \
-  ../../../../../boost/boost/preprocessor/seq/first_n.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/control/expr_if.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/facilities/empty.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/tuple/elem.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/tuple/rem.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/first_n.hpp \
   ../../../../../boost/boost/preprocessor/seq/fold_right.hpp \
-  ../../../../../boost/boost/preprocessor/detail/auto_rec.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/detail/auto_rec.hpp \
   ../../../../../boost/boost/preprocessor/seq/reverse.hpp \
-  ../../../../../boost/boost/preprocessor/seq/for_each.hpp \
-  ../../../../../boost/boost/preprocessor/seq/for_each_i.hpp \
-  ../../../../../boost/boost/preprocessor/seq/for_each_product.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/for_each.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/for_each_i.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/for_each_product.hpp \
   ../../../../../boost/boost/preprocessor/seq/insert.hpp \
   ../../../../../boost/boost/preprocessor/seq/rest_n.hpp \
-  ../../../../../boost/boost/preprocessor/arithmetic/inc.hpp \
-  ../../../../../boost/boost/preprocessor/seq/detail/split.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/arithmetic/inc.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/detail/split.hpp \
   ../../../../../boost/boost/preprocessor/seq/pop_back.hpp \
   ../../../../../boost/boost/preprocessor/seq/pop_front.hpp \
-  ../../../../../boost/boost/preprocessor/seq/push_back.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/push_back.hpp \
   ../../../../../boost/boost/preprocessor/seq/push_front.hpp \
   ../../../../../boost/boost/preprocessor/seq/remove.hpp \
   ../../../../../boost/boost/preprocessor/seq/replace.hpp \
   ../../../../../boost/boost/preprocessor/seq/subseq.hpp \
   ../../../../../boost/boost/preprocessor/seq/to_array.hpp \
   ../../../../../boost/boost/preprocessor/seq/to_list.hpp \
-  ../../../../../boost/boost/preprocessor/punctuation/comma.hpp \
-  ../../../../../boost/boost/preprocessor/punctuation/paren.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/punctuation/comma.hpp \
+  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/punctuation/paren.hpp \
   ../../../../../boost/boost/preprocessor/seq/detail/binary_transform.hpp \
   ../../../../../boost/boost/preprocessor/seq/to_tuple.hpp \
   ../../../../../boost/boost/preprocessor/seq/transform.hpp \

@@ -29,20 +29,21 @@ class BasicSampleApp : public AppNative {
     
 	void drawWaveForm();
 	
-    void drawData( double *data, int N, Vec2i pos, float height, int step, Color col );
+//    void drawData( double *data, int N, Vec2i pos, float height, int step, Color col );
     
-    void drawData( float *data, int N, Vec2i pos, float height, int step, Color col );
+    void drawData( string label, float *data, int N, float gain, Rectf rect, Color col = Color::white(), bool clamp = true );
     
-    void drawData( double *data, int N, Rectf rect, Color col = Color::white(), bool clamp = true );
+    void drawData( string label, double *data, int N, float gain, Rectf rect, Color col = Color::white(), bool clamp = true );
 
+    void initGui();
+    
 	audio::TrackRef mTrack;
 	audio::PcmBuffer32fRef mPcmBuffer;
     
     audio::Input            mInput;
 	std::shared_ptr<float>  mFftDataRef;
-	audio::PcmBuffer32fRef  mPcmBufferLive;
     
-    params::InterfaceGl mParams;
+    params::InterfaceGlRef  mParams;
     
     float               mFftGain;
     float               mPeakThreshold;
@@ -79,7 +80,7 @@ void BasicSampleApp::setup()
     mXtract.init();
     
     mMean           = 0.0f;
-    mFftGain        = 2.0f;
+    mFftGain        = 550.0f;
     mPeakThreshold  = 0.5f;
     
     const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
@@ -95,12 +96,9 @@ void BasicSampleApp::setup()
         }
 	}
     
-    mParams = params::InterfaceGl( "Params", Vec2f( 0, 0 ) );
-    mParams.addParam( "Peak threshold",    &mPeakThreshold,   "min=0.0 max=1000.0 step=0.1" );
-    
-    mParams.addParam( "ci Fft",         &mRenderCinderFft );
-    
     mFontSmall = gl::TextureFont::create( Font( "Helvetica", 12 ) );
+    
+    initGui();
 }
 
 
@@ -136,19 +134,19 @@ void BasicSampleApp::update()
     if ( !mFftDataRef )
         return;
     
-    mXtract.setSpectrum( mFftDataRef );
+//    mXtract.setSpectrum( mFftDataRef );
 
-	mXtract.setPcmData( leftBuffer );
+	mXtract.setPcmData( mPcmBuffer, true );
     
     mMean           = mXtract.getMean();
     mSpectrum       = mXtract.getSpectrum();
     mPeakSpectrum   = mXtract.getPeakSpectrum( mPeakThreshold );
     mMfccs          = mXtract.getMfcc();
-    mBarks          = mXtract.getBarkCoefficients();
-    mF0             = mXtract.getF0();
-    mHarmonicSpectrum   = mXtract.getHarmonicSpectrum();
+//    mBarks          = mXtract.getBarkCoefficients();
+//    mF0             = mXtract.getF0();
+//    mHarmonicSpectrum   = mXtract.getHarmonicSpectrum();
     
-    mXtract.getAutocorrelationFft();
+//    mXtract.getAutocorrelationFft();
     
     
 }
@@ -163,16 +161,26 @@ void BasicSampleApp::draw()
     
     
     drawWaveForm();
+    Rectf startRect( 15, 15, 15 + ( getWindowWidth() - 35 ) / 2, 150 );
+    startRect.offset( Vec2i ( 0, 200 ) );
     
-//    if ( mFftDataRef && mRenderCinderFft )
-//        drawData( mFftDataRef.get(), BLOCKSIZE >> 2, Vec2i( 10, 600 ), 1.0f, 1, Color( 1.0f, 1.0f, 1.0f ) );
+    Rectf rect = startRect;
+    // no DC component, so -1?
+    drawData( "Spectrum(Xtract)",   mSpectrum.get(), ( BLOCKSIZE >> 2 ) - 1, mFftGain, rect, Color( 0.2f, 0.7f, 1.0f ) );      rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
+    drawData( "Spectrum peaks",     mPeakSpectrum.get(),      ( BLOCKSIZE >> 2 ) - 1, mFftGain, rect, Color( 1.0f, 0.2f, 0.15f )  );
     
-    Rectf rect( 15, 15, 15 + ( getWindowWidth() - 35 ) / 2, 150 );
-    
-    drawData( mSpectrum.get(),          BLOCKSIZE >> 2, rect, Color( 0.2f, 0.7f, 1.0f ) );      rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
-    drawData( mPeakSpectrum.get(),      BLOCKSIZE >> 2, rect, Color( 1.0f, 0.2f, 0.15f )  );
-    
-    rect = Rectf( 15, 15, 15 + ( getWindowWidth() - 35 ) / 2, 150 );
+    if ( mFftDataRef )
+    {
+        rect = startRect;
+        rect.offset( Vec2i ( 0, rect.getHeight() + 5 ) );
+        drawData( "Spectrum(cinder)", mFftDataRef.get(), BLOCKSIZE >> 2, 1.0f, rect );
+    }
+    rect = startRect;
+    rect.offset( rect.getSize() + Vec2i ( 5, 5 ) );
+    drawData( "MEL", mMfccs.get(), MFCC_FREQ_BANDS, 1.0f, rect );    rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
+
+    /*
+     rect = startRect;
     rect.offset( Vec2i ( 0, rect.getHeight() + 5 ) );
     drawData( mHarmonicSpectrum.get(),  BLOCKSIZE >> 2, rect, Color( 0.7f, 0.2f, 1.0f )  );     rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
     drawData( mMfccs.get(),             MFCC_FREQ_BANDS, rect );
@@ -181,7 +189,7 @@ void BasicSampleApp::draw()
     rect.offset( 2 * Vec2i ( 0, rect.getHeight() + 5 ) );
     drawData( mBarks.get(),             XTRACT_BARK_BANDS, rect );                              
 //    drawData( mXtract.getAutocorrelationFft().get(),  XTRACT_BARK_BANDS,  rect );
-    
+    */
     float w = 300;
     float h = 30;
     
@@ -220,8 +228,7 @@ void BasicSampleApp::draw()
     
     gl::popMatrices();
     
-    
-//    mParams.draw();
+    mParams->draw();
 }
 
 
@@ -257,7 +264,7 @@ void BasicSampleApp::drawWaveForm()
 }
 
 
-void BasicSampleApp::drawData( double *data, int N, Rectf rect, Color col, bool clamp )
+void BasicSampleApp::drawData( string label, double *data, int N, float gain, Rectf rect, Color col, bool clamp )
 {
     int padding = 5;
     
@@ -277,7 +284,8 @@ void BasicSampleApp::drawData( double *data, int N, Rectf rect, Color col, bool 
     for( int i = 0; i < N; i++ )
     {
 		float barY = clamp ? math<float>::min( data[i], h ) : data[i];
-//        barY *= h;
+        
+        barY *= gain;
         
         gl::color( col );
         glVertex2f( i * step,           h );
@@ -291,7 +299,59 @@ void BasicSampleApp::drawData( double *data, int N, Rectf rect, Color col, bool 
     
     glEnd();
     
+    gl::color( Color::white() );
+    mFontSmall->drawString( label, Vec2f( 5, 10 ) );
+    
     gl::popMatrices();
+}
+
+
+void BasicSampleApp::drawData( string label, float *data, int N, float gain, Rectf rect, Color col, bool clamp )
+{
+    int padding = 5;
+    
+    glPushMatrix();
+    
+    gl::color( ColorA( 0.3f, 0.3f, 0.3f, 0.15f ) );
+    gl::drawSolidRect( rect );
+    
+    rect.inflate( - Vec2i::one() * padding );
+    gl::translate( rect.getUpperLeft() );
+    
+    glBegin( GL_QUADS );
+    
+    float step = rect.getWidth() / N;
+    float h = rect.getHeight();
+    
+    for( int i = 0; i < N; i++ )
+    {
+		float barY = clamp ? math<float>::min( data[i], h ) : data[i];
+        
+        barY *= gain;
+        
+        gl::color( col );
+        glVertex2f( i * step,           h );
+        glVertex2f( ( i + 1 ) * step,   h );
+        
+        gl::color( col + Color( (float)i / (float)N, 0.0f, 1.0f - (float)i / (float)N ) );
+        glVertex2f( ( i + 1 ) * step,   h-barY );
+        glVertex2f( i * step,           h-barY );
+		
+	}
+    
+    glEnd();
+    
+    gl::color( Color::white() );
+    mFontSmall->drawString( label, Vec2f( 5, 10 ) );
+    
+    gl::popMatrices();
+}
+
+
+void BasicSampleApp::initGui()
+{
+    mParams = params::InterfaceGl::create( "params", Vec2f( 200, 300 ) );
+    mParams->addParam( "Fft gain", &mFftGain, "min=0.5 max=2000.0 step=0.1" );
 }
 
 

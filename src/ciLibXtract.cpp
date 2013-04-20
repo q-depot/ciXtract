@@ -49,10 +49,29 @@ void ciLibXtract::init()
 }
 
 
-void ciLibXtract::setPcmData( audio::Buffer32fRef pcmBufferRef )
+
+
+
+void ciLibXtract::setPcmData( audio::PcmBuffer32fRef pcmBufferRef, bool isInterleaved )
 {
-    for( size_t k=0; k < BLOCKSIZE; k++ )
-        mPcmData.get()[k] = pcmBufferRef->mData[k];
+    audio::Buffer32fRef buff;
+    
+    if ( isInterleaved )
+    {
+        buff = pcmBufferRef->getInterleavedData();
+        
+        size_t buffLength = buff->mSampleCount;
+        
+        for( size_t k=0; k < buffLength; k+=2 )
+            mPcmData.get()[k/2] = buff->mData[k];
+    }
+    else
+    {
+    buff = pcmBufferRef->getChannelData( audio::CHANNEL_FRONT_LEFT );
+        for( size_t k=0; k < BLOCKSIZE; k++ )
+            mPcmData.get()[k] = buff->mData[k];
+    }
+    
 }
 
 
@@ -73,12 +92,12 @@ double ciLibXtract::getMean()
 
 shared_ptr<double> ciLibXtract::getSpectrum()
 {    
-//    mArgd[0] = SAMPLERATE / (double)BLOCKSIZE;
-//    mArgd[1] = XTRACT_MAGNITUDE_SPECTRUM;           //  XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
-//    mArgd[2] = 0.f;                                 // No DC component
-//    mArgd[3] = 1.f;                                 // No Normalisation
-//    
-//    xtract[XTRACT_SPECTRUM]( mPcmData.get(), BLOCKSIZE >> 1, mArgd, mSpectrum.get() );
+    mArgd[0] = SAMPLERATE / (double)1024;
+    mArgd[1] = XTRACT_MAGNITUDE_SPECTRUM;           //  XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
+    mArgd[2] = 0.f;                                 // No DC component
+    mArgd[3] = 0.f;                                 // No Normalisation
+    
+    xtract[XTRACT_SPECTRUM]( mPcmData.get(), 1024, mArgd, mSpectrum.get() );
 
     return mSpectrum;
 }

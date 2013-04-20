@@ -10,6 +10,7 @@ using namespace ci::app;
 using namespace std;
 
 #define BLOCKSIZE           2048
+#define FFT_SIZE            1024
 #define SAMPLERATE          44100
 #define PERIOD              100
 #define MFCC_FREQ_BANDS     32
@@ -27,7 +28,7 @@ public:
     
     void init();
     
-    void setPcmData( ci::audio::Buffer32fRef pcmBufferRef );
+    void setPcmData( ci::audio::PcmBuffer32fRef pcmBufferRef, bool isInterleaved = false );
     
     void setSpectrum( std::shared_ptr<float> fftDataRef );
     
