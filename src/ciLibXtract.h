@@ -10,7 +10,8 @@ using namespace ci::app;
 using namespace std;
 
 #define BLOCKSIZE           2048
-#define FFT_SIZE            1024
+#define PCM_BUFF_SIZE       1024
+#define FFT_SIZE            512
 #define SAMPLERATE          44100
 #define PERIOD              100
 #define MFCC_FREQ_BANDS     32
@@ -28,7 +29,7 @@ public:
     
     void init();
     
-    void setPcmData( ci::audio::PcmBuffer32fRef pcmBufferRef, bool isInterleaved = false );
+    void setInterleavedData( ci::audio::Buffer32fRef buff );
     
     void setSpectrum( std::shared_ptr<float> fftDataRef );
     
@@ -40,7 +41,7 @@ public:
 public:
     
     // 	Extract frequency domain spectrum from time domain signal.
-    std::shared_ptr<double> getSpectrum();
+    std::shared_ptr<double> getSpectrum( bool normalised = false );
     
     // 	Extract autocorrelation from time domain signal using FFT based method.
     std::shared_ptr<double> getAutocorrelationFft();

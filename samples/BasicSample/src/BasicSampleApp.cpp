@@ -47,7 +47,8 @@ class BasicSampleApp : public AppNative {
     
     float               mFftGain;
     float               mPeakThreshold;
-    bool                mRenderCinderFft;
+    float               mBarkGain;
+    bool                mSpectrumNorm;
     
     ciLibXtract         mXtract;
     double              mMean;
@@ -56,6 +57,7 @@ class BasicSampleApp : public AppNative {
     shared_ptr<double>  mPeakSpectrum;
     shared_ptr<double>  mMfccs;
     shared_ptr<double>  mBarks;
+    shared_ptr<double>  mAutocorrelationFft;
     
     float               mF0;
     
@@ -80,8 +82,10 @@ void BasicSampleApp::setup()
     mXtract.init();
     
     mMean           = 0.0f;
-    mFftGain        = 550.0f;
+    mFftGain        = 1500.0f;
     mPeakThreshold  = 0.5f;
+    mBarkGain       = 200.0f;
+    mSpectrumNorm   = false;
     
     const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
 	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter )
@@ -136,18 +140,16 @@ void BasicSampleApp::update()
     
 //    mXtract.setSpectrum( mFftDataRef );
 
-	mXtract.setPcmData( mPcmBuffer, true );
+	mXtract.setInterleavedData( leftBuffer );
     
-    mMean           = mXtract.getMean();
-    mSpectrum       = mXtract.getSpectrum();
-    mPeakSpectrum   = mXtract.getPeakSpectrum( mPeakThreshold );
-    mMfccs          = mXtract.getMfcc();
-//    mBarks          = mXtract.getBarkCoefficients();
-//    mF0             = mXtract.getF0();
-//    mHarmonicSpectrum   = mXtract.getHarmonicSpectrum();
-    
-//    mXtract.getAutocorrelationFft();
-    
+    mMean               = mXtract.getMean();
+    mSpectrum           = mXtract.getSpectrum( mSpectrumNorm );
+    mPeakSpectrum       = mXtract.getPeakSpectrum( mPeakThreshold );
+    mMfccs              = mXtract.getMfcc();
+    mBarks              = mXtract.getBarkCoefficients();
+    mF0                 = mXtract.getF0();
+    mHarmonicSpectrum   = mXtract.getHarmonicSpectrum();
+//    mAutocorrelationFft = mXtract.getAutocorrelationFft();
     
 }
 
@@ -166,30 +168,32 @@ void BasicSampleApp::draw()
     
     Rectf rect = startRect;
     // no DC component, so -1?
-    drawData( "Spectrum(Xtract)",   mSpectrum.get(), ( BLOCKSIZE >> 2 ) - 1, mFftGain, rect, Color( 0.2f, 0.7f, 1.0f ) );      rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
-    drawData( "Spectrum peaks",     mPeakSpectrum.get(),      ( BLOCKSIZE >> 2 ) - 1, mFftGain, rect, Color( 1.0f, 0.2f, 0.15f )  );
+    drawData( "Spectrum(Xtract)",   mSpectrum.get(), FFT_SIZE - 1, mFftGain, rect, Color( 0.2f, 0.7f, 1.0f ), true );
+    
+    rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
+    drawData( "Spectrum peaks",     mPeakSpectrum.get(), FFT_SIZE - 1, mFftGain, rect, Color( 1.0f, 0.2f, 0.15f ), true  );
     
     if ( mFftDataRef )
     {
         rect = startRect;
         rect.offset( Vec2i ( 0, rect.getHeight() + 5 ) );
-        drawData( "Spectrum(cinder)", mFftDataRef.get(), BLOCKSIZE >> 2, 1.0f, rect );
+        drawData( "Spectrum(cinder)", mFftDataRef.get(), FFT_SIZE, 1.0f, rect );
     }
-    rect = startRect;
-    rect.offset( rect.getSize() + Vec2i ( 5, 5 ) );
-    drawData( "MEL", mMfccs.get(), MFCC_FREQ_BANDS, 1.0f, rect );    rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
-
-    /*
-     rect = startRect;
-    rect.offset( Vec2i ( 0, rect.getHeight() + 5 ) );
-    drawData( mHarmonicSpectrum.get(),  BLOCKSIZE >> 2, rect, Color( 0.7f, 0.2f, 1.0f )  );     rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
-    drawData( mMfccs.get(),             MFCC_FREQ_BANDS, rect );
+//    rect = startRect;
+//    rect.offset( rect.getSize() + Vec2i ( 5, 5 ) );
+    rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
+    drawData( "MEL", mMfccs.get(), MFCC_FREQ_BANDS, 1.0f, rect, Color::white(), true );    rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
     
-    rect = Rectf( 15, 15, 15 + ( getWindowWidth() - 35 ) / 2, 150 );
+    rect = startRect;
     rect.offset( 2 * Vec2i ( 0, rect.getHeight() + 5 ) );
-    drawData( mBarks.get(),             XTRACT_BARK_BANDS, rect );                              
-//    drawData( mXtract.getAutocorrelationFft().get(),  XTRACT_BARK_BANDS,  rect );
-    */
+    drawData( "BARK", mBarks.get(), XTRACT_BARK_BANDS, mBarkGain, rect );
+
+    rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
+    drawData( "Harmonic Spectrum", mHarmonicSpectrum.get(),  FFT_SIZE, mFftGain, rect, Color( 0.7f, 0.2f, 1.0f )  );
+    
+//    drawData( "Autocorrelation Fft", mAutocorrelationFft.get(), FFT_SIZE, mFftGain, rect );
+
+    
     float w = 300;
     float h = 30;
     
@@ -283,9 +287,12 @@ void BasicSampleApp::drawData( string label, double *data, int N, float gain, Re
     
     for( int i = 0; i < N; i++ )
     {
-		float barY = clamp ? math<float>::min( data[i], h ) : data[i];
+		float barY = data[i];
         
         barY *= gain;
+
+        if ( clamp )
+            barY = math<float>::clamp( barY, 0.0f, h );
         
         gl::color( col );
         glVertex2f( i * step,           h );
@@ -351,7 +358,10 @@ void BasicSampleApp::drawData( string label, float *data, int N, float gain, Rec
 void BasicSampleApp::initGui()
 {
     mParams = params::InterfaceGl::create( "params", Vec2f( 200, 300 ) );
+    mParams->addParam( "Fft norm", &mSpectrumNorm );
     mParams->addParam( "Fft gain", &mFftGain, "min=0.5 max=2000.0 step=0.1" );
+    mParams->addParam( "Peaks threshold", &mPeakThreshold, "min=0.0 max=100.0 step=0.1" );
+    mParams->addParam( "Bark gain", &mBarkGain, "min=0.5 max=1000.0 step=0.1" );
 }
 
 
