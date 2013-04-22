@@ -165,7 +165,7 @@ public:
     double 	getFlatnessDb();
     
     // 	Extract the tonality factor of an input vector using a method described by Peeters 2003.
-//    double 	getTonality() { return 0.0f; }
+    double 	getTonality();
     
     // 	Extract the noisiness of an input vector using a method described by Tae Hong Park (2000)
 //    double 	getNoisiness() { return 0.0f; }
@@ -241,6 +241,7 @@ private:
     double                  mFlatness;
     double                  mFlatnessDb;
     double                  mPower;
+    double                  mTonality;
     
     xtract_mel_filter       mel_filters;
     

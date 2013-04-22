@@ -278,3 +278,11 @@ double ciLibXtract::getPower()
     return mPower;
 }
 
+
+double ciLibXtract::getTonality()
+{
+    double *argd = NULL;
+    xtract_tonality( argd, 0, &mFlatnessDb, &mTonality );
+    return mTonality;
+}
+
