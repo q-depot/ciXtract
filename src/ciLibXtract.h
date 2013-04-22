@@ -180,7 +180,7 @@ public:
 //    double 	getCrest() { return 0.0f; }
     
     // 	Extract the Spectral Power of an input vector using a method described by Bee Suan Ong (2005)
-//    double 	getPower() { return 0.0f; }
+    double 	getPower();
     
     // 	Extract the Odd to even harmonic ratio of an input vector.
 //    double 	getOddEvenRatio() { return 0.0f; }
@@ -240,6 +240,7 @@ private:
     double                  mVariance;
     double                  mFlatness;
     double                  mFlatnessDb;
+    double                  mPower;
     
     xtract_mel_filter       mel_filters;
     

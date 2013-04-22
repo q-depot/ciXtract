@@ -270,3 +270,11 @@ double ciLibXtract::getVariance()
     return mVariance;
 }
 
+
+double ciLibXtract::getPower()
+{
+    void *argd = NULL;
+    xtract_variance( mSpectrum.get(), FFT_SIZE, &argd, &mPower );
+    return mPower;
+}
+
