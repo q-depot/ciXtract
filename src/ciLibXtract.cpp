@@ -292,24 +292,36 @@ double ciLibXtract::getTonality()
 
 bool ciLibXtract::getOnSet( float threshold, float vel, float gain )
 {
-//    double newAvg   = gain * ( mBarks.get()[0] + mBarks.get()[1] ) / 2.0f;
-//    
-//    if( newAvg > mBarkOnSetAvg * ( 1.0f + threshold ) )
-//    {
-//        mBarkOnSetAvg = newAvg;
-//        return true;
-//    }
-//    else
-//        mBarkOnSetAvg *= vel;
-    float val = gain * mBarks.get()[0];
+    double val = gain * ( mBarks.get()[0] + mBarks.get()[1] ) / 2.0f;
+    
+    if ( val < threshold * 0.1f )
+    {
+        mBarkOnSetAvg *= vel;
+        return false;
+    }
+    
     if( val > mBarkOnSetAvg )
     {
         mBarkOnSetAvg = val;
         return true;
     }
-    else
-        mBarkOnSetAvg *= vel;
     
+    mBarkOnSetAvg *= vel;
     return false;
+//    float val = gain * mBarks.get()[1];
+//    
+//    if ( val < threshold * 0.1f )
+//    {
+//        mBarkOnSetAvg *= vel;
+//        return false;
+//    }
+//    
+//    if( val > mBarkOnSetAvg )
+//    {
+//        mBarkOnSetAvg = val;
+//        return true;
+//    }
+    
+//    return false;
 }
 
