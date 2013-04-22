@@ -182,9 +182,7 @@ double ciLibXtract::getF0()
 double ciLibXtract::getFailsafeF0()
 {
     double sr = SAMPLERATE;
-    
     xtract_failsafe_f0( mPcmData.get(), PCM_BUFF_SIZE, &sr, &mFailsafeF0 );
-    
     return mFailsafeF0;
 }
 
@@ -192,9 +190,7 @@ double ciLibXtract::getFailsafeF0()
 double ciLibXtract::getSpectralCentroid()
 {
     void *argd = NULL;
-    
     xtract_spectral_centroid( mSpectrum.get(), FFT_SIZE, argd, &mSpectralCentroid );
-    
     return mSpectralCentroid;
 }
 
@@ -202,7 +198,6 @@ double ciLibXtract::getSpectralCentroid()
 double ciLibXtract::getSpread()
 {
     xtract_spread( mSpectrum.get(), FFT_SIZE, &mSpectralCentroid, &mSpread );
-    
     return mSpread;
 }
 
@@ -210,10 +205,24 @@ double ciLibXtract::getSpread()
 double ciLibXtract::getLoudness()
 {
     void *argd = NULL;
-    
     xtract_loudness( mBarks.get(), XTRACT_BARK_BANDS, argd, &mLoudness );
-    
     return mLoudness;
+}
+
+
+double ciLibXtract::getFlatness()
+{
+    void *argd = NULL;
+    xtract_flatness( mSpectrum.get(), FFT_SIZE / 2, argd, &mFlatness );
+    return mFlatness;
+}
+
+
+double ciLibXtract::getFlatnessDb()
+{
+    double *argd = NULL;
+    xtract_flatness( argd, 0, &mFlatness, &mFlatnessDb );
+    return mFlatnessDb;
 }
 
 

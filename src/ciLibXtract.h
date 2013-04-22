@@ -159,10 +159,10 @@ public:
     double 	getLoudness();
     
     // 	Extract the spectral flatness measure of an input vector, where the flatness measure (SFM) is defined as the ratio of the geometric mean to the arithmetic mean of a magnitude spectrum.
-//    double 	getFlatness() { return 0.0f; }
+    double 	getFlatness();
     
     // 	Extract the LOG spectral flatness measure of an input vector.
-//    double 	getFlatnessDb() { return 0.0f; }
+    double 	getFlatnessDb();
     
     // 	Extract the tonality factor of an input vector using a method described by Peeters 2003.
 //    double 	getTonality() { return 0.0f; }
@@ -238,7 +238,8 @@ private:
     double                  mAverageDeviation;
     double                  mStandardDeviation;
     double                  mVariance;
-    
+    double                  mFlatness;
+    double                  mFlatnessDb;
     
     xtract_mel_filter       mel_filters;
     
