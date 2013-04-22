@@ -9,6 +9,11 @@
 #include "cinder/audio/FftProcessor.h"
 #include "cinder/audio/Input.h"
 #include "cinder/gl/TextureFont.h"
+#include "cinder/Json.h"
+#include "cinder/audio/Output.h"
+#include "cinder/audio/Io.h"
+#include "cinder/System.h"
+#include "OscSender.h"
 
 #include "ciLibXtract.h"
 
@@ -18,26 +23,36 @@ using namespace std;
 
 
 class BasicSampleApp : public AppNative {
-  public:
+public:
     void shutdown();
     void prepareSettings( Settings *settings );
 	void setup();
-	void mouseDown( MouseEvent event );
     void keyDown( KeyEvent event );
 	void update();
 	void draw();
     
 	void drawWaveForm();
-	
-//    void drawData( double *data, int N, Vec2i pos, float height, int step, Color col );
     
     void drawData( string label, float *data, int N, float gain, Rectf rect, Color col = Color::white(), bool clamp = true );
     
     void drawData( string label, double *data, int N, float gain, Rectf rect, Color col = Color::white(), bool clamp = true );
-
+    
+    void drawData( string label, float data, float gain, Rectf rect, Color col = Color::white(), bool clamp = true );
+    
     void initGui();
     
-	audio::TrackRef mTrack;
+    void processData();
+    
+    void processJson();
+    
+    void writeJson();
+    
+    void sendOscData();
+    
+    void playTrack();
+    
+    void fileDrop( FileDropEvent event );
+    
 	audio::PcmBuffer32fRef mPcmBuffer;
     
     audio::Input            mInput;
@@ -57,19 +72,64 @@ class BasicSampleApp : public AppNative {
     shared_ptr<double>  mHarmonicSpectrum;
     shared_ptr<double>  mPeakSpectrum;
     shared_ptr<double>  mMfccs;
-    shared_ptr<double>  mBarks;
+    shared_ptr<double>  mBark;
     shared_ptr<double>  mAutocorrelationFft;
     shared_ptr<double>  mSubBands;
     
     float               mF0;
+    float               mFilesafeF0;
+    float               mSpectralCentroid;
+    float               mSpread;
+    float               mLoudness;
+    float               mIrregularityK;
+    float               mIrregularityJ;
+    float               mStandardDeviation;
+    float               mAverageDeviation;
+    float               mVariance;
+    float               mFlatness;
+    float               mFlatnessDb;
+    float               mPower;
+    float               mTonality;
+    
+    
+    float               mMeanGain;
+    float               mCentroidGain;
+    float               mDeviationGain;
+    float               mSpreadGain;
+    float               mLoudnessGain;
+    
     
     gl::TextureFontRef  mFontSmall;
-
+    
+    
+    float               mFps;
+    
+    JsonTree            mJsonOutput;
+    bool                mProcessJson;
+    
+    float               mDumping;
+    
+    xtract_spectrum_    mSpectrumMode;
+    
+    Color               mBgColor;
+    
+    
+    osc::Sender         mOscSender;
+	std::string         mOscHost;
+	int                 mOscPort;
+    bool                mOscEnable;
+    
+    audio::SourceRef    mAudioRef;
+    audio::TrackRef     mTrackRef;
+    string              mTrackName;
+    bool                mIsTrackInput;
 };
 
 
 void BasicSampleApp::shutdown()
 {
+    mTrackRef.reset();
+    mAudioRef.reset();
 }
 
 
@@ -84,11 +144,24 @@ void BasicSampleApp::setup()
     mXtract.init();
     
     mMean           = 0.0f;
-    mFftGain        = 1500.0f;
+    mFftGain        = 1.0f;
     mPeakThreshold  = 0.5f;
-    mBarkGain       = 200.0f;
-    mSubBandGain    = 100.0f;
+    mBarkGain       = 1.0f;
+    mSubBandGain    = 1.0f;
     mSpectrumNorm   = false;
+    mProcessJson    = false;
+    mSpectrumMode   = XTRACT_MAGNITUDE_SPECTRUM;
+    mDumping        = 0.92f;
+    
+    mBgColor        = Color::white() * 0.15f;
+    mOscEnable      = false;
+    mIsTrackInput   = false;
+    
+    mMeanGain       = 200.0f;
+    mCentroidGain   = 500.0f;
+    mDeviationGain  = 100.0f;
+    mSpreadGain     = 100.0f;
+    mLoudnessGain   = 100.0f;
     
     const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
 	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter )
@@ -96,9 +169,7 @@ void BasicSampleApp::setup()
         if ( (*iter)->getName() == "Soundflower (2ch)" )
         {
             mInput = audio::Input( *iter );
-            
             mInput.start();
-            
             break;
         }
 	}
@@ -106,6 +177,15 @@ void BasicSampleApp::setup()
     mFontSmall = gl::TextureFont::create( Font( "Helvetica", 12 ) );
     
     initGui();
+    
+	// assume the broadcast address is this machine's IP address but with 255 as the final value
+	// so to multicast from IP 192.168.1.100, the host should be 192.168.1.255
+	mOscHost = System::getIpAddress();
+    mOscPort = 8000;
+    
+	if( mOscHost.rfind( '.' ) != string::npos )
+		mOscHost.replace( mOscHost.rfind( '.' ) + 1, 3, "255" );
+    mOscSender.setup( mOscHost, mOscPort, true );
 }
 
 
@@ -115,63 +195,149 @@ void BasicSampleApp::keyDown( KeyEvent event )
     
     if ( c == ' ' )
     {
-//        mVolume = ( mVolume == 0.0f ) ? 1.0f : 0.0f;
-//        mTrack->setVolume( mVolume );
+        //        mVolume = ( mVolume == 0.0f ) ? 1.0f : 0.0f;
+        //        mTrack->setVolume( mVolume );
     }
 }
 
 
-void BasicSampleApp::mouseDown( MouseEvent event )
+void BasicSampleApp::processData()
 {
+    //    for( size_t k=0; k < FFT_SIZE; k++ )
+    //        mSpectrum[k] = *= mDumping;
 }
 
 
 void BasicSampleApp::update()
 {
-    mPcmBuffer = mInput.getPcmBuffer();
+    if ( mIsTrackInput && mTrackRef )
+        mPcmBuffer = mTrackRef->getPcmBuffer();
+    else if ( !mIsTrackInput )
+        mPcmBuffer = mInput.getPcmBuffer();
+    else
+        return;
+    
 	if( ! mPcmBuffer )
 		return;
-	
-	audio::Buffer32fRef leftBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
-//	audio::Buffer32fRef rightBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_RIGHT );
     
+    audio::Buffer32fRef leftBuffer = mPcmBuffer->getInterleavedData();
     
-	mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ), BLOCKSIZE >> 2 );
+    //	audio::Buffer32fRef leftBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
+    //	audio::Buffer32fRef rightBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_RIGHT );
+    
+    //    console() << leftBuffer->mSampleCount << endl;
+    
+	mFftDataRef = audio::calculateFft( mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT ), FFT_SIZE );
 	
     if ( !mFftDataRef )
         return;
     
-//    mXtract.setSpectrum( mFftDataRef );
-
+    //    mXtract.setSpectrum( mFftDataRef );
+    
 	mXtract.setInterleavedData( leftBuffer );
     
     mMean               = mXtract.getMean();
-    mSpectrum           = mXtract.getSpectrum( mSpectrumNorm );
+    mSpectrum           = mXtract.getSpectrum( mSpectrumMode, mSpectrumNorm, mDumping );
     mPeakSpectrum       = mXtract.getPeakSpectrum( mPeakThreshold );
     mMfccs              = mXtract.getMfcc();
-    mBarks              = mXtract.getBarkCoefficients();
+    mBark              = mXtract.getBarkCoefficients();
     mF0                 = mXtract.getF0();
+    mFilesafeF0         = mXtract.getFailsafeF0();
     mHarmonicSpectrum   = mXtract.getHarmonicSpectrum();
     mSubBands           = mXtract.getSubBands();
+    mSpectralCentroid   = mXtract.getSpectralCentroid();
+    mSpread             = mXtract.getSpread();
+    mLoudness           = mXtract.getLoudness();
+    mIrregularityK      = mXtract.getIrregularityK();
+    mIrregularityJ      = mXtract.getIrregularityJ();
+    mVariance           = mXtract.getVariance();
+    mStandardDeviation  = mXtract.getStandardDeviation();
+    mAverageDeviation   = mXtract.getAverageDeviation();
+    mFlatness           = mXtract.getFlatness();
+    mFlatnessDb         = mXtract.getFlatnessDb();
+    mPower              = mXtract.getPower();
+    mTonality           = mXtract.getTonality();
     
-//    mAutocorrelationFft = mXtract.getAutocorrelationFft();
+    //    mAutocorrelationFft = mXtract.getAutocorrelationFft();
     
+    if ( mProcessJson )
+        processJson();
+    
+    if ( mOscEnable )
+        sendOscData();
+    
+    mFps = getAverageFps();
 }
 
 
 void BasicSampleApp::draw()
 {
-//	gl::clear( Color( 0.85f, 0.85f, 0.85f ) );
-    gl::clear( Color::white() * 0.25f );
+    //	gl::clear( Color( 0.85f, 0.85f, 0.85f ) );
+    gl::clear( mBgColor );
     gl::color( Color::white() );
     gl::enableAlphaBlending();
     
-    
     drawWaveForm();
-    Rectf startRect( 15, 15, 15 + ( getWindowWidth() - 35 ) / 2, 150 );
-    startRect.offset( Vec2i ( 0, 200 ) );
     
+    int margin = 5;
+    Rectf startRect( margin, margin, 200, 40 );
     Rectf rect = startRect;
+    Vec2f boxSize = Vec2f( ( getWindowWidth() - margin * 4 - startRect.getWidth() ) / 2.0f, 150 );
+    
+    drawData( "FPS", mFps, 0.0166f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Mean", mMean, mMeanGain, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "F0", mF0, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Failsafe F0", mFilesafeF0, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Spectral Centroid", mSpectralCentroid, mCentroidGain, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Spread", mSpread, mSpreadGain, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Loudness", mF0, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Irregularity K", mIrregularityK, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Irregularity J", mIrregularityJ, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Variance", mVariance, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Standard Deviation", mStandardDeviation, mDeviationGain, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Average Deviation", mAverageDeviation, mDeviationGain, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Flatness", mFlatness, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Flatness Db", mFlatnessDb, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Power", mPower, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    drawData( "Tonality", mTonality, 1.0f, rect, Color::white(), true );
+    rect.offset( Vec2f( 0, rect.getHeight() + margin ) );
+    
+    
+    // Plot
+    
+    startRect.set( startRect.x2 + margin, startRect.y1, startRect.x2 + margin + boxSize.x , startRect.y1 + boxSize.y );
+    rect = startRect;
+    
     // no DC component, so -1?
     drawData( "Spectrum(Xtract)",   mSpectrum.get(), FFT_SIZE - 1, mFftGain, rect, Color( 0.2f, 0.7f, 1.0f ), true );
     
@@ -184,60 +350,21 @@ void BasicSampleApp::draw()
         rect.offset( Vec2i ( 0, rect.getHeight() + 5 ) );
         drawData( "Spectrum(cinder)", mFftDataRef.get(), FFT_SIZE, 1.0f, rect );
     }
-//    rect = startRect;
-//    rect.offset( rect.getSize() + Vec2i ( 5, 5 ) );
+    
     rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
     drawData( "MEL", mMfccs.get(), MFCC_FREQ_BANDS, 1.0f, rect, Color::white(), true );    rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
     
-    rect = startRect;
-    rect.offset( 2 * Vec2i ( 0, rect.getHeight() + 5 ) );
-    drawData( "BARK", mBarks.get(), XTRACT_BARK_BANDS, mBarkGain, rect );
-
+    rect = startRect;   rect.offset( 2 * Vec2i ( 0, rect.getHeight() + 5 ) );
+    drawData( "BARK", mBark.get(), XTRACT_BARK_BANDS, mBarkGain, rect );
+    
     rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
     drawData( "Harmonic Spectrum", mHarmonicSpectrum.get(),  FFT_SIZE, mFftGain, rect, Color( 0.7f, 0.2f, 1.0f )  );
     
-    rect = startRect;
-    rect.offset( 3 * Vec2i ( 0, rect.getHeight() + 5 ) );
+    rect = startRect;   rect.offset( 3 * Vec2i ( 0, rect.getHeight() + 5 ) );
     drawData( "Sub-bands", mSubBands.get(), SUB_BANDS, mSubBandGain, rect );
-//    drawData( "Autocorrelation Fft", mAutocorrelationFft.get(), FFT_SIZE, mFftGain, rect );
-
-    float w = 300;
-    float h = 30;
     
-    gl::pushMatrices();
-    
-    // Mean
-    gl::color( Color::white() );
-    glBegin( GL_QUADS );
-    glVertex2f( 0,          0 );
-    glVertex2f( mMean * w,  0 );
-    glVertex2f( mMean * w,  h );
-    glVertex2f( 0,          h );
-    glEnd();
-    
-    gl::translate( 0, h + 5 );
-    
-    // F0
-    glBegin( GL_QUADS );
-    glVertex2f( 0,          0 );
-    glVertex2f( mF0 * w,    0 );
-    glVertex2f( mF0 * w,    h );
-    glVertex2f( 0,          h );
-    glEnd();
-    
-    gl::translate( 0, h + 5 );
-    
-    // Spectral Centroid
-    float sc = mXtract.getSpectralCentroid();
-    glBegin( GL_QUADS );
-    glVertex2f( 0,      0 );
-    glVertex2f( sc * w, 0 );
-    glVertex2f( sc * w, h );
-    glVertex2f( 0,      h );
-    glEnd();
-    
-    
-    gl::popMatrices();
+    //    rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
+    //    drawData( "Autocorrelation Fft", mAutocorrelationFft.get(), FFT_SIZE, mFftGain, rect );
     
     mParams->draw();
 }
@@ -251,7 +378,7 @@ void BasicSampleApp::drawWaveForm()
 	int bufferLength = mPcmBuffer->getSampleCount();
 	audio::Buffer32fRef leftBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
 	audio::Buffer32fRef rightBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_RIGHT );
-
+    
 	int displaySize = getWindowWidth();
 	float scale = displaySize / (float)bufferLength;
 	
@@ -294,10 +421,10 @@ void BasicSampleApp::drawData( string label, double *data, int N, float gain, Re
     
     for( int i = 0; i < N; i++ )
     {
-		float barY = data[i];
+		float barY = data[i] * h;
         
         barY *= gain;
-
+        
         if ( clamp )
             barY = math<float>::clamp( barY, 0.0f, h );
         
@@ -338,7 +465,10 @@ void BasicSampleApp::drawData( string label, float *data, int N, float gain, Rec
     
     for( int i = 0; i < N; i++ )
     {
-		float barY = clamp ? math<float>::min( data[i], h ) : data[i];
+		float barY = data[i];
+        
+        if ( clamp )
+            barY = math<float>::clamp( barY, 0.0f, h );
         
         barY *= gain;
         
@@ -361,18 +491,143 @@ void BasicSampleApp::drawData( string label, float *data, int N, float gain, Rec
 }
 
 
+void BasicSampleApp::drawData( string label, float data, float gain, Rectf rect, Color col, bool clamp )
+{
+    float padding = 5;
+    gl::color( ColorA( 0.3f, 0.3f, 0.3f, 0.15f ) );
+    gl::drawSolidRect( rect );
+    rect.inflate( - Vec2i::one() * padding );
+    
+    data *= gain;
+    
+    if ( clamp )
+        data = math<float>::clamp( data, 0.0f, 1.0f );
+    
+    rect.set( rect.x1, rect.y1 + padding * 3.5,  rect.x1 + rect.getWidth() * data, rect.y2 );
+    gl::color( col );
+    gl::drawSolidRect( rect );
+    gl::color( Color::white() );
+    mFontSmall->drawString( label, rect.getUpperLeft() - Vec2f( 0, padding * 1.5 ) );
+}
+
+
 void BasicSampleApp::initGui()
 {
-    mParams = params::InterfaceGl::create( "params", Vec2f( 200, 300 ) );
-    mParams->addParam( "Fft norm", &mSpectrumNorm );
-    mParams->addParam( "Fft gain", &mFftGain, "min=0.5 max=2000.0 step=0.1" );
-    mParams->addParam( "Peaks threshold", &mPeakThreshold, "min=0.0 max=100.0 step=0.1" );
-    mParams->addParam( "Bark gain", &mBarkGain, "min=0.5 max=1000.0 step=0.1" );
-    mParams->addParam( "Sub-band gain", &mSubBandGain, "min=0.5 max=1000.0 step=0.1" );
+    Vec2i guiSize( 250, 300 );
+    Vec2i pos = getWindowSize() - guiSize - Vec2i::one() * 5;
     
+    mParams = params::InterfaceGl::create( "params", guiSize );
+	
+    vector<string> strs; strs.push_back("Magnitude"); strs.push_back("Log Magnitude"); strs.push_back("Power"); strs.push_back("Log Power");
+	mParams->addParam( "Spectrum", strs, (int*)&mSpectrumMode );
+    mParams->addParam( "Fft norm", &mSpectrumNorm );
+    mParams->addParam( "Fft gain", &mFftGain,               "min=0.1 max=100.0 step=0.1" );
+    mParams->addParam( "Peaks threshold", &mPeakThreshold,  "min=0.0 max=100.0 step=0.1" );
+    mParams->addParam( "Bark gain", &mBarkGain,             "min=0.1 max=100.0 step=0.1" );
+    mParams->addParam( "Sub-band gain", &mSubBandGain,      "min=0.1 max=100.0 step=0.1" );
+    mParams->addParam( "Dumping", &mDumping,                "min=0.1 max=1.0 step=0.01" );
+    mParams->addParam( "Mean gain", &mMeanGain,             "min=0.1 max=500.0 step=0.1" );
+    mParams->addParam( "Centroid gain", &mCentroidGain,             "min=0.1 max=500.0 step=0.1" );
+    mParams->addParam( "Deviation gain", &mDeviationGain,             "min=0.1 max=500.0 step=0.1" );
+    mParams->addParam( "Spread gain", &mSpreadGain,             "min=0.1 max=500.0 step=0.1" );
+    mParams->addParam( "Loudness gain", &mLoudnessGain,             "min=0.1 max=500.0 step=0.1" );
+    
+    mParams->addSeparator();
+    mParams->addParam( "Output json", &mProcessJson );
+    mParams->addButton( "Write json", std::bind( &BasicSampleApp::writeJson, this ) );
+    
+    mParams->addSeparator();
+	mParams->addParam( "Bg color", &mBgColor );
+    
+    mParams->addSeparator();
+	mParams->addParam( "OSC", &mOscEnable );
+    
+    mParams->addSeparator();
+    mParams->addParam( "Track", &mTrackName, "", true );
+    mParams->addButton( "Play", std::bind( &BasicSampleApp::playTrack, this ) );
+    
+    mParams->setOptions( "", "position='" + toString( pos.x ) + " " + toString( pos.y ) + "'");
+}
+
+
+void BasicSampleApp::processJson()
+{
+    JsonTree frame = JsonTree::makeObject( "frame_" + toString( getElapsedFrames() ) );
+    
+    JsonTree fft = JsonTree::makeArray( "fft" );
+    for( size_t k=0; k < FFT_SIZE; k++ )
+        fft.pushBack( JsonTree( "", toString( mSpectrum.get()[k] * mFftGain ) ) );
+    
+    JsonTree bark = JsonTree::makeArray( "bark" );
+    for( size_t k=0; k < XTRACT_BARK_BANDS; k++ )
+        bark.pushBack( JsonTree( "", toString( mBark.get()[k] * mBarkGain ) ) );
+    
+    frame.pushBack( JsonTree( "time", toString( getElapsedSeconds() ) ) );
+    frame.pushBack( bark );
+    frame.pushBack( fft );
+    
+    mJsonOutput.pushBack( frame );
+}
+
+
+void BasicSampleApp::writeJson()
+{
+    fs::path filepath = getAssetPath( "output") / "out.json";
+    JsonTree::WriteOptions wo;
+    wo.indented( false );
+    mJsonOutput.write( filepath, wo );
+    
+    mJsonOutput.clear();
+    
+    mProcessJson = false;
+}
+
+
+void BasicSampleApp::sendOscData()
+{
+	osc::Message message;
+    for( int k=0; k < XTRACT_BARK_BANDS-1; k++ )
+    {
+        message.addFloatArg( (float)( mBark.get()[k] * mBarkGain ) );
+    }
+    message.setAddress("/bark");
+    mOscSender.sendMessage( message );
+}
+
+
+void BasicSampleApp::playTrack()
+{
+    if ( !mAudioRef || !mTrackRef )
+        return;
+    
+    if ( mTrackRef->isPlaying() )
+    {
+        mTrackRef->stop();
+        mIsTrackInput = false;
+    }
+    else
+    {
+        mTrackRef->setTime( 0.0f );
+        mTrackRef->play();
+        mIsTrackInput = true;
+    }
+}
+
+
+void BasicSampleApp::fileDrop( FileDropEvent event )
+{
+    fs::path filePath = event.getFile(0);
+    
+    if( filePath.extension() != ".mp3" )
+        return;
+    
+    mTrackName  = filePath.filename().generic_string();
+    mAudioRef   = ci::audio::load( filePath.generic_string() );
+    mTrackRef   = ci::audio::Output::addTrack( mAudioRef, false );
+    
+    mTrackRef->enablePcmBuffering(true);
 }
 
 
 CINDER_APP_NATIVE( BasicSampleApp, RendererGl )
-
 

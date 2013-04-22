@@ -24,6 +24,7 @@ ciLibXtract::~ciLibXtract()
     free( mel_filters.filters );
 }
 
+
 void ciLibXtract::init()
 {
 //    xtract_init_fft( FFT_SIZE, XTRACT_SPECTRUM );
@@ -55,8 +56,10 @@ void ciLibXtract::init()
     
     
     for( size_t k=0; k < PCM_BUFF_SIZE; k++ )
-            mSpectrum.get()[k] = 0.0f;
+        mSpectrum.get()[k] = 0.0f;
     
+
+    mBarkOnSetAvg = 0.0f;
 }
 
 
@@ -76,12 +79,14 @@ void ciLibXtract::setSpectrum( std::shared_ptr<float> fftDataRef )
 
 double ciLibXtract::getMean()
 {
-    xtract[XTRACT_MEAN]( mPcmData.get(), PCM_BUFF_SIZE, NULL, &mMean );
+//    xtract_mean( mPcmData.get(), PCM_BUFF_SIZE, NULL, &mMean );
+    double *argd = NULL;
+    xtract_mean( mSpectrum.get(), FFT_SIZE, argd, &mMean );
     return mMean;
 }
 
 
-shared_ptr<double> ciLibXtract::getSpectrum( xtract_spectrum_ spectrumType, bool normalised, float dumping )
+shared_ptr<double> ciLibXtract::getSpectrum( xtract_spectrum_ spectrumType, bool normalised )
 {
     mArgd[0] = SAMPLERATE / (double)PCM_BUFF_SIZE;
     mArgd[1] = spectrumType;                        //  XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
@@ -89,20 +94,22 @@ shared_ptr<double> ciLibXtract::getSpectrum( xtract_spectrum_ spectrumType, bool
     mArgd[3] = normalised;                          // No Normalisation
     
     
-    if ( dumping > 0 )
-    {
-        std::shared_ptr<double> data = std::shared_ptr<double>( new double[ PCM_BUFF_SIZE ] );
-        
-        xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_BUFF_SIZE, mArgd, data.get() );
-        
-        for( size_t k=0; k < FFT_SIZE; k++ )
-            if ( data.get()[k] > mSpectrum.get()[k] )
-                mSpectrum.get()[k] = data.get()[k];
-            else
-                mSpectrum.get()[k] *= dumping;
-    }
-        else
-            xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_BUFF_SIZE, mArgd, mSpectrum.get() );
+//    if ( dumping > 0 )
+//    {
+//        std::shared_ptr<double> data = std::shared_ptr<double>( new double[ PCM_BUFF_SIZE ] );
+//        
+//        xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_BUFF_SIZE, mArgd, data.get() );
+//        
+//        for( size_t k=0; k < FFT_SIZE; k++ )
+//            if ( data.get()[k] > mSpectrum.get()[k] )
+//                mSpectrum.get()[k] = data.get()[k];
+//            else
+//                mSpectrum.get()[k] *= dumping;
+//    }
+//        else
+//            xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_BUFF_SIZE, mArgd, mSpectrum.get() );
+    
+    xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_BUFF_SIZE, mArgd, mSpectrum.get() );
     
     return mSpectrum;
 }
@@ -173,7 +180,7 @@ std::shared_ptr<double> ciLibXtract::getSubBands()
 
 double ciLibXtract::getF0()
 {
-    double sr = SAMPLERATE;
+    double sr = SAMPLERATE / (double)PCM_BUFF_SIZE;
     xtract_f0( mPcmData.get(), PCM_BUFF_SIZE, &sr, &mF0 );
     return mF0;
 }
@@ -189,8 +196,7 @@ double ciLibXtract::getFailsafeF0()
 
 double ciLibXtract::getSpectralCentroid()
 {
-    void *argd = NULL;
-    xtract_spectral_centroid( mSpectrum.get(), FFT_SIZE, argd, &mSpectralCentroid );
+    xtract_spectral_centroid( mSpectrum.get(), FFT_SIZE, NULL, &mSpectralCentroid );
     return mSpectralCentroid;
 }
 
@@ -212,16 +218,14 @@ double ciLibXtract::getLoudness()
 
 double ciLibXtract::getFlatness()
 {
-    void *argd = NULL;
-    xtract_flatness( mSpectrum.get(), FFT_SIZE / 2, argd, &mFlatness );
+    xtract_flatness( mSpectrum.get(), FFT_SIZE / 2, NULL, &mFlatness );
     return mFlatness;
 }
 
 
 double ciLibXtract::getFlatnessDb()
 {
-    double *argd = NULL;
-    xtract_flatness( argd, 0, &mFlatness, &mFlatnessDb );
+    xtract_flatness( NULL, 0, &mFlatness, &mFlatnessDb );
     return mFlatnessDb;
 }
 
@@ -273,16 +277,40 @@ double ciLibXtract::getVariance()
 
 double ciLibXtract::getPower()
 {
-    void *argd = NULL;
-    xtract_variance( mSpectrum.get(), FFT_SIZE, &argd, &mPower );
+    xtract_power( mSpectrum.get(), FFT_SIZE, NULL, &mPower );
     return mPower;
 }
 
 
 double ciLibXtract::getTonality()
 {
-    double *argd = NULL;
-    xtract_tonality( argd, 0, &mFlatnessDb, &mTonality );
+    xtract_tonality( NULL, 0, &mFlatnessDb, &mTonality );
     return mTonality;
+}
+
+
+
+bool ciLibXtract::getOnSet( float threshold, float vel, float gain )
+{
+//    double prevAvg  = ( mBarkOnSet[0] + mBarkOnSet[1] ) / 2.0f;
+    double newAvg   = gain * ( mBarks.get()[0] + mBarks.get()[1] ) / 2.0f;
+    
+    if( newAvg > mBarkOnSetAvg * ( 1.0f + threshold ) )
+    {
+        mBarkOnSetAvg = newAvg;
+        return true;
+    }
+    else
+        mBarkOnSetAvg *= vel;
+    
+    //    if( mBarks.get()[0] > mBarkOnSet[0] )
+//    {
+//        mBarkOnSet[0] = mBarks.get()[0];
+//        return true;
+//    }
+//    else
+//        mBarkOnSet[0] *= vel;
+    
+    return false;
 }
 

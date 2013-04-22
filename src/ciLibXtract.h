@@ -47,7 +47,7 @@ public:
 public:
    
     // 	Extract frequency domain spectrum from time domain signal.
-    std::shared_ptr<double> getSpectrum( xtract_spectrum_ spectrumType, bool normalised, float dumping = -1 );
+    std::shared_ptr<double> getSpectrum( xtract_spectrum_ spectrumType, bool normalised );
     
     // 	Extract autocorrelation from time domain signal using FFT based method.
     std::shared_ptr<double> getAutocorrelationFft();
@@ -213,6 +213,14 @@ public:
 //    double 	getNonzeroCount() { return 0.0f; }
     
     
+    // ------------------------------------ //
+    //            Other functions           //
+    // ------------------------------------ //
+    
+public:
+    
+    bool getOnSet( float threshold = 1.0f, float vel = 0.9f, float gain = 1.0f );
+    
 private:
     
     std::shared_ptr<double> mPcmData;
@@ -248,6 +256,8 @@ private:
     std::shared_ptr<int>    mBarkBandLimits;
     
     bool                    mFeaturesEnable[ XTRACT_FEATURES ];
+    
+    double                  mBarkOnSetAvg;
     
 };
 
