@@ -9,7 +9,6 @@
 #include "cinder/audio/FftProcessor.h"
 #include "cinder/audio/Input.h"
 #include "cinder/gl/TextureFont.h"
-#include "cinder/Json.h"
 #include "cinder/audio/Output.h"
 #include "cinder/audio/Io.h"
 #include "cinder/System.h"
@@ -42,10 +41,6 @@ public:
     void initGui();
     
     void processData();
-    
-    void processJson();
-    
-    void writeJson();
     
     void sendOscData();
     
@@ -104,9 +99,6 @@ public:
     
     float               mFps;
     
-    JsonTree            mJsonOutput;
-    bool                mProcessJson;
-    
     float               mDumping;
     
     xtract_spectrum_    mSpectrumMode;
@@ -149,7 +141,6 @@ void BasicSampleApp::setup()
     mBarkGain       = 1.0f;
     mSubBandGain    = 1.0f;
     mSpectrumNorm   = false;
-    mProcessJson    = false;
     mSpectrumMode   = XTRACT_MAGNITUDE_SPECTRUM;
     mDumping        = 0.92f;
     
@@ -259,9 +250,6 @@ void BasicSampleApp::update()
     mTonality           = mXtract.getTonality();
     
     //    mAutocorrelationFft = mXtract.getAutocorrelationFft();
-    
-    if ( mProcessJson )
-        processJson();
     
     if ( mOscEnable )
         sendOscData();
@@ -533,10 +521,6 @@ void BasicSampleApp::initGui()
     mParams->addParam( "Loudness gain", &mLoudnessGain,             "min=0.1 max=500.0 step=0.1" );
     
     mParams->addSeparator();
-    mParams->addParam( "Output json", &mProcessJson );
-    mParams->addButton( "Write json", std::bind( &BasicSampleApp::writeJson, this ) );
-    
-    mParams->addSeparator();
 	mParams->addParam( "Bg color", &mBgColor );
     
     mParams->addSeparator();
@@ -547,39 +531,6 @@ void BasicSampleApp::initGui()
     mParams->addButton( "Play", std::bind( &BasicSampleApp::playTrack, this ) );
     
     mParams->setOptions( "", "position='" + toString( pos.x ) + " " + toString( pos.y ) + "'");
-}
-
-
-void BasicSampleApp::processJson()
-{
-    JsonTree frame = JsonTree::makeObject( "frame_" + toString( getElapsedFrames() ) );
-    
-    JsonTree fft = JsonTree::makeArray( "fft" );
-    for( size_t k=0; k < FFT_SIZE; k++ )
-        fft.pushBack( JsonTree( "", toString( mSpectrum.get()[k] * mFftGain ) ) );
-    
-    JsonTree bark = JsonTree::makeArray( "bark" );
-    for( size_t k=0; k < XTRACT_BARK_BANDS; k++ )
-        bark.pushBack( JsonTree( "", toString( mBark.get()[k] * mBarkGain ) ) );
-    
-    frame.pushBack( JsonTree( "time", toString( getElapsedSeconds() ) ) );
-    frame.pushBack( bark );
-    frame.pushBack( fft );
-    
-    mJsonOutput.pushBack( frame );
-}
-
-
-void BasicSampleApp::writeJson()
-{
-    fs::path filepath = getAssetPath( "output") / "out.json";
-    JsonTree::WriteOptions wo;
-    wo.indented( false );
-    mJsonOutput.write( filepath, wo );
-    
-    mJsonOutput.clear();
-    
-    mProcessJson = false;
 }
 
 
