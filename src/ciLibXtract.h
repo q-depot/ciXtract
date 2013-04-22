@@ -9,7 +9,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define BLOCKSIZE           2048
+//#define BLOCKSIZE           2048
 #define PCM_BUFF_SIZE       1024
 #define FFT_SIZE            512
 #define SAMPLERATE          44100
@@ -17,7 +17,7 @@ using namespace std;
 #define MFCC_FREQ_BANDS     32
 #define MFCC_FREQ_MIN       20
 #define MFCC_FREQ_MAX       20000
-
+#define SUB_BANDS           32
 
 class ciLibXtract {
     
@@ -33,15 +33,21 @@ public:
     
     void setSpectrum( std::shared_ptr<float> fftDataRef );
     
+    void update();
+    
+    void enableFeature( xtract_features_ feature )  { mFeaturesEnable[ feature ] = true; }
+    
+    void disableFeature( xtract_features_ feature ) { mFeaturesEnable[ feature ] = false; }
+
     
     // ------------------------------------ //
     //    Scalar extraction functions       //
     // ------------------------------------ //
     
 public:
-    
+   
     // 	Extract frequency domain spectrum from time domain signal.
-    std::shared_ptr<double> getSpectrum( bool normalised = false );
+    std::shared_ptr<double> getSpectrum( xtract_spectrum_ spectrumType, bool normalised, float dumping = -1 );
     
     // 	Extract autocorrelation from time domain signal using FFT based method.
     std::shared_ptr<double> getAutocorrelationFft();
@@ -77,7 +83,7 @@ public:
 //    std::shared_ptr<double> getLpcc() { return std::shared_ptr<double>( new double ); }
 
     // 	Extract subbands from a spectrum.
-//    std::shared_ptr<double> getSubbands() { return std::shared_ptr<double>( new double ); }
+    std::shared_ptr<double> getSubBands();
     
     
     
@@ -92,13 +98,13 @@ public:
     double getMean();
     
     // 	Extract the variance of an input vector.
-//    double 	getVariance() { return 0.0f; }
+    double 	getVariance();
 
     //  Extract the deviation of an input vector.
-//    double 	getStandardDeviation() { return 0.0f; }
+    double 	getStandardDeviation();
     
     // 	Extract the average deviation of an input vector.
-//    double 	getAverageDeviation() { return 0.0f; }
+    double 	getAverageDeviation();
 
     // 	Extract the skewness of an input vector.
 //    double 	getSkewness() { return 0.0f; }
@@ -125,10 +131,10 @@ public:
     double 	getSpectralCentroid();
     
     // 	Calculate the Irregularity of an input vector using a method described by Krimphoff (1994)
-//    double 	getIrregularityK() { return 0.0f; }
+    double 	getIrregularityK();
     
     // 	Calculate the Irregularity of an input vector using a method described by Jensen (1999)
-//    double 	getIrregularityJ() { return 0.0f; }
+    double 	getIrregularityJ();
     
     // 	Calculate the Tristimulus of an input vector using a method described by Pollard and Jansson (1982)
 //    double 	getTristimulus1() { return 0.0f; }
@@ -141,16 +147,16 @@ public:
 //    double 	getSmoothness() { return 0.0f; }
     
     // 	Extract the spectral spread of an input vector using a method described by Casagrande(2005)
-//    double 	getSpread() { return 0.0f; }
+    double 	getSpread();
     
     // 	Extract the zero crossing rate of an input vector.
-//    double 	getZcr() { return 0.0f; }
+    double 	getZcr();
     
     // 	Extract the spectral rolloff of an input vector using a method described by Bee Suan Ong (2005)
 //    double 	getRolloff() { return 0.0f; }
     
     // 	Extract the 'total loudness' of an input vector using a method described by Moore, Glasberg et al (2005)
-//    double 	getLoudness() { return 0.0f; }
+    double 	getLoudness();
     
     // 	Extract the spectral flatness measure of an input vector, where the flatness measure (SFM) is defined as the ratio of the geometric mean to the arithmetic mean of a magnitude spectrum.
 //    double 	getFlatness() { return 0.0f; }
@@ -201,10 +207,11 @@ public:
     double 	getF0();
     
     // 	Extract the fundamental frequency of an input vector.
-//    double 	getFailsafeF0() { return 0.0f; }
+    double 	getFailsafeF0();
     
     // 	Extract the number of non-zero elements in an input vector.
 //    double 	getNonzeroCount() { return 0.0f; }
+    
     
 private:
     
@@ -215,15 +222,30 @@ private:
     std::shared_ptr<double> mMfccs;
     std::shared_ptr<double> mBarks;
     std::shared_ptr<double> mHarmonicSpectrum;
+    std::shared_ptr<double> mSubBands;
     
     double                  mArgd[4];
     
+    double                  mMean;
     double                  mF0;
+    double                  mFailsafeF0;
     double                  mSpectralCentroid;
+    double                  mSpread;
+    double                  mLoudness;
+    double                  mIrregularityK;
+    double                  mIrregularityJ;
+    double                  mZcr;
+    double                  mAverageDeviation;
+    double                  mStandardDeviation;
+    double                  mVariance;
+    
     
     xtract_mel_filter       mel_filters;
     
     std::shared_ptr<int>    mBarkBandLimits;
+    
+    bool                    mFeaturesEnable[ XTRACT_FEATURES ];
+    
 };
 
 #endif

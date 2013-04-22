@@ -49,6 +49,7 @@ class BasicSampleApp : public AppNative {
     float               mPeakThreshold;
     float               mBarkGain;
     bool                mSpectrumNorm;
+    float               mSubBandGain;
     
     ciLibXtract         mXtract;
     double              mMean;
@@ -58,6 +59,7 @@ class BasicSampleApp : public AppNative {
     shared_ptr<double>  mMfccs;
     shared_ptr<double>  mBarks;
     shared_ptr<double>  mAutocorrelationFft;
+    shared_ptr<double>  mSubBands;
     
     float               mF0;
     
@@ -85,6 +87,7 @@ void BasicSampleApp::setup()
     mFftGain        = 1500.0f;
     mPeakThreshold  = 0.5f;
     mBarkGain       = 200.0f;
+    mSubBandGain    = 100.0f;
     mSpectrumNorm   = false;
     
     const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
@@ -149,6 +152,8 @@ void BasicSampleApp::update()
     mBarks              = mXtract.getBarkCoefficients();
     mF0                 = mXtract.getF0();
     mHarmonicSpectrum   = mXtract.getHarmonicSpectrum();
+    mSubBands           = mXtract.getSubBands();
+    
 //    mAutocorrelationFft = mXtract.getAutocorrelationFft();
     
 }
@@ -191,9 +196,11 @@ void BasicSampleApp::draw()
     rect.offset( Vec2i ( rect.getWidth() + 5, 0 ) );
     drawData( "Harmonic Spectrum", mHarmonicSpectrum.get(),  FFT_SIZE, mFftGain, rect, Color( 0.7f, 0.2f, 1.0f )  );
     
+    rect = startRect;
+    rect.offset( 3 * Vec2i ( 0, rect.getHeight() + 5 ) );
+    drawData( "Sub-bands", mSubBands.get(), SUB_BANDS, mSubBandGain, rect );
 //    drawData( "Autocorrelation Fft", mAutocorrelationFft.get(), FFT_SIZE, mFftGain, rect );
 
-    
     float w = 300;
     float h = 30;
     
@@ -301,7 +308,6 @@ void BasicSampleApp::drawData( string label, double *data, int N, float gain, Re
         gl::color( col + Color( (float)i / (float)N, 0.0f, 1.0f - (float)i / (float)N ) );
         glVertex2f( ( i + 1 ) * step,   h-barY );
         glVertex2f( i * step,           h-barY );
-		
 	}
     
     glEnd();
@@ -362,6 +368,8 @@ void BasicSampleApp::initGui()
     mParams->addParam( "Fft gain", &mFftGain, "min=0.5 max=2000.0 step=0.1" );
     mParams->addParam( "Peaks threshold", &mPeakThreshold, "min=0.0 max=100.0 step=0.1" );
     mParams->addParam( "Bark gain", &mBarkGain, "min=0.5 max=1000.0 step=0.1" );
+    mParams->addParam( "Sub-band gain", &mSubBandGain, "min=0.5 max=1000.0 step=0.1" );
+    
 }
 
 
