@@ -228,10 +228,10 @@ void BasicSampleApp::update()
 	mXtract.setInterleavedData( leftBuffer );
     
     mMean               = mXtract.getMean();
-    mSpectrum           = mXtract.getSpectrum( mSpectrumMode, mSpectrumNorm, mDumping );
+    mSpectrum           = mXtract.getSpectrum( mSpectrumMode, mSpectrumNorm );
     mPeakSpectrum       = mXtract.getPeakSpectrum( mPeakThreshold );
     mMfccs              = mXtract.getMfcc();
-    mBark              = mXtract.getBarkCoefficients();
+    mBark               = mXtract.getBarkCoefficients();
     mF0                 = mXtract.getF0();
     mFilesafeF0         = mXtract.getFailsafeF0();
     mHarmonicSpectrum   = mXtract.getHarmonicSpectrum();
