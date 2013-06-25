@@ -1,3 +1,13 @@
+/*
+ *  ciLibXtract.cpp
+ *
+ *  Created by Andrea Cuius
+ *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
+ *
+ *  www.nocte.co.uk
+ *
+ */
+
 
 #include "ciLibXtract.h"
 
@@ -6,8 +16,11 @@ using namespace ci::app;
 using namespace std;
 
 
-ciLibXtract::ciLibXtract()
+ciLibXtract::ciLibXtract( audio::Input source )
 {
+    mInputSource = source;
+    
+    init();
 //    xtract_function_descriptor_t *descriptors = xtract_make_descriptors();
 //    
 //    console() << "Descriptor:\n";
@@ -27,7 +40,6 @@ ciLibXtract::~ciLibXtract()
 
 void ciLibXtract::init()
 {
-//    xtract_init_fft( FFT_SIZE, XTRACT_SPECTRUM );
     xtract_init_fft( PCM_BUFF_SIZE << 1, XTRACT_SPECTRUM );
     
     mPcmData            = std::shared_ptr<double>( new double[ PCM_BUFF_SIZE ] );

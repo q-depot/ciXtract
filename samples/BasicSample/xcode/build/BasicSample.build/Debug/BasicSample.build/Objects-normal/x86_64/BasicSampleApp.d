@@ -1,3 +1,55 @@
 dependencies: \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../src/BasicSampleApp.cpp \
-  ../../../../../include/cinder/app/AppNative.h
+  ../../../../../include/cinder/app/AppNative.h \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/ciLibXtract.h \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/libxtract.h \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_scalar.h \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_vector.h \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_delta.h \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_types.h \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_macros.h \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_helper.h \
+  ../../../../../include/cinder/audio/Input.h \
+  ../../../../../include/cinder/audio/PcmBuffer.h \
+  ../../../../../boost/boost/preprocessor/seq.hpp \
+  ../../../../../boost/boost/preprocessor/seq/cat.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/arithmetic/dec.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/config/config.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/control/if.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/fold_left.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/seq.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/size.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/tuple/eat.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/elem.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/enum.hpp \
+  ../../../../../boost/boost/preprocessor/seq/filter.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/control/expr_if.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/facilities/empty.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/tuple/elem.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/tuple/rem.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/first_n.hpp \
+  ../../../../../boost/boost/preprocessor/seq/fold_right.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/cat.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/detail/auto_rec.hpp \
+  ../../../../../boost/boost/preprocessor/seq/reverse.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/for_each.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/for_each_i.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/for_each_product.hpp \
+  ../../../../../boost/boost/preprocessor/seq/insert.hpp \
+  ../../../../../boost/boost/preprocessor/seq/rest_n.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/arithmetic/inc.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/detail/split.hpp \
+  ../../../../../boost/boost/preprocessor/seq/pop_back.hpp \
+  ../../../../../boost/boost/preprocessor/seq/pop_front.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/seq/push_back.hpp \
+  ../../../../../boost/boost/preprocessor/seq/push_front.hpp \
+  ../../../../../boost/boost/preprocessor/seq/remove.hpp \
+  ../../../../../boost/boost/preprocessor/seq/replace.hpp \
+  ../../../../../boost/boost/preprocessor/seq/subseq.hpp \
+  ../../../../../boost/boost/preprocessor/seq/to_array.hpp \
+  ../../../../../boost/boost/preprocessor/seq/to_list.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/punctuation/comma.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/punctuation/paren.hpp \
+  ../../../../../boost/boost/preprocessor/seq/detail/binary_transform.hpp \
+  ../../../../../boost/boost/preprocessor/seq/to_tuple.hpp \
+  ../../../../../boost/boost/preprocessor/seq/transform.hpp

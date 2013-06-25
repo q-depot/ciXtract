@@ -8,8 +8,7 @@ dependencies: \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_types.h \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_macros.h \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_helper.h \
-  ../../../../../include/cinder/audio/Output.h \
-  ../../../../../include/cinder/audio/Io.h \
+  ../../../../../include/cinder/audio/Input.h \
   ../../../../../include/cinder/audio/PcmBuffer.h \
   ../../../../../boost/boost/preprocessor/seq.hpp \
   ../../../../../boost/boost/preprocessor/seq/cat.hpp \

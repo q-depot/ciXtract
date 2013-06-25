@@ -1,3 +1,13 @@
+/*
+ *  ciLibXtract.h
+ *
+ *  Created by Andrea Cuius
+ *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
+ *
+ *  www.nocte.co.uk
+ *
+ */
+
 
 #ifndef CILIBXTRACT
 #define CILIBXTRACT
@@ -5,7 +15,8 @@
 #pragma once
 
 #include "libxtract.h"
-#include "cinder/audio/Output.h"
+//#include "cinder/audio/Output.h"
+#include "cinder/audio/Input.h"
 
 
 using namespace ci;
@@ -56,13 +67,15 @@ private:
 
 
 
+class ciLibXtract;
+typedef std::shared_ptr<ciLibXtract>    ciLibXtractRef;
 
 
 class ciLibXtract {
     
 public:
     
-    ciLibXtract();
+    static ciLibXtractRef create( audio::Input source ) { return ciLibXtractRef( new ciLibXtract( source ) ); }
     
     ~ciLibXtract();
     
@@ -78,13 +91,18 @@ public:
     void disableFeature( xtract_features_ feature ) { mFeaturesEnable[ feature ] = false; }
 
     
-    void setSource( ci::audio::SourceRef source );
-    void setSource( audio::TrackRef source );
+//    void setSource( ci::audio::SourceRef source );
+//    void setSource( audio::TrackRef source );
 
     
     // ------------------------------------ //
     //    Scalar extraction functions       //
     // ------------------------------------ //
+    
+private:
+    
+    ciLibXtract( audio::Input source );
+    
     
 public:
    
@@ -265,9 +283,12 @@ public:
     
 private:
     
+    ci::audio::Input        mInputSource;
     
     
-//    audio::Buffer32fRef buff;
+    
+    //////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
     
     std::shared_ptr<double> mPcmData;
     std::shared_ptr<double> mSpectrum;
