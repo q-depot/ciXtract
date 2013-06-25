@@ -21,63 +21,205 @@ ciLibXtract::ciLibXtract( audio::Input source )
     mInputSource = source;
     
     init();
-//    xtract_function_descriptor_t *descriptors = xtract_make_descriptors();
-//    
-//    console() << "Descriptor:\n";
-//    console() << descriptors[XTRACT_MEAN].algo.p_name << endl;
-//    console() << descriptors[XTRACT_MEAN].algo.p_desc << endl;
-//    console() << descriptors[XTRACT_MEAN].argv.min << " --- " << descriptors[XTRACT_MEAN].argv.max << endl;
 }
 
 
 ciLibXtract::~ciLibXtract()
 {
-    for( int n = 0; n < MFCC_FREQ_BANDS; ++n )
-        free( mel_filters.filters[n] );
-    free( mel_filters.filters );
+//    for( int n = 0; n < MFCC_FREQ_BANDS; ++n )
+//        free( mel_filters.filters[n] );
+//    free( mel_filters.filters );
 }
 
 
 void ciLibXtract::init()
 {
-    xtract_init_fft( PCM_BUFF_SIZE << 1, XTRACT_SPECTRUM );
+    xtract_init_fft( PCM_SIZE << 1, XTRACT_SPECTRUM );
     
-    mPcmData            = std::shared_ptr<double>( new double[ PCM_BUFF_SIZE ] );
-    mSpectrum           = std::shared_ptr<double>( new double[ PCM_BUFF_SIZE ] );
-    mPeakSpectrum       = std::shared_ptr<double>( new double[ PCM_BUFF_SIZE ] );
-    mBarks              = std::shared_ptr<double>( new double[ XTRACT_BARK_BANDS ] );
-    mHarmonicSpectrum   = std::shared_ptr<double>( new double[ PCM_BUFF_SIZE ] );
-    mAutocorrelationFft = std::shared_ptr<double>( new double[ PCM_BUFF_SIZE ] );
+    mPcmData    = std::shared_ptr<double>( new double[ PCM_SIZE ] );
+    mSpectrum   = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     
-    mMfccs              = std::shared_ptr<double>( new double[ MFCC_FREQ_BANDS ] );
-    mBarkBandLimits     = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
+    for( size_t k=0; k < PCM_SIZE; k++ )
+    {
+        mPcmData.get()[k]   = 0.0f;
+        mSpectrum.get()[k]  = 0.0f;
+    }
+    
+    
+// -------------- //
+// --- Params --- //
+// -------------- //
+    
+//  Spectrum
+    mParams["spectrum_n"]       = SAMPLERATE / (double)PCM_SIZE;
+    mParams["spectrum_type"]    = XTRACT_MAGNITUDE_SPECTRUM;    // XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
+    mParams["spectrum_dc"]      = 0.0f;
+    mParams["spectrum_norm"]    = 0.0f;
+    
+    
+// ----------------- //
+// --- Callbacks --- //
+// ----------------- //
+    
+    mCallbacks[XTRACT_SPECTRUM] = { "XTRACT_SPECTRUM", std::bind( &ciLibXtract::updateSpectrum, this ), 0 };
+    
+    /*
+//#define XTRACT_FEATURES 59
+//    enum xtract_features_ {
+//        XTRACT_MEAN,
+//        XTRACT_VARIANCE,
+//        XTRACT_STANDARD_DEVIATION,
+//        XTRACT_AVERAGE_DEVIATION,
+//        XTRACT_SKEWNESS,
+//        XTRACT_KURTOSIS,
+//        XTRACT_SPECTRAL_MEAN,
+//        XTRACT_SPECTRAL_VARIANCE,
+//        XTRACT_SPECTRAL_STANDARD_DEVIATION,
+     
+//        XTRACT_SPECTRAL_SKEWNESS,
+//        XTRACT_SPECTRAL_KURTOSIS,
+//        XTRACT_SPECTRAL_CENTROID,
+//        XTRACT_IRREGULARITY_K,
+//        XTRACT_IRREGULARITY_J,
+//        XTRACT_TRISTIMULUS_1,
+//        XTRACT_TRISTIMULUS_2,
+//        XTRACT_TRISTIMULUS_3,
+//        XTRACT_SMOOTHNESS,
+//        XTRACT_SPREAD,
+//        XTRACT_ZCR,
+//        XTRACT_ROLLOFF,
+//        XTRACT_LOUDNESS,
+//        XTRACT_FLATNESS,
+//        XTRACT_FLATNESS_DB,
+//        XTRACT_TONALITY,
+//        XTRACT_CREST,
+//        XTRACT_NOISINESS,
+//        XTRACT_RMS_AMPLITUDE,
+//        XTRACT_SPECTRAL_INHARMONICITY,
+//        XTRACT_POWER,
+//        XTRACT_ODD_EVEN_RATIO,
+//        XTRACT_SHARPNESS,
+//        XTRACT_SPECTRAL_SLOPE,
+//        XTRACT_LOWEST_VALUE,
+//        XTRACT_HIGHEST_VALUE,
+//        XTRACT_SUM,
+//        XTRACT_NONZERO_COUNT,
+//        XTRACT_HPS,
+//        XTRACT_F0,
+//        XTRACT_FAILSAFE_F0,
+//        XTRACT_LNORM,
+//        XTRACT_FLUX,
+//        XTRACT_ATTACK_TIME,
+//        XTRACT_DECAY_TIME,
+//        XTRACT_DIFFERENCE_VECTOR,
+//        XTRACT_AUTOCORRELATION,
+//        XTRACT_AMDF,
+//        XTRACT_ASDF,
+//        XTRACT_BARK_COEFFICIENTS,
+//        XTRACT_PEAK_SPECTRUM,
+//        XTRACT_SPECTRUM,
+//        XTRACT_AUTOCORRELATION_FFT,
+//        XTRACT_MFCC,
+//        XTRACT_DCT,
+//        XTRACT_HARMONIC_SPECTRUM,
+//        XTRACT_LPC,
+//        XTRACT_LPCC,
+//        XTRACT_SUBBANDS,
+//
+//        XTRACT_WINDOWED
+//    };
+*/
+}
 
-    mSubBands           = std::shared_ptr<double>( new double[ SUB_BANDS ] );
+void ciLibXtract::update()
+{
+    if ( !mInputSource )
+        return;
+    
+    mPcmBuffer = mInputSource.getPcmBuffer();
 
+	if( !mPcmBuffer )
+		return;
     
-    mel_filters.n_filters = MFCC_FREQ_BANDS;
-    mel_filters.filters   = (double **)malloc(MFCC_FREQ_BANDS * sizeof(double *));
-    for( int n = 0; n < MFCC_FREQ_BANDS; ++n )
-        mel_filters.filters[n] = (double *)malloc(PCM_BUFF_SIZE * sizeof(double));
+    audio::Buffer32fRef buff = mPcmBuffer->getInterleavedData();
+    
+    for( size_t k=0; k < PCM_SIZE; k++ )
+        mPcmData.get()[k] = buff->mData[k*2];
 
-    // TODO double check initialisation !!! <<<
-    // XTRACT_EQUAL_GAIN, XTRACT_EQUAL_AREA
-    xtract_init_mfcc( PCM_BUFF_SIZE, SAMPLERATE >> 1, XTRACT_EQUAL_GAIN, MFCC_FREQ_MIN, MFCC_FREQ_MAX, mel_filters.n_filters, mel_filters.filters );
+    updateCallbacks();
     
-    xtract_init_bark( FFT_SIZE, SAMPLERATE >> 1, mBarkBandLimits.get() );
-    
-    
-    for( size_t k=0; k < PCM_BUFF_SIZE; k++ )
-        mSpectrum.get()[k] = 0.0f;
-    
-
-    mBarkOnSetAvg = 0.0f;
+    //	audio::Buffer32fRef leftBuffer = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT )  // CHANNEL_FRONT_RIGHT
 }
 
 
+//void ciLibXtract::updateSpectrum( xtract_spectrum_ spectrumType, bool normalised )
+
+void ciLibXtract::updateCallbacks()
+{
+    FeatureCallback f;
+    std::map<xtract_features_,FeatureCallback>::iterator it;
+    for( it = mCallbacks.begin(); it!=mCallbacks.end(); ++it )
+    {
+        f = it->second;
+        if ( f.count > 0 )
+            f.cb();
+    }
+}
+
+
+void ciLibXtract::updateSpectrum()
+{
+    _argd[0] = mParams["spectrum_n"];
+    _argd[1] = mParams["spectrum_type"];
+    _argd[2] = mParams["spectrum_dc"];
+    _argd[3] = mParams["spectrum_norm"];
+    
+    xtract_spectrum( mPcmData.get(), PCM_SIZE, _argd, mSpectrum.get() );
+}
+
+
+void ciLibXtract::debug()
+{
+    FeatureCallback f;
+    std::map<xtract_features_,FeatureCallback>::iterator it;
+    for( it = mCallbacks.begin(); it!=mCallbacks.end(); ++it )
+        if ( it->second.count > 0 )
+            console() << it->first << endl;
+}
+
+
+
+void ciLibXtract::enableFeature( xtract_features_ feature )
+{
+    if ( feature == XTRACT_SPECTRUM )
+        mCallbacks[XTRACT_SPECTRUM].count += 1;
+}
+
+
+void ciLibXtract::disableFeature( xtract_features_ feature )
+{
+    if ( feature == XTRACT_SPECTRUM )
+        mCallbacks[XTRACT_SPECTRUM].count -= 1;
+}
+
+
+std::shared_ptr<double> ciLibXtract::getVectorFeature( xtract_features_ feature )
+{
+    if ( feature == XTRACT_SPECTRUM )
+        return mSpectrum;
+    
+    return std::shared_ptr<double>();
+}
+
+
+
+
+
+
+/*
 void ciLibXtract::setInterleavedData( audio::Buffer32fRef buff )
 {
-    for( size_t k=0; k < PCM_BUFF_SIZE; k++ )
+    for( size_t k=0; k < PCM_SIZE; k++ )
         mPcmData.get()[k] = buff->mData[k*2];
 }
 
@@ -91,7 +233,7 @@ void ciLibXtract::setSpectrum( std::shared_ptr<float> fftDataRef )
 
 double ciLibXtract::getMean()
 {
-//    xtract_mean( mPcmData.get(), PCM_BUFF_SIZE, NULL, &mMean );
+//    xtract_mean( mPcmData.get(), PCM_SIZE, NULL, &mMean );
     double *argd = NULL;
     xtract_mean( mSpectrum.get(), FFT_SIZE, argd, &mMean );
     return mMean;
@@ -100,7 +242,7 @@ double ciLibXtract::getMean()
 
 shared_ptr<double> ciLibXtract::getSpectrum( xtract_spectrum_ spectrumType, bool normalised )
 {
-    mArgd[0] = SAMPLERATE / (double)PCM_BUFF_SIZE;
+    mArgd[0] = SAMPLERATE / (double)PCM_SIZE;
     mArgd[1] = spectrumType;                        //  XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
     mArgd[2] = 0.f;                                 // No DC component
     mArgd[3] = normalised;                          // No Normalisation
@@ -108,9 +250,9 @@ shared_ptr<double> ciLibXtract::getSpectrum( xtract_spectrum_ spectrumType, bool
     
 //    if ( dumping > 0 )
 //    {
-//        std::shared_ptr<double> data = std::shared_ptr<double>( new double[ PCM_BUFF_SIZE ] );
+//        std::shared_ptr<double> data = std::shared_ptr<double>( new double[ PCM_SIZE ] );
 //        
-//        xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_BUFF_SIZE, mArgd, data.get() );
+//        xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_SIZE, mArgd, data.get() );
 //        
 //        for( size_t k=0; k < FFT_SIZE; k++ )
 //            if ( data.get()[k] > mSpectrum.get()[k] )
@@ -119,9 +261,9 @@ shared_ptr<double> ciLibXtract::getSpectrum( xtract_spectrum_ spectrumType, bool
 //                mSpectrum.get()[k] *= dumping;
 //    }
 //        else
-//            xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_BUFF_SIZE, mArgd, mSpectrum.get() );
+//            xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_SIZE, mArgd, mSpectrum.get() );
     
-    xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_BUFF_SIZE, mArgd, mSpectrum.get() );
+    xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_SIZE, mArgd, mSpectrum.get() );
     
     return mSpectrum;
 }
@@ -130,7 +272,7 @@ shared_ptr<double> ciLibXtract::getSpectrum( xtract_spectrum_ spectrumType, bool
 shared_ptr<double> ciLibXtract::getAutocorrelationFft()
 {
     void *argd = NULL;
-    xtract_autocorrelation_fft( mPcmData.get(), PCM_BUFF_SIZE, argd, mAutocorrelationFft.get() );
+    xtract_autocorrelation_fft( mPcmData.get(), PCM_SIZE, argd, mAutocorrelationFft.get() );
     return mAutocorrelationFft;
 }
 
@@ -192,8 +334,8 @@ std::shared_ptr<double> ciLibXtract::getSubBands()
 
 double ciLibXtract::getF0()
 {
-    double sr = SAMPLERATE / (double)PCM_BUFF_SIZE;
-    xtract_f0( mPcmData.get(), PCM_BUFF_SIZE, &sr, &mF0 );
+    double sr = SAMPLERATE / (double)PCM_SIZE;
+    xtract_f0( mPcmData.get(), PCM_SIZE, &sr, &mF0 );
     return mF0;
 }
 
@@ -201,7 +343,7 @@ double ciLibXtract::getF0()
 double ciLibXtract::getFailsafeF0()
 {
     double sr = SAMPLERATE;
-    xtract_failsafe_f0( mPcmData.get(), PCM_BUFF_SIZE, &sr, &mFailsafeF0 );
+    xtract_failsafe_f0( mPcmData.get(), PCM_SIZE, &sr, &mFailsafeF0 );
     return mFailsafeF0;
 }
 
@@ -337,3 +479,4 @@ bool ciLibXtract::getOnSet( float threshold, float vel, float gain )
 //    return false;
 }
 
+*/

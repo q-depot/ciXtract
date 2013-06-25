@@ -1,6 +1,7 @@
 dependencies: \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../src/BasicSampleApp.cpp \
   ../../../../../include/cinder/app/AppNative.h \
+  ../../../../../include/cinder/params/Params.h \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/ciLibXtract.h \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/libxtract.h \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/xtract_scalar.h \
