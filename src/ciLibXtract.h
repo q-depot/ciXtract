@@ -2,8 +2,11 @@
 #ifndef CILIBXTRACT
 #define CILIBXTRACT
 
+#pragma once
+
 #include "libxtract.h"
-#include "cinder/audio/PcmBuffer.h"
+#include "cinder/audio/Output.h"
+
 
 using namespace ci;
 using namespace ci::app;
@@ -19,6 +22,42 @@ using namespace std;
 #define MFCC_FREQ_MAX       20000
 #define SUB_BANDS           32
 
+/*
+class AudioSource;
+typedef std::shared_ptr<AudioSource>    AudioSOurceRef;
+
+class AudioSource {
+
+public:
+    
+    static AudioSourceRef create( ci::audio::SourceRef source ) { return AudioSourceRef( new AudioSource( source ) ); }
+    static AudioSourceRef create( ci::audio::TrackRef )         { return AudioSourceRef( new AudioSource( source ) ); }
+    
+    ~AudioSource() {}
+    
+    
+private:
+    
+    AudioSource( ci::audio::SourceRef source ) : mSourceAudioRef(source) {}
+    AudioSource( ci::audio::TrackRef source ) : mSourceAudioRef(source) {}
+
+
+private:
+    
+    ci::audio::SourceRef    mSourceAudioRef;
+    ci::audio::TrackRef     mSourceTrackRef;
+    
+};
+*/
+
+
+
+
+
+
+
+
+
 class ciLibXtract {
     
 public:
@@ -30,14 +69,17 @@ public:
     void init();
     
     void setInterleavedData( ci::audio::Buffer32fRef buff );
-    
+
     void setSpectrum( std::shared_ptr<float> fftDataRef );
     
     void update();
     
     void enableFeature( xtract_features_ feature )  { mFeaturesEnable[ feature ] = true; }
-    
     void disableFeature( xtract_features_ feature ) { mFeaturesEnable[ feature ] = false; }
+
+    
+    void setSource( ci::audio::SourceRef source );
+    void setSource( audio::TrackRef source );
 
     
     // ------------------------------------ //
@@ -222,6 +264,10 @@ public:
     bool getOnSet( float threshold = 1.0f, float vel = 0.9f, float gain = 1.0f );
     
 private:
+    
+    
+    
+//    audio::Buffer32fRef buff;
     
     std::shared_ptr<double> mPcmData;
     std::shared_ptr<double> mSpectrum;

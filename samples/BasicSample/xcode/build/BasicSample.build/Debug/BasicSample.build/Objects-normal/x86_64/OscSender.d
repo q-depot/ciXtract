@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../OSC/src/OscSender.cpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../OSC/src/OscSender.cpp \
   ../../../../../blocks/OSC/src/OscSender.h \
   ../../../../../blocks/OSC/src/OscBundle.h \
   ../../../../../blocks/OSC/src/OscMessage.h \

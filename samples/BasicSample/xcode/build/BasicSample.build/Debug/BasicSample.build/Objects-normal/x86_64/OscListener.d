@@ -1,23 +1,23 @@
 dependencies: \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../OSC/src/OscListener.cpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../OSC/src/OscListener.cpp \
   ../../../../../include/cinder/Utilities.h \
   ../../../../../boost/boost/lexical_cast.hpp \
   ../../../../../boost/boost/detail/lcast_precision.hpp \
   ../../../../../boost/boost/array.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/assert.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/functional/hash_fwd.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/assert.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/functional/hash_fwd.hpp \
   ../../../../../boost/boost/numeric/conversion/cast.hpp \
   ../../../../../boost/boost/numeric/conversion/converter.hpp \
   ../../../../../boost/boost/numeric/conversion/conversion_traits.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/conversion_traits.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/meta.hpp \
   ../../../../../boost/boost/mpl/equal_to.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/aux_/comparison_op.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/aux_/numeric_op.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/apply_wrap.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/aux_/include_preprocessed.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/cat.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/stringize.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/aux_/comparison_op.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/aux_/numeric_op.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/apply_wrap.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/aux_/include_preprocessed.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/cat.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/stringize.hpp \
   ../../../../../boost/boost/mpl/aux_/preprocessed/gcc/equal_to.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/int_float_mixture.hpp \
   ../../../../../boost/boost/numeric/conversion/int_float_mixture_enum.hpp \
@@ -37,16 +37,16 @@ dependencies: \
   ../../../../../boost/boost/numeric/conversion/bounds.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/bounds.hpp \
   ../../../../../boost/boost/numeric/conversion/numeric_cast_traits.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/cstdint.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/cstdint.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/numeric_cast_traits.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/preprocessed/numeric_cast_traits_common.hpp \
   ../../../../../boost/boost/numeric/conversion/detail/preprocessed/numeric_cast_traits_long_long.hpp \
   ../../../../../boost/boost/type_traits/has_left_shift.hpp \
   ../../../../../boost/boost/type_traits/detail/has_binary_operator.hpp \
   ../../../../../boost/boost/type_traits/is_fundamental.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/type_traits/detail/bool_trait_def.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/type_traits/detail/template_arity_spec.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/type_traits/detail/bool_trait_undef.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/type_traits/detail/bool_trait_def.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/type_traits/detail/template_arity_spec.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/type_traits/detail/bool_trait_undef.hpp \
   ../../../../../boost/boost/type_traits/has_right_shift.hpp \
   ../../../../../boost/boost/math/special_functions/sign.hpp \
   ../../../../../boost/boost/math/tools/config.hpp \
@@ -61,10 +61,10 @@ dependencies: \
   ../../../../../boost/boost/mpl/aux_/contains_impl.hpp \
   ../../../../../boost/boost/mpl/find.hpp \
   ../../../../../boost/boost/mpl/remove_if.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/apply.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/mpl/apply.hpp \
   ../../../../../boost/boost/mpl/vector.hpp \
   ../../../../../boost/boost/mpl/limits/vector.hpp \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/inc.hpp \
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/inc.hpp \
   ../../../../../boost/boost/mpl/vector/vector20.hpp \
   ../../../../../boost/boost/mpl/vector/vector10.hpp \
   ../../../../../boost/boost/mpl/vector/vector0.hpp \

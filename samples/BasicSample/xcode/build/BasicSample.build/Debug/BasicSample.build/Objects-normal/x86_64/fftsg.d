@@ -1,2 +1,2 @@
 dependencies: \
-  /Users/Q/Code/Cinder_DEV/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/ooura/fftsg.c
+  /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/ooura/fftsg.c
