@@ -153,25 +153,21 @@ void BasicSampleApp::drawData( string label, std::shared_ptr<double> data, int N
 
 void BasicSampleApp::initGui()
 {
-    mParams = params::InterfaceGl::create( "Params", Vec2f( 250, 300 ) );
+    mParams = params::InterfaceGl::create( "Params", Vec2f( 350, getWindowHeight() - 45 ) );
     mParams->addParam( "Debug", &mDebug );
     
     mParams->addSeparator();
     
-    mParams->addText( "Enable" );
-	mParams->addButton( "on_XTRACT_SPECTRUM",               std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_SPECTRUM ) );
-	mParams->addButton( "on_XTRACT_MEAN",                   std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_MEAN ) );
-	mParams->addButton( "on_XTRACT_VARIANCE",               std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_VARIANCE ) );
-	mParams->addButton( "on_XTRACT_STANDARD_DEVIATION",     std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_STANDARD_DEVIATION ) );
-	mParams->addButton( "on_XTRACT_AVERAGE_DEVIATION",      std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_AVERAGE_DEVIATION ) );
+    std::map<xtract_features_,ciLibXtract::FeatureCallback>::iterator it;
     
+    mParams->addText( "Enable" );
+    for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
+        mParams->addButton( "on_" + it->second.name, std::bind( &ciLibXtract::enableFeature, mLibXtract, it->first ) );
     
     mParams->addText( "Disable" );
-	mParams->addButton( "off_XTRACT_SPECTRUM",              std::bind( &ciLibXtract::disableFeature, mLibXtract, XTRACT_SPECTRUM ) );
-	mParams->addButton( "off_XTRACT_MEAN",                  std::bind( &ciLibXtract::disableFeature, mLibXtract, XTRACT_MEAN ) );
-	mParams->addButton( "off_XTRACT_VARIANCE",              std::bind( &ciLibXtract::disableFeature, mLibXtract, XTRACT_VARIANCE ) );
-	mParams->addButton( "off_XTRACT_STANDARD_DEVIATION",    std::bind( &ciLibXtract::disableFeature, mLibXtract, XTRACT_STANDARD_DEVIATION ) );
-	mParams->addButton( "off_XTRACT_AVERAGE_DEVIATION",     std::bind( &ciLibXtract::disableFeature, mLibXtract, XTRACT_AVERAGE_DEVIATION ) );
+    for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
+        mParams->addButton( "off_" + it->second.name, std::bind( &ciLibXtract::disableFeature, mLibXtract, it->first ) );
+    
 }
 
 

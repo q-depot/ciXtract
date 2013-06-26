@@ -56,7 +56,7 @@ public:
     std::shared_ptr<double> getVectorFeature( xtract_features_ feature );
     
     
-private:
+public:
     
     static std::map<xtract_features_,std::vector<xtract_features_>> xtract_features_dependencies;
     
@@ -95,6 +95,10 @@ private:
     
     void updateSpectrum();
     
+
+    // TEMPORARY PUBLIC !!! <<<<<<<<<<<<<<
+public:
+    std::map<xtract_features_,FeatureCallback>  mCallbacks;
     
 private:
     
@@ -103,13 +107,8 @@ private:
     std::shared_ptr<double>                     mPcmData;
     std::shared_ptr<double>                     mSpectrum;
     
-    double                                      mMean;
-    double                                      mVariance;
-    double                                      mStandardDeviation;
-    double                                      mAverageDeviation;
+    double  mScalarValues[XTRACT_FEATURES];     // the array is bigger but at least you can refer to each item using xtract_features_
     
-    
-    std::map<xtract_features_,FeatureCallback>  mCallbacks;
     std::map<std::string,double>                mParams;
     
     double                                      _argd[4];
