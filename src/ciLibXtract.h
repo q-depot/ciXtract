@@ -96,7 +96,14 @@ private:
     void updateSpectralMean();
     void updateSpectralVariance();
     void updateSpectralStandardDeviation();
-    
+    void updateSpectralSkewness();
+    void updateSpectralKurtosis();
+    void updateSpectralCentroid();
+    void updateIrregularityK();
+    void updateIrregularityJ();
+    void updateTristimulus1();
+    void updateTristimulus2();
+    void updateTristimulus3();
     
     void updateSpectrum();
     

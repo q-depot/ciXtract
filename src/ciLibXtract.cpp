@@ -18,7 +18,7 @@ using namespace std;
 
 std::map<xtract_features_,std::vector<xtract_features_>> ciLibXtract::xtract_features_dependencies =
 {
-    { XTRACT_MEAN,                          { XTRACT_SPECTRUM } },
+    { XTRACT_MEAN,                          {  } },
     { XTRACT_VARIANCE,                      { XTRACT_MEAN } },
     { XTRACT_STANDARD_DEVIATION,            { XTRACT_VARIANCE } },
     { XTRACT_AVERAGE_DEVIATION,             { XTRACT_MEAN } },
@@ -27,7 +27,17 @@ std::map<xtract_features_,std::vector<xtract_features_>> ciLibXtract::xtract_fea
     { XTRACT_SPECTRAL_MEAN,                 { XTRACT_SPECTRUM } },
     { XTRACT_SPECTRAL_VARIANCE,             { XTRACT_SPECTRAL_MEAN } },
     { XTRACT_SPECTRAL_STANDARD_DEVIATION,   { XTRACT_SPECTRAL_VARIANCE } },
+    { XTRACT_SPECTRAL_SKEWNESS,             { XTRACT_SPECTRAL_MEAN } },
+    { XTRACT_SPECTRAL_KURTOSIS,             { XTRACT_SPECTRAL_MEAN, XTRACT_SPECTRAL_STANDARD_DEVIATION } },
+    { XTRACT_SPECTRAL_CENTROID,             { XTRACT_SPECTRUM } },
+    { XTRACT_IRREGULARITY_K,                { XTRACT_SPECTRUM } },
+    { XTRACT_IRREGULARITY_J,                { XTRACT_SPECTRUM } },
     
+
+    
+//    { XTRACT_TRISTIMULUS_1,                 { XTRACT_HARMONIC_SPECTRUM } },
+//    { XTRACT_TRISTIMULUS_2,                 { XTRACT_HARMONIC_SPECTRUM } },
+//    { XTRACT_TRISTIMULUS_3,                 { XTRACT_HARMONIC_SPECTRUM } },
     
     { XTRACT_SPECTRUM, std::vector<xtract_features_>() }
         
@@ -106,17 +116,25 @@ void ciLibXtract::init()
     mCallbacks[XTRACT_SPECTRAL_VARIANCE]            = { "XTRACT_SPECTRAL_VARIANCE", std::bind( &ciLibXtract::updateSpectralVariance, this ), 0 };
     mCallbacks[XTRACT_SPECTRAL_STANDARD_DEVIATION]  = { "XTRACT_SPECTRAL_STANDARD_DEVIATION", std::bind( &ciLibXtract::updateSpectralStandardDeviation, this ), 0 };
 
+    mCallbacks[XTRACT_SPECTRAL_SKEWNESS]            = { "XTRACT_SPECTRAL_SKEWNESS", std::bind( &ciLibXtract::updateSpectralSkewness, this ), 0 };
+    mCallbacks[XTRACT_SPECTRAL_KURTOSIS]            = { "XTRACT_SPECTRAL_KURTOSIS", std::bind( &ciLibXtract::updateSpectralKurtosis, this ), 0 };
+    mCallbacks[XTRACT_SPECTRAL_CENTROID]            = { "XTRACT_SPECTRAL_CENTROID", std::bind( &ciLibXtract::updateSpectralCentroid, this ), 0 };
+    mCallbacks[XTRACT_IRREGULARITY_K]               = { "XTRACT_IRREGULARITY_K", std::bind( &ciLibXtract::updateIrregularityK, this ), 0 };
+    mCallbacks[XTRACT_IRREGULARITY_J]               = { "XTRACT_IRREGULARITY_J", std::bind( &ciLibXtract::updateIrregularityJ, this ), 0 };
+//    mCallbacks[XTRACT_TRISTIMULUS_1]                = { "XTRACT_TRISTIMULUS_1", std::bind( &ciLibXtract::updateTristimulus1, this ), 0 };
+//    mCallbacks[XTRACT_TRISTIMULUS_2]                = { "XTRACT_TRISTIMULUS_2", std::bind( &ciLibXtract::updateTristimulus2, this ), 0 };
+//    mCallbacks[XTRACT_TRISTIMULUS_3]                = { "XTRACT_TRISTIMULUS_3", std::bind( &ciLibXtract::updateTristimulus3, this ), 0 };
+
+    
+    
     // TODO
     /*
     
-    XTRACT_SPECTRAL_SKEWNESS,
-    XTRACT_SPECTRAL_KURTOSIS,
-    XTRACT_SPECTRAL_CENTROID,
-    XTRACT_IRREGULARITY_K,
-    XTRACT_IRREGULARITY_J,
-    XTRACT_TRISTIMULUS_1,
-    XTRACT_TRISTIMULUS_2,
-    XTRACT_TRISTIMULUS_3,
+     
+     
+     
+     
+     
     XTRACT_SMOOTHNESS,
     XTRACT_SPREAD,
     XTRACT_ZCR,
@@ -188,20 +206,16 @@ void ciLibXtract::update()
 
 void ciLibXtract::updateCallbacks()
 {
-    FeatureCallback f;
     std::map<xtract_features_,FeatureCallback>::iterator it;
     for( it = mCallbacks.begin(); it!=mCallbacks.end(); ++it )
-    {
-        f = it->second;
-        if ( f.enable )
-            f.cb();
-    }
+        if ( it->second.enable )
+            it->second.cb();
 }
 
 
 void ciLibXtract::debug()
 {
-    Vec2f offset = Vec2f( 515, 15 );
+    Vec2f offset = Vec2f( 515, 25 );
     
     std::map<xtract_features_,FeatureCallback>::iterator it;
     for( it = mCallbacks.begin(); it!=mCallbacks.end(); ++it )
@@ -308,6 +322,39 @@ void ciLibXtract::updateSpectralStandardDeviation()
     xtract_spectral_standard_deviation( mSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_SPECTRAL_VARIANCE], &mScalarValues[XTRACT_SPECTRAL_STANDARD_DEVIATION] );
 }
 
+void ciLibXtract::updateSpectralSkewness()
+{
+    xtract_spectral_skewness( mSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_SPECTRAL_MEAN], &mScalarValues[XTRACT_SPECTRAL_SKEWNESS] );
+}
+
+void ciLibXtract::updateSpectralKurtosis()
+{
+    double data[2] = { mScalarValues[XTRACT_SPECTRAL_MEAN], mScalarValues[XTRACT_SPECTRAL_STANDARD_DEVIATION] };
+    xtract_spectral_kurtosis( mSpectrum.get(), PCM_SIZE >> 1, data, &mScalarValues[XTRACT_SPECTRAL_KURTOSIS] );
+}
+
+void ciLibXtract::updateSpectralCentroid()
+{
+    xtract_spectral_centroid( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_SPECTRAL_CENTROID] );
+}
+
+void ciLibXtract::updateIrregularityK()
+{
+    xtract_irregularity_k( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_IRREGULARITY_K] );
+}
+
+void ciLibXtract::updateIrregularityJ()
+{
+    xtract_irregularity_j( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_IRREGULARITY_J] );
+}
+
+// need xtract_harmonics()
+//void ciLibXtract::updateTristimulus1() {}
+//void ciLibXtract::updateTristimulus2() {}
+//void ciLibXtract::updateTristimulus3() {}
+
+
+
 void ciLibXtract::updateSpectrum()
 {
     _argd[0] = mParams["spectrum_n"];
@@ -317,3 +364,4 @@ void ciLibXtract::updateSpectrum()
     
     xtract_spectrum( mPcmData.get(), PCM_SIZE, _argd, mSpectrum.get() );
 }
+

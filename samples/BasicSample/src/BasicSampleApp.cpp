@@ -13,6 +13,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder/gl/TextureFont.h"
 #include "cinder/params/Params.h"
+#include "cinder/Utilities.h"
 
 #include "ciLibXtract.h"
 
@@ -42,6 +43,8 @@ public:
     bool                    mDebug;
     
     gl::TextureFontRef      mFontSmall;
+    
+    float                   mGain[XTRACT_FEATURES];
 };
 
 
@@ -70,6 +73,8 @@ void BasicSampleApp::setup()
     mLibXtract = ciLibXtract::create( mInput );
     mLibXtract->enableFeature( XTRACT_SPECTRUM );
     
+    for( auto k=0; k < XTRACT_FEATURES; k++ )
+        mGain[k] = 1.0f;
     
     mDebug  = true;
     
@@ -102,18 +107,22 @@ void BasicSampleApp::draw()
     drawVectorData( "Spectrum", mLibXtract->getVectorFeature( XTRACT_SPECTRUM ), buffSize, 500.0f, Rectf( 15, 15, 350, 150 ), true );
 
     Vec2f scalarPos( 15, 200 );
-    drawScalarData( "Mean", mLibXtract->getScalarFeature( XTRACT_MEAN ), 500.0f, scalarPos, true );         scalarPos += Vec2f(0, 35);
+    float margin = 35;
     
-//    mCallbacks[XTRACT_MEAN]                         = { "XTRACT_MEAN", std::bind( &ciLibXtract::updateMean, this ), 0 };
-//    mCallbacks[XTRACT_VARIANCE]                     = { "XTRACT_VARIANCE", std::bind( &ciLibXtract::updateVariance, this ), 0 };
-//    mCallbacks[XTRACT_STANDARD_DEVIATION]           = { "XTRACT_STANDARD_DEVIATION", std::bind( &ciLibXtract::updateStandardDeviation, this ), 0 };
-//    mCallbacks[XTRACT_AVERAGE_DEVIATION]            = { "XTRACT_AVERAGE_DEVIATION", std::bind( &ciLibXtract::updateAverageDeviation, this ), 0 };
-//    mCallbacks[XTRACT_SKEWNESS]                     = { "XTRACT_SKEWNESS", std::bind( &ciLibXtract::updateSkewness, this ), 0 };
-//    mCallbacks[XTRACT_KURTOSIS]                     = { "XTRACT_KURTOSIS", std::bind( &ciLibXtract::updateKurtosis, this ), 0 };
-//    mCallbacks[XTRACT_SPECTRAL_MEAN]                = { "XTRACT_SPECTRAL_MEAN", std::bind( &ciLibXtract::updateSpectralMean, this ), 0 };
-//    mCallbacks[XTRACT_SPECTRAL_VARIANCE]            = { "XTRACT_SPECTRAL_VARIANCE", std::bind( &ciLibXtract::updateSpectralVariance, this ), 0 };
-//    mCallbacks[XTRACT_SPECTRAL_STANDARD_DEVIATION]  = { "XTRACT_SPECTRAL_STANDARD_DEVIATION", std::bind( &ciLibXtract::updateSpectralStandardDeviation, this ), 0 };
-//    
+    drawScalarData( "Mean", mLibXtract->getScalarFeature( XTRACT_MEAN ), 500.0f, scalarPos, true );                                                             scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Variance", mLibXtract->getScalarFeature( XTRACT_VARIANCE ), 500.0f, scalarPos, true );                                                     scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Standard deviation", mLibXtract->getScalarFeature( XTRACT_STANDARD_DEVIATION ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Average deviation", mLibXtract->getScalarFeature( XTRACT_AVERAGE_DEVIATION ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Skewness", mLibXtract->getScalarFeature( XTRACT_SKEWNESS ), 500.0f, scalarPos, true );                                                     scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Kurtosis", mLibXtract->getScalarFeature( XTRACT_KURTOSIS ), 500.0f, scalarPos, true );                                                     scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spectral mean", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_MEAN ), 500.0f, scalarPos, true );                                           scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spectral variance", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_VARIANCE ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spectral standard deviation deviation", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_STANDARD_DEVIATION ), 500.0f, scalarPos, true );     scalarPos += Vec2f( 0, margin );    
+    drawScalarData( "Spectral skewness", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_SKEWNESS ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spectral kurtosis", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_KURTOSIS ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spectral centroid", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_CENTROID ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Irregularity K", mLibXtract->getScalarFeature( XTRACT_IRREGULARITY_K ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Irregularity J", mLibXtract->getScalarFeature( XTRACT_IRREGULARITY_J ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
     
     
     if ( mDebug )
@@ -209,6 +218,8 @@ void BasicSampleApp::drawScalarData( string label, double val, float gain, Vec2f
 void BasicSampleApp::initGui()
 {
     mParams = params::InterfaceGl::create( "Params", Vec2f( 350, getWindowHeight() - 45 ) );
+    mParams->setOptions( "", "position='" + toString( getWindowWidth() - 380 ) + " " + toString( 15 ) + "'");
+    
     mParams->addParam( "Debug", &mDebug );
     
     mParams->addSeparator();
@@ -222,7 +233,6 @@ void BasicSampleApp::initGui()
     mParams->addText( "Disable" );
     for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
         mParams->addButton( "off_" + it->second.name, std::bind( &ciLibXtract::disableFeature, mLibXtract, it->first ) );
-    
 }
 
 
