@@ -101,11 +101,66 @@ private:
     void updateSpectralCentroid();
     void updateIrregularityK();
     void updateIrregularityJ();
-    void updateTristimulus1();
-    void updateTristimulus2();
-    void updateTristimulus3();
+//    void updateTristimulus1();
+//    void updateTristimulus2();
+//    void updateTristimulus3();
+
+    void updateSmoothness();
+    void updateSpread();
+    void updateZcr();
+    void updateRollOff();
+//    void updateLoudness();
+    void updateFlatness();
+    void updateFlatnessDb();
+    
+    void updateTonality();
+//    void updateCrest();
+//    void updateNoisiness();
+    void updateRmsAmplitude();
+//    void updateSpectralInharmonicity();
+    void updatePower();
+//    void updateOddEvenRatio();
+    void updateSharpness ();
+    
+    
+    
+    
+    /*
+    
+    void updateSpectralSlope();
+    void updateLowestValue();
+    void updateHighestValue();
+    void updateSum();
+    void updateNonZeroCount();
+    void updateHps();
+    void updateF0();
+    void updateFailsafeF0();
+    void updateLnorm();
+    void updateFlux();
+    void updateAttackTime();
+    void updateDecayTime();
+    void updateDifferenceVector();
+    */
     
     void updateSpectrum();
+    
+
+//    void updateAutoCorrelationFft();
+//    void updateMfcc();
+//     void updateDct();
+//     void updateAutocorrelation();
+//     void updateAmdf();
+//     void updateAsdf();
+//     void updateBarkCoefficients();
+//     
+     void updatePeakSpectrum();
+//    void updateHarmonicSpectrum();
+//    void updateLpc();
+//    void updateLpcc();
+//    void updateSubbands();
+//    
+//    void updateWindowed();
+
     
 
     // TEMPORARY PUBLIC !!! <<<<<<<<<<<<<<
@@ -118,6 +173,7 @@ private:
 	audio::PcmBuffer32fRef                      mPcmBuffer;
     std::shared_ptr<double>                     mPcmData;
     std::shared_ptr<double>                     mSpectrum;
+    std::shared_ptr<double>                     mPeakSpectrum;
     
     double  mScalarValues[XTRACT_FEATURES];     // the array is bigger but at least you can refer to each item using xtract_features_
     
