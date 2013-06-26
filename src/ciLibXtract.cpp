@@ -109,61 +109,57 @@ void ciLibXtract::init()
     // TODO
     /*
     
-    //        XTRACT_SPECTRAL_MEAN,
-    //        XTRACT_SPECTRAL_VARIANCE,
-    //        XTRACT_SPECTRAL_STANDARD_DEVIATION,
-
-    //        XTRACT_SPECTRAL_SKEWNESS,
-    //        XTRACT_SPECTRAL_KURTOSIS,
-    //        XTRACT_SPECTRAL_CENTROID,
-    //        XTRACT_IRREGULARITY_K,
-    //        XTRACT_IRREGULARITY_J,
-    //        XTRACT_TRISTIMULUS_1,
-    //        XTRACT_TRISTIMULUS_2,
-    //        XTRACT_TRISTIMULUS_3,
-    //        XTRACT_SMOOTHNESS,
-    //        XTRACT_SPREAD,
-    //        XTRACT_ZCR,
-    //        XTRACT_ROLLOFF,
-    //        XTRACT_LOUDNESS,
-    //        XTRACT_FLATNESS,
-    //        XTRACT_FLATNESS_DB,
-    //        XTRACT_TONALITY,
-    //        XTRACT_CREST,
-    //        XTRACT_NOISINESS,
-    //        XTRACT_RMS_AMPLITUDE,
-    //        XTRACT_SPECTRAL_INHARMONICITY,
-    //        XTRACT_POWER,
-    //        XTRACT_ODD_EVEN_RATIO,
-    //        XTRACT_SHARPNESS,
-    //        XTRACT_SPECTRAL_SLOPE,
-    //        XTRACT_LOWEST_VALUE,
-    //        XTRACT_HIGHEST_VALUE,
-    //        XTRACT_SUM,
-    //        XTRACT_NONZERO_COUNT,
-    //        XTRACT_HPS,
-    //        XTRACT_F0,
-    //        XTRACT_FAILSAFE_F0,
-    //        XTRACT_LNORM,
-    //        XTRACT_FLUX,
-    //        XTRACT_ATTACK_TIME,
-    //        XTRACT_DECAY_TIME,
-    //        XTRACT_DIFFERENCE_VECTOR,
-    //        XTRACT_AUTOCORRELATION,
-    //        XTRACT_AMDF,
-    //        XTRACT_ASDF,
-    //        XTRACT_BARK_COEFFICIENTS,
-    //        XTRACT_PEAK_SPECTRUM,
-    
-    //        XTRACT_AUTOCORRELATION_FFT,
-    //        XTRACT_MFCC,
-    //        XTRACT_DCT,
-    //        XTRACT_HARMONIC_SPECTRUM,
-    //        XTRACT_LPC,
-    //        XTRACT_LPCC,
-    //        XTRACT_SUBBANDS,
-
-    //        XTRACT_WINDOWED
+    XTRACT_SPECTRAL_SKEWNESS,
+    XTRACT_SPECTRAL_KURTOSIS,
+    XTRACT_SPECTRAL_CENTROID,
+    XTRACT_IRREGULARITY_K,
+    XTRACT_IRREGULARITY_J,
+    XTRACT_TRISTIMULUS_1,
+    XTRACT_TRISTIMULUS_2,
+    XTRACT_TRISTIMULUS_3,
+    XTRACT_SMOOTHNESS,
+    XTRACT_SPREAD,
+    XTRACT_ZCR,
+    XTRACT_ROLLOFF,
+    XTRACT_LOUDNESS,
+    XTRACT_FLATNESS,
+    XTRACT_FLATNESS_DB,
+    XTRACT_TONALITY,
+    XTRACT_CREST,
+    XTRACT_NOISINESS,
+    XTRACT_RMS_AMPLITUDE,
+    XTRACT_SPECTRAL_INHARMONICITY,
+    XTRACT_POWER,
+    XTRACT_ODD_EVEN_RATIO,
+    XTRACT_SHARPNESS,
+    XTRACT_SPECTRAL_SLOPE,
+    XTRACT_LOWEST_VALUE,
+    XTRACT_HIGHEST_VALUE,
+    XTRACT_SUM,
+    XTRACT_NONZERO_COUNT,
+    XTRACT_HPS,
+    XTRACT_F0,
+    XTRACT_FAILSAFE_F0,
+    XTRACT_LNORM,
+    XTRACT_FLUX,
+    XTRACT_ATTACK_TIME,
+    XTRACT_DECAY_TIME,
+    XTRACT_DIFFERENCE_VECTOR,
+    XTRACT_AUTOCORRELATION,
+    XTRACT_AMDF,
+    XTRACT_ASDF,
+    XTRACT_BARK_COEFFICIENTS,
+    XTRACT_PEAK_SPECTRUM,
+    XTRACT_SPECTRUM,
+    XTRACT_AUTOCORRELATION_FFT,
+    XTRACT_MFCC,
+    XTRACT_DCT,
+    XTRACT_HARMONIC_SPECTRUM,
+    XTRACT_LPC,
+    XTRACT_LPCC,
+    XTRACT_SUBBANDS,
+    // Helper functions
+    XTRACT_WINDOWED
     
     */
 }
@@ -321,227 +317,3 @@ void ciLibXtract::updateSpectrum()
     
     xtract_spectrum( mPcmData.get(), PCM_SIZE, _argd, mSpectrum.get() );
 }
-
-
-
-/*
-
-
-shared_ptr<double> ciLibXtract::getSpectrum( xtract_spectrum_ spectrumType, bool normalised )
-{
-    mArgd[0] = SAMPLERATE / (double)PCM_SIZE;
-    mArgd[1] = spectrumType;                        //  XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
-    mArgd[2] = 0.f;                                 // No DC component
-    mArgd[3] = normalised;                          // No Normalisation
-    
-    
-//    if ( dumping > 0 )
-//    {
-//        std::shared_ptr<double> data = std::shared_ptr<double>( new double[ PCM_SIZE ] );
-//        
-//        xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_SIZE, mArgd, data.get() );
-//        
-//        for( size_t k=0; k < FFT_SIZE; k++ )
-//            if ( data.get()[k] > mSpectrum.get()[k] )
-//                mSpectrum.get()[k] = data.get()[k];
-//            else
-//                mSpectrum.get()[k] *= dumping;
-//    }
-//        else
-//            xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_SIZE, mArgd, mSpectrum.get() );
-    
-    xtract[XTRACT_SPECTRUM]( mPcmData.get(), PCM_SIZE, mArgd, mSpectrum.get() );
-    
-    return mSpectrum;
-}
-
-
-shared_ptr<double> ciLibXtract::getAutocorrelationFft()
-{
-    void *argd = NULL;
-    xtract_autocorrelation_fft( mPcmData.get(), PCM_SIZE, argd, mAutocorrelationFft.get() );
-    return mAutocorrelationFft;
-}
-
-
-shared_ptr<double> ciLibXtract::getMfcc()
-{
-    xtract_mfcc( mSpectrum.get(), FFT_SIZE, &mel_filters, mMfccs.get() );
-    
-    return mMfccs;
-}
-
-
-
-shared_ptr<double> ciLibXtract::getPeakSpectrum( double threshold )
-{
-    mArgd[0] = SAMPLERATE / (double)FFT_SIZE;     // samplerate / N
-    mArgd[1] = threshold;                                   // peak threshold as percentage of the magnitude of the maximum peak found
-    mArgd[2] = 0.f;
-    mArgd[3] = 0.f;
-    
-    xtract_peak_spectrum( mSpectrum.get(), FFT_SIZE, mArgd, mPeakSpectrum.get() );
-    
-    return mPeakSpectrum;
-}
-
-
-std::shared_ptr<double> ciLibXtract::getBarkCoefficients()
-{
-    xtract_bark_coefficients( mSpectrum.get(), FFT_SIZE, mBarkBandLimits.get(), mBarks.get() );
-
-    return mBarks;
-}
-
-
-std::shared_ptr<double> ciLibXtract::getHarmonicSpectrum()
-{
-    mArgd[0] = mF0;
-    mArgd[1] = 0.3f;
-
-    xtract_harmonic_spectrum( mPeakSpectrum.get(), FFT_SIZE, mArgd, mHarmonicSpectrum.get() );
-
-    return mHarmonicSpectrum;
-}
-
-std::shared_ptr<double> ciLibXtract::getSubBands()
-{
-    mArgd[0] = XTRACT_SUM;                      // XTRACT_SUM or XTRACT_MEAN
-    mArgd[1] = SUB_BANDS;                       // subbands N
-    mArgd[2] = XTRACT_LINEAR_SUBBANDS;          // xtract_subband_scales_ { XTRACT_OCTAVE_SUBBANDS, XTRACT_LINEAR_SUBBANDS }
-    mArgd[3] = 1;                               // start point of the subbands
-    
-    xtract_spectral_centroid( mSpectrum.get(), FFT_SIZE, mArgd, mSubBands.get() );
-    
-    return mSubBands;
-}
-
-
-// TODO doesn't work!
-
-double ciLibXtract::getF0()
-{
-    double sr = SAMPLERATE / (double)PCM_SIZE;
-    xtract_f0( mPcmData.get(), PCM_SIZE, &sr, &mF0 );
-    return mF0;
-}
-
-
-double ciLibXtract::getFailsafeF0()
-{
-    double sr = SAMPLERATE;
-    xtract_failsafe_f0( mPcmData.get(), PCM_SIZE, &sr, &mFailsafeF0 );
-    return mFailsafeF0;
-}
-
-
-double ciLibXtract::getSpectralCentroid()
-{
-    xtract_spectral_centroid( mSpectrum.get(), FFT_SIZE, NULL, &mSpectralCentroid );
-    return mSpectralCentroid;
-}
-
-
-double ciLibXtract::getSpread()
-{
-    xtract_spread( mSpectrum.get(), FFT_SIZE, &mSpectralCentroid, &mSpread );
-    return mSpread;
-}
-
-
-double ciLibXtract::getLoudness()
-{
-    void *argd = NULL;
-    xtract_loudness( mBarks.get(), XTRACT_BARK_BANDS, argd, &mLoudness );
-    return mLoudness;
-}
-
-
-double ciLibXtract::getFlatness()
-{
-    xtract_flatness( mSpectrum.get(), FFT_SIZE / 2, NULL, &mFlatness );
-    return mFlatness;
-}
-
-
-double ciLibXtract::getFlatnessDb()
-{
-    xtract_flatness( NULL, 0, &mFlatness, &mFlatnessDb );
-    return mFlatnessDb;
-}
-
-
-double ciLibXtract::getIrregularityK()
-{
-    void *argd = NULL;
-    xtract_irregularity_k( mSpectrum.get(), FFT_SIZE, argd, &mIrregularityK );
-    return mIrregularityK;
-}
-
-
-double ciLibXtract::getIrregularityJ()
-{
-    void *argd = NULL;
-    xtract_irregularity_j( mSpectrum.get(), FFT_SIZE, argd, &mIrregularityJ );
-    return mIrregularityJ;
-}
-
-
-//double ciLibXtract::getZcr()
-//{
-//    void *argd = NULL;
-//    xtract_irregularity_j( mSpectrum.get(), FFT_SIZE, argd, &mIrregularityJ );
-//    return mIrregularityJ;
-//}
-
-double ciLibXtract::getPower()
-{
-    xtract_power( mSpectrum.get(), FFT_SIZE, NULL, &mPower );
-    return mPower;
-}
-
-
-double ciLibXtract::getTonality()
-{
-    xtract_tonality( NULL, 0, &mFlatnessDb, &mTonality );
-    return mTonality;
-}
-
-
-
-bool ciLibXtract::getOnSet( float threshold, float vel, float gain )
-{
-    double val = gain * ( mBarks.get()[0] + mBarks.get()[1] ) / 2.0f;
-    
-    if ( val < threshold * 0.1f )
-    {
-        mBarkOnSetAvg *= vel;
-        return false;
-    }
-    
-    if( val > mBarkOnSetAvg )
-    {
-        mBarkOnSetAvg = val;
-        return true;
-    }
-    
-    mBarkOnSetAvg *= vel;
-    return false;
-//    float val = gain * mBarks.get()[1];
-//    
-//    if ( val < threshold * 0.1f )
-//    {
-//        mBarkOnSetAvg *= vel;
-//        return false;
-//    }
-//    
-//    if( val > mBarkOnSetAvg )
-//    {
-//        mBarkOnSetAvg = val;
-//        return true;
-//    }
-    
-//    return false;
-}
-
-*/

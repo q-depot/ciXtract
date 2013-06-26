@@ -52,8 +52,13 @@ public:
     void disableFeature( xtract_features_ feature );
     
     void debug();
-
+    
     std::shared_ptr<double> getVectorFeature( xtract_features_ feature );
+    
+    double getScalarFeature( xtract_features_ feature )
+    {
+        return mScalarValues[feature];
+    }
     
     
 public:
