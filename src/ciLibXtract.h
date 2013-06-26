@@ -106,7 +106,7 @@ private:
     double                                      mMean;
     double                                      mVariance;
     double                                      mStandardDeviation;
-    
+    double                                      mAverageDeviation;
     
     
     std::map<xtract_features_,FeatureCallback>  mCallbacks;

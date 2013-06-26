@@ -159,10 +159,11 @@ void BasicSampleApp::initGui()
     mParams->addSeparator();
     
     mParams->addText( "Enable" );
-	mParams->addButton( "on_XTRACT_SPECTRUM",              std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_SPECTRUM ) );
-	mParams->addButton( "on_XTRACT_MEAN",                  std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_MEAN ) );
-	mParams->addButton( "on_XTRACT_VARIANCE",              std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_VARIANCE ) );
-	mParams->addButton( "on_XTRACT_STANDARD_DEVIATION",    std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_STANDARD_DEVIATION ) );
+	mParams->addButton( "on_XTRACT_SPECTRUM",               std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_SPECTRUM ) );
+	mParams->addButton( "on_XTRACT_MEAN",                   std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_MEAN ) );
+	mParams->addButton( "on_XTRACT_VARIANCE",               std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_VARIANCE ) );
+	mParams->addButton( "on_XTRACT_STANDARD_DEVIATION",     std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_STANDARD_DEVIATION ) );
+	mParams->addButton( "on_XTRACT_AVERAGE_DEVIATION",      std::bind( &ciLibXtract::enableFeature, mLibXtract, XTRACT_AVERAGE_DEVIATION ) );
     
     
     mParams->addText( "Disable" );
@@ -170,6 +171,7 @@ void BasicSampleApp::initGui()
 	mParams->addButton( "off_XTRACT_MEAN",                  std::bind( &ciLibXtract::disableFeature, mLibXtract, XTRACT_MEAN ) );
 	mParams->addButton( "off_XTRACT_VARIANCE",              std::bind( &ciLibXtract::disableFeature, mLibXtract, XTRACT_VARIANCE ) );
 	mParams->addButton( "off_XTRACT_STANDARD_DEVIATION",    std::bind( &ciLibXtract::disableFeature, mLibXtract, XTRACT_STANDARD_DEVIATION ) );
+	mParams->addButton( "off_XTRACT_AVERAGE_DEVIATION",     std::bind( &ciLibXtract::disableFeature, mLibXtract, XTRACT_AVERAGE_DEVIATION ) );
 }
 
 

@@ -21,10 +21,8 @@ std::map<xtract_features_,std::vector<xtract_features_>> ciLibXtract::xtract_fea
     { XTRACT_MEAN,                      { XTRACT_SPECTRUM } },
     { XTRACT_VARIANCE,                  { XTRACT_MEAN } },
     { XTRACT_STANDARD_DEVIATION,        { XTRACT_VARIANCE } },
+    { XTRACT_AVERAGE_DEVIATION,         { XTRACT_MEAN } },
     
-//        XTRACT_VARIANCE,
-//        XTRACT_STANDARD_DEVIATION,
-//        XTRACT_AVERAGE_DEVIATION,
 //        XTRACT_SKEWNESS,
 //        XTRACT_KURTOSIS,
 //        XTRACT_SPECTRAL_MEAN,
@@ -128,6 +126,7 @@ void ciLibXtract::init()
     mMean               = 0.0f;
     mVariance           = 0.0f;
     mStandardDeviation  = 0.0f;
+    mAverageDeviation   = 0.0f;
     
 // -------------- //
 // --- Params --- //
@@ -148,7 +147,9 @@ void ciLibXtract::init()
     mCallbacks[XTRACT_MEAN]                         = { "XTRACT_MEAN", std::bind( &ciLibXtract::updateMean, this ), 0 };                                                // + XTRACT_SPECTRUM
     mCallbacks[XTRACT_VARIANCE]                     = { "XTRACT_VARIANCE", std::bind( &ciLibXtract::updateVariance, this ), 0 };                                        // + XTRACT_MEAN
     mCallbacks[XTRACT_STANDARD_DEVIATION]           = { "XTRACT_STANDARD_DEVIATION", std::bind( &ciLibXtract::updateStandardDeviation, this ), 0 };                     // + XTRACT_VARIANCE
-    mCallbacks[XTRACT_AVERAGE_DEVIATION]            = { "XTRACT_AVERAGE_DEVIATION", std::bind( &ciLibXtract::updateAverageDeviation, this ), 0 };
+    mCallbacks[XTRACT_AVERAGE_DEVIATION]            = { "XTRACT_AVERAGE_DEVIATION", std::bind( &ciLibXtract::updateAverageDeviation, this ), 0 };                       // + XTRACT_MEAN
+    
+    // TODO
     mCallbacks[XTRACT_SKEWNESS]                     = { "XTRACT_SKEWNESS", std::bind( &ciLibXtract::updateSkewness, this ), 0 };
     mCallbacks[XTRACT_KURTOSIS]                     = { "XTRACT_KURTOSIS", std::bind( &ciLibXtract::updateKurtosis, this ), 0 };
     mCallbacks[XTRACT_SPECTRAL_MEAN]                = { "XTRACT_SPECTRAL_MEAN", std::bind( &ciLibXtract::updateSpectralMean, this ), 0 };
@@ -293,9 +294,8 @@ void ciLibXtract::disableFeature( xtract_features_ feature )
     mCallbacks[feature].enable = false;
     
     // disable all features that depends on this one
-    FeatureCallback f;
     std::map<xtract_features_,FeatureCallback>::iterator it;
-    for( it = mCallbacks.begin(); it!=mCallbacks.end(); ++it )
+    for( it = mCallbacks.begin(); it != mCallbacks.end(); ++it )
     {
         if ( featureDependsOn( it->first, feature ) )
             disableFeature( it->first );
@@ -348,7 +348,7 @@ void ciLibXtract::updateStandardDeviation()
 
 void ciLibXtract::updateAverageDeviation()
 {
-    
+    xtract_average_deviation( mSpectrum.get(), PCM_SIZE >> 1, &mMean, &mAverageDeviation );
 }
 
 
@@ -566,13 +566,6 @@ double ciLibXtract::getIrregularityJ()
 //    xtract_irregularity_j( mSpectrum.get(), FFT_SIZE, argd, &mIrregularityJ );
 //    return mIrregularityJ;
 //}
-
-double ciLibXtract::getAverageDeviation()
-{
-    xtract_average_deviation( mSpectrum.get(), FFT_SIZE, &mMean, &mAverageDeviation );
-    return mAverageDeviation;
-}
-
 
 double ciLibXtract::getPower()
 {
