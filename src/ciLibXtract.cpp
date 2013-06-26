@@ -20,6 +20,7 @@ std::map<xtract_features_,std::vector<xtract_features_>> ciLibXtract::xtract_fea
 {
     { XTRACT_SPECTRUM,                      {} },
     { XTRACT_PEAK_SPECTRUM,                 { XTRACT_SPECTRUM } },
+    { XTRACT_BARK_COEFFICIENTS,             { XTRACT_SPECTRUM } },
     { XTRACT_MEAN,                          { XTRACT_SPECTRUM } },
     { XTRACT_VARIANCE,                      { XTRACT_MEAN } },
     { XTRACT_STANDARD_DEVIATION,            { XTRACT_VARIANCE } },
@@ -79,11 +80,9 @@ ciLibXtract::~ciLibXtract() {}
 
 void ciLibXtract::init()
 {
-    xtract_init_fft( PCM_SIZE << 1, XTRACT_SPECTRUM );
-    
     
 // -------------- //
-// --- Vector --- //
+// ----- FFT ---- //
 // -------------- //
     
     mPcmData        = std::shared_ptr<double>( new double[ PCM_SIZE ] );
@@ -97,6 +96,18 @@ void ciLibXtract::init()
         mPeakSpectrum.get()[k]  = 0.0f;
     }
     
+    xtract_init_fft( PCM_SIZE << 1, XTRACT_SPECTRUM );
+
+    
+// -------------- //
+// --- Barks ---- //
+// -------------- //
+    
+    mBarks              = std::shared_ptr<double>( new double[ XTRACT_BARK_BANDS ] );
+    mBarkBandLimits     = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
+    
+    xtract_init_bark( PCM_SIZE >> 1, SAMPLERATE >> 1, mBarkBandLimits.get() );
+    
     
 // -------------- //
 // --- Scalar --- //
@@ -104,11 +115,7 @@ void ciLibXtract::init()
     
     for( size_t k=0; k < XTRACT_FEATURES; k++ )
         mScalarValues[k] = 0.0f;
-        
-//    mMean               = 0.0f;
-//    mVariance           = 0.0f;
-//    mStandardDeviation  = 0.0f;
-//    mAverageDeviation   = 0.0f;
+
     
 // -------------- //
 // --- Params --- //
@@ -187,8 +194,8 @@ void ciLibXtract::init()
 //    mCallbacks[XTRACT_AUTOCORRELATION]              = { "XTRACT_AUTOCORRELATION", std::bind( &ciLibXtract::updateAutocorrelation, this ), 0 };
 //    mCallbacks[XTRACT_AMDF]                         = { "XTRACT_AMDF", std::bind( &ciLibXtract::updateAmdf, this ), 0 };
 //    mCallbacks[XTRACT_ASDF]                         = { "XTRACT_ASDF", std::bind( &ciLibXtract::updateAsdf, this ), 0 };
-//    mCallbacks[XTRACT_BARK_COEFFICIENTS]            = { "XTRACT_BARK_COEFFICIENTS", std::bind( &ciLibXtract::updateBarkCoefficients, this ), 0 };
-//     
+    mCallbacks[XTRACT_BARK_COEFFICIENTS]            = { "XTRACT_BARK_COEFFICIENTS", std::bind( &ciLibXtract::updateBarkCoefficients, this ), 0 };
+//
 //    mCallbacks[XTRACT_AUTOCORRELATION_FFT]          = { "XTRACT_AUTOCORRELATION_FFT", std::bind( &ciLibXtract::updateAutoCorrelationFft, this ), 0 };
 //    mCallbacks[XTRACT_MFCC]                         = { "XTRACT_MFCC", std::bind( &ciLibXtract::updateMfcc, this ), 0 };
 //    mCallbacks[XTRACT_DCT]                          = { "XTRACT_DCT", std::bind( &ciLibXtract::updateDct, this ), 0 };
@@ -283,8 +290,19 @@ std::shared_ptr<double> ciLibXtract::getVectorFeature( xtract_features_ feature 
 {
     if ( feature == XTRACT_SPECTRUM )
         return mSpectrum;
+
+    else if ( feature == XTRACT_PEAK_SPECTRUM )
+        return mPeakSpectrum;
     
-    return std::shared_ptr<double>();
+    else if ( feature == XTRACT_BARK_COEFFICIENTS )
+        return mBarks;
+    
+    else
+    {
+        console() << "getVectorFeature() feature not found! " << feature << endl;
+        exit(-1);
+    }
+//    return std::shared_ptr<double>();
 }
 
 
@@ -466,11 +484,13 @@ void ciLibXtract::updateSpectrum()
     xtract_spectrum( mPcmData.get(), PCM_SIZE, _argd, mSpectrum.get() );
 }
 
-
 void ciLibXtract::updatePeakSpectrum()
 {
     double data[2] = { mParams["spectrum_sample_rate_N"], mParams["peak_spectrum_threshold"] };
     xtract_peak_spectrum( mSpectrum.get(), PCM_SIZE >> 1, data, mPeakSpectrum.get() );
 }
 
-
+void ciLibXtract::updateBarkCoefficients()
+{
+    xtract_bark_coefficients( mSpectrum.get(), PCM_SIZE >> 1, mBarkBandLimits.get(), mBarks.get() );
+}

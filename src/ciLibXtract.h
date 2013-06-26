@@ -151,8 +151,8 @@ private:
 //     void updateAutocorrelation();
 //     void updateAmdf();
 //     void updateAsdf();
-//     void updateBarkCoefficients();
-//     
+     void updateBarkCoefficients();
+//
      void updatePeakSpectrum();
 //    void updateHarmonicSpectrum();
 //    void updateLpc();
@@ -174,6 +174,8 @@ private:
     std::shared_ptr<double>                     mPcmData;
     std::shared_ptr<double>                     mSpectrum;
     std::shared_ptr<double>                     mPeakSpectrum;
+    std::shared_ptr<double>                     mBarks;
+    std::shared_ptr<int>                        mBarkBandLimits;
     
     double  mScalarValues[XTRACT_FEATURES];     // the array is bigger but at least you can refer to each item using xtract_features_
     

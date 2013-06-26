@@ -50,7 +50,7 @@ public:
 
 void BasicSampleApp::prepareSettings( Settings *settings )
 {
-    settings->setWindowSize( 1200, 800 );
+    settings->setWindowSize( 1250, 800 );
 }
 
 
@@ -101,29 +101,45 @@ void BasicSampleApp::draw()
 	gl::clear( Color( 0, 0, 0 ) );
     gl::enableAlphaBlending();
     
-    std::shared_ptr<double> spectrum = mLibXtract->getVectorFeature( XTRACT_SPECTRUM );
     int buffSize = PCM_SIZE >> 1;
     
-    drawVectorData( "Spectrum", mLibXtract->getVectorFeature( XTRACT_SPECTRUM ), buffSize, 500.0f, Rectf( 15, 15, 350, 150 ), true );
+    Rectf r( 230, 15, 530, 150 );
+    drawVectorData( "Spectrum",         mLibXtract->getVectorFeature( XTRACT_SPECTRUM ),        buffSize, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
+    drawVectorData( "Peak Spectrum",    mLibXtract->getVectorFeature( XTRACT_PEAK_SPECTRUM ),   buffSize, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
+    drawVectorData( "Barks",            mLibXtract->getVectorFeature( XTRACT_BARK_COEFFICIENTS ),   XTRACT_BARK_BANDS, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
 
-    Vec2f scalarPos( 15, 200 );
+    Vec2f scalarPos( 15, 15 );
     float margin = 35;
     
-    drawScalarData( "Mean", mLibXtract->getScalarFeature( XTRACT_MEAN ), 500.0f, scalarPos, true );                                                             scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Variance", mLibXtract->getScalarFeature( XTRACT_VARIANCE ), 500.0f, scalarPos, true );                                                     scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Standard deviation", mLibXtract->getScalarFeature( XTRACT_STANDARD_DEVIATION ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Average deviation", mLibXtract->getScalarFeature( XTRACT_AVERAGE_DEVIATION ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Skewness", mLibXtract->getScalarFeature( XTRACT_SKEWNESS ), 500.0f, scalarPos, true );                                                     scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Kurtosis", mLibXtract->getScalarFeature( XTRACT_KURTOSIS ), 500.0f, scalarPos, true );                                                     scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral mean", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_MEAN ), 500.0f, scalarPos, true );                                           scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral variance", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_VARIANCE ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Mean", mLibXtract->getScalarFeature( XTRACT_MEAN ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Variance", mLibXtract->getScalarFeature( XTRACT_VARIANCE ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Standard deviation", mLibXtract->getScalarFeature( XTRACT_STANDARD_DEVIATION ), 500.0f, scalarPos, true );             scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Average deviation", mLibXtract->getScalarFeature( XTRACT_AVERAGE_DEVIATION ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Skewness", mLibXtract->getScalarFeature( XTRACT_SKEWNESS ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Kurtosis", mLibXtract->getScalarFeature( XTRACT_KURTOSIS ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spectral mean", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_MEAN ), 500.0f, scalarPos, true );                       scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spectral variance", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_VARIANCE ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
     drawScalarData( "Spectral standard deviation deviation", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_STANDARD_DEVIATION ), 500.0f, scalarPos, true );     scalarPos += Vec2f( 0, margin );    
-    drawScalarData( "Spectral skewness", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_SKEWNESS ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral kurtosis", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_KURTOSIS ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral centroid", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_CENTROID ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Irregularity K", mLibXtract->getScalarFeature( XTRACT_IRREGULARITY_K ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Irregularity J", mLibXtract->getScalarFeature( XTRACT_IRREGULARITY_J ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
-    
+    drawScalarData( "Spectral skewness", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_SKEWNESS ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spectral kurtosis", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_KURTOSIS ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spectral centroid", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_CENTROID ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Irregularity K", mLibXtract->getScalarFeature( XTRACT_IRREGULARITY_K ), 500.0f, scalarPos, true );                     scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Irregularity J", mLibXtract->getScalarFeature( XTRACT_IRREGULARITY_J ), 500.0f, scalarPos, true );                     scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Smoothness", mLibXtract->getScalarFeature( XTRACT_SMOOTHNESS ), 500.0f, scalarPos, true );                             scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Spread", mLibXtract->getScalarFeature( XTRACT_SPREAD ), 500.0f, scalarPos, true );                                     scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Zcr", mLibXtract->getScalarFeature( XTRACT_ZCR  ), 500.0f, scalarPos, true );                                          scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Rolloff", mLibXtract->getScalarFeature( XTRACT_ROLLOFF ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
+//        drawScalarData( "Loudness", mLibXtract->getScalarFeature( XTRACT_LOUDNESS ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Flatness", mLibXtract->getScalarFeature( XTRACT_FLATNESS ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Flatness Db", mLibXtract->getScalarFeature( XTRACT_FLATNESS_DB ), 500.0f, scalarPos, true );                           scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Tonality", mLibXtract->getScalarFeature( XTRACT_TONALITY ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
+//    drawScalarData( "Crest", mLibXtract->getScalarFeature( XTRACT_CREST ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
+//    drawScalarData( "Noisiness", mLibXtract->getScalarFeature( XTRACT_NOISINESS ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
+    drawScalarData( "RMX amplitude", mLibXtract->getScalarFeature( XTRACT_RMS_AMPLITUDE ), 500.0f, scalarPos, true );                       scalarPos += Vec2f( 0, margin );
+//    drawScalarData( "Spectral Inhamonicity", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_INHARMONICITY ), 500.0f, scalarPos, true );                    scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Power", mLibXtract->getScalarFeature( XTRACT_POWER ), 500.0f, scalarPos, true );                                       scalarPos += Vec2f( 0, margin );
+//    drawScalarData( "Odd even ratio", mLibXtract->getScalarFeature( XTRACT_ODD_EVEN_RATIO ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
+    drawScalarData( "Sharpness", mLibXtract->getScalarFeature( XTRACT_SHARPNESS ), 500.0f, scalarPos, true );                               scalarPos += Vec2f( 0, margin );
     
     if ( mDebug )
         mLibXtract->debug();
