@@ -23,14 +23,13 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-//#define BLOCKSIZE           2048
 #define PCM_SIZE            1024
 #define SAMPLERATE          44100
-#define PERIOD              100
-#define MFCC_FREQ_BANDS     32
-#define MFCC_FREQ_MIN       20
-#define MFCC_FREQ_MAX       20000
-#define SUB_BANDS           32
+//#define PERIOD              100
+//#define MFCC_FREQ_BANDS     32
+//#define MFCC_FREQ_MIN       20
+//#define MFCC_FREQ_MAX       20000
+//#define SUB_BANDS           32
 
 
 class ciLibXtract;
@@ -101,15 +100,13 @@ private:
     void updateSpectralCentroid();
     void updateIrregularityK();
     void updateIrregularityJ();
-//    void updateTristimulus1();
-//    void updateTristimulus2();
-//    void updateTristimulus3();
+    void updateTristimulus1();
 
     void updateSmoothness();
     void updateSpread();
     void updateZcr();
     void updateRollOff();
-//    void updateLoudness();
+    void updateLoudness();
     void updateFlatness();
     void updateFlatnessDb();
     
@@ -117,30 +114,28 @@ private:
 //    void updateCrest();
 //    void updateNoisiness();
     void updateRmsAmplitude();
-//    void updateSpectralInharmonicity();
+    void updateSpectralInharmonicity();
     void updatePower();
-//    void updateOddEvenRatio();
+    void updateOddEvenRatio();
     void updateSharpness ();
     
     
     
     
-    /*
-    
-    void updateSpectralSlope();
-    void updateLowestValue();
-    void updateHighestValue();
-    void updateSum();
-    void updateNonZeroCount();
-    void updateHps();
+//    void updateSpectralSlope();
+//    void updateLowestValue();
+//    void updateHighestValue();
+//    void updateSum();
+//    void updateNonZeroCount();
+//    void updateHps();
     void updateF0();
-    void updateFailsafeF0();
-    void updateLnorm();
-    void updateFlux();
-    void updateAttackTime();
-    void updateDecayTime();
-    void updateDifferenceVector();
-    */
+//    void updateFailsafeF0();
+//    void updateLnorm();
+//    void updateFlux();
+//    void updateAttackTime();
+//    void updateDecayTime();
+//    void updateDifferenceVector();
+
     
     void updateSpectrum();
     
@@ -153,8 +148,8 @@ private:
 //     void updateAsdf();
      void updateBarkCoefficients();
 //
-     void updatePeakSpectrum();
-//    void updateHarmonicSpectrum();
+    void updatePeakSpectrum();
+    void updateHarmonicSpectrum();
 //    void updateLpc();
 //    void updateLpcc();
 //    void updateSubbands();
@@ -174,6 +169,7 @@ private:
     std::shared_ptr<double>                     mPcmData;
     std::shared_ptr<double>                     mSpectrum;
     std::shared_ptr<double>                     mPeakSpectrum;
+    std::shared_ptr<double>                     mHarmonicSpectrum;
     std::shared_ptr<double>                     mBarks;
     std::shared_ptr<int>                        mBarkBandLimits;
     
