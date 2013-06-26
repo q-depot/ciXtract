@@ -108,7 +108,8 @@ void BasicSampleApp::draw()
     drawVectorData( "Peak Spectrum",    mLibXtract->getVectorFeature( XTRACT_PEAK_SPECTRUM ),   fftSize, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
     drawVectorData( "Barks",            mLibXtract->getVectorFeature( XTRACT_BARK_COEFFICIENTS ),XTRACT_BARK_BANDS, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
     drawVectorData( "Harmonic Spectrum",mLibXtract->getVectorFeature( XTRACT_HARMONIC_SPECTRUM ),fftSize, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
-
+    drawVectorData( "Mffcs",            mLibXtract->getVectorFeature( XTRACT_MFCC ),            MFCC_FREQ_BANDS, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
+    
     Vec2f scalarPos( 15, 15 );
     float margin = 35;
     

@@ -21,6 +21,7 @@ std::map<xtract_features_,std::vector<xtract_features_>> ciLibXtract::xtract_fea
     { XTRACT_SPECTRUM,                      {} },
     { XTRACT_PEAK_SPECTRUM,                 { XTRACT_SPECTRUM } },
     { XTRACT_BARK_COEFFICIENTS,             { XTRACT_SPECTRUM } },
+    { XTRACT_MFCC,                          { XTRACT_SPECTRUM } },
     
     
     { XTRACT_MEAN,                          { XTRACT_SPECTRUM } },
@@ -111,6 +112,22 @@ void ciLibXtract::init()
     
     xtract_init_fft( PCM_SIZE << 1, XTRACT_SPECTRUM );
 
+// -------------- //
+// ---- Mfcc ---- //
+// -------------- //
+    
+    mMfccs              = std::shared_ptr<double>( new double[ MFCC_FREQ_BANDS ] );
+    
+    for( size_t k=0; k < MFCC_FREQ_BANDS; k++ )
+        mMfccs.get()[k] = 0.0f;
+    
+    mMelFilters.n_filters = MFCC_FREQ_BANDS;
+    mMelFilters.filters   = (double **)malloc(MFCC_FREQ_BANDS * sizeof(double *));
+    for( int n = 0; n < MFCC_FREQ_BANDS; ++n )
+        mMelFilters.filters[n] = (double *)malloc(PCM_SIZE * sizeof(double));
+    
+    xtract_init_mfcc( PCM_SIZE >> 1, SAMPLERATE >> 1, XTRACT_EQUAL_GAIN, MFCC_FREQ_MIN, MFCC_FREQ_MAX, mMelFilters.n_filters, mMelFilters.filters );
+    
     
 // -------------- //
 // --- Barks ---- //
@@ -217,7 +234,7 @@ void ciLibXtract::init()
     
     
 //    mCallbacks[XTRACT_AUTOCORRELATION_FFT]          = { "XTRACT_AUTOCORRELATION_FFT", std::bind( &ciLibXtract::updateAutoCorrelationFft, this ), false };
-//    mCallbacks[XTRACT_MFCC]                         = { "XTRACT_MFCC", std::bind( &ciLibXtract::updateMfcc, this ), false };
+    mCallbacks[XTRACT_MFCC]                         = { "XTRACT_MFCC", std::bind( &ciLibXtract::updateMfcc, this ), false };
 //    mCallbacks[XTRACT_DCT]                          = { "XTRACT_DCT", std::bind( &ciLibXtract::updateDct, this ), false };
 
 //    mCallbacks[XTRACT_SUBBANDS]                     = { "XTRACT_SUBBANDS", std::bind( &ciLibXtract::updateSubbands, this ), false };
@@ -315,6 +332,9 @@ std::shared_ptr<double> ciLibXtract::getVectorFeature( xtract_features_ feature 
     
     else if ( feature == XTRACT_HARMONIC_SPECTRUM )
         return mHarmonicSpectrum;
+    
+    else if ( feature == XTRACT_MFCC )
+        return mMfccs;
     
     else
     {
@@ -526,4 +546,9 @@ void ciLibXtract::updateHarmonicSpectrum()
     xtract_harmonic_spectrum( mPeakSpectrum.get(), PCM_SIZE >> 1, data, mHarmonicSpectrum.get() );
 }
 
+
+void ciLibXtract::updateMfcc()
+{
+    xtract_mfcc( mSpectrum.get(), PCM_SIZE >> 1, &mMelFilters, mMfccs.get() );
+}
 

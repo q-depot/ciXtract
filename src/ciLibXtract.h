@@ -25,10 +25,11 @@ using namespace std;
 
 #define PCM_SIZE            1024
 #define SAMPLERATE          44100
-//#define PERIOD              100
-//#define MFCC_FREQ_BANDS     32
-//#define MFCC_FREQ_MIN       20
-//#define MFCC_FREQ_MAX       20000
+
+#define PERIOD              100
+#define MFCC_FREQ_BANDS     13
+#define MFCC_FREQ_MIN       20
+#define MFCC_FREQ_MAX       20000
 //#define SUB_BANDS           32
 
 
@@ -141,7 +142,7 @@ private:
     
 
 //    void updateAutoCorrelationFft();
-//    void updateMfcc();
+    void updateMfcc();
 //     void updateDct();
 //     void updateAutocorrelation();
 //     void updateAmdf();
@@ -171,7 +172,11 @@ private:
     std::shared_ptr<double>                     mPeakSpectrum;
     std::shared_ptr<double>                     mHarmonicSpectrum;
     std::shared_ptr<double>                     mBarks;
+    
     std::shared_ptr<int>                        mBarkBandLimits;
+
+    std::shared_ptr<double>                     mMfccs;
+    xtract_mel_filter                           mMelFilters;
     
     double  mScalarValues[XTRACT_FEATURES];     // the array is bigger but at least you can refer to each item using xtract_features_
     
