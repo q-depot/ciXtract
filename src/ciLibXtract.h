@@ -17,6 +17,7 @@
 #include "libxtract.h"
 #include "cinder/audio/Input.h"
 
+#include "cinder/gl/TextureFont.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -54,6 +55,17 @@ public:
 
     std::shared_ptr<double> getVectorFeature( xtract_features_ feature );
     
+    
+private:
+    
+    static std::map<xtract_features_,std::vector<xtract_features_>> xtract_features_dependencies;
+    
+    struct FeatureCallback {
+        std::string             name;
+        std::function<void()>   cb;
+        bool                    enable;
+    };
+
 private:
     
     ciLibXtract( audio::Input source );
@@ -62,32 +74,47 @@ private:
 
     void updateCallbacks();
     
+    bool featureDependsOn( xtract_features_ this_feature, xtract_features_ test_feature );
+    
     // ------------------------------------ //
     //              Callbacks               //
     // ------------------------------------ //
     
 private:
     
+    void updateMean();
+    void updateVariance();
+    void updateStandardDeviation();
+    void updateAverageDeviation();
+    void updateSkewness();
+    void updateKurtosis();
+    void updateSpectralMean();
+    void updateSpectralVariance();
+    void updateSpectralStandardDeviation();
+    
+    
     void updateSpectrum();
     
     
 private:
-
-    struct FeatureCallback {
-        std::string             name;
-        std::function<void()>   cb;
-        int                     count;
-    };
     
     ci::audio::Input                            mInputSource;
 	audio::PcmBuffer32fRef                      mPcmBuffer;
     std::shared_ptr<double>                     mPcmData;
     std::shared_ptr<double>                     mSpectrum;
     
+    double                                      mMean;
+    double                                      mVariance;
+    double                                      mStandardDeviation;
+    
+    
+    
     std::map<xtract_features_,FeatureCallback>  mCallbacks;
     std::map<std::string,double>                mParams;
     
     double                                      _argd[4];
+    
+    ci::gl::TextureFontRef                      mFontSmall;
     
 };
 

@@ -51,4 +51,7 @@ dependencies: \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../../../boost/boost/preprocessor/punctuation/paren.hpp \
   ../../../../../boost/boost/preprocessor/seq/detail/binary_transform.hpp \
   ../../../../../boost/boost/preprocessor/seq/to_tuple.hpp \
-  ../../../../../boost/boost/preprocessor/seq/transform.hpp
+  ../../../../../boost/boost/preprocessor/seq/transform.hpp \
+  ../../../../../include/cinder/gl/TextureFont.h \
+  ../../../../../include/cinder/Text.h \
+  ../../../../../include/cinder/gl/Texture.h

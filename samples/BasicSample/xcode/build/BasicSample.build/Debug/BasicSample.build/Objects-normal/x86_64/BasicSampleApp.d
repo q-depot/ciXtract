@@ -1,6 +1,9 @@
 dependencies: \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../src/BasicSampleApp.cpp \
   ../../../../../include/cinder/app/AppNative.h \
+  ../../../../../include/cinder/gl/TextureFont.h \
+  ../../../../../include/cinder/Text.h \
+  ../../../../../include/cinder/gl/Texture.h \
   ../../../../../include/cinder/params/Params.h \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/ciLibXtract.h \
   /Users/Q/Code/Cinder/blocks/ciLibXtract/samples/BasicSample/xcode/../../../src/xtract/libxtract.h \
