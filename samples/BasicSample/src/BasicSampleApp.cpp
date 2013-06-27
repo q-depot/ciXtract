@@ -148,10 +148,15 @@ void BasicSampleApp::draw()
         
         else if ( it->first == XTRACT_AUTOCORRELATION_FFT )
         {
-            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), PCM_SIZE, f.enable, 500.0f, vectorDataOffset, true );
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), PCM_SIZE, f.enable, 1.0f, vectorDataOffset, true );
             vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
         }
         
+        else if ( it->first == XTRACT_SUBBANDS )
+        {
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), SUBBANDS_N, f.enable, 500.0f, vectorDataOffset, true );
+            vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
+        }
         
         if ( scalarDataOffset.y > getWindowHeight() - 45 )
         {

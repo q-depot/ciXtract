@@ -42,6 +42,7 @@ void ciLibXtract::init()
     mHarmonicSpectrum   = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     mAutocorrelation    = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     mAutocorrelationFft = std::shared_ptr<double>( new double[ PCM_SIZE ] );
+    mSubBands           = std::shared_ptr<double>( new double[ SUBBANDS_N ] );
     
     for( size_t k=0; k < PCM_SIZE; k++ )
     {
@@ -52,6 +53,9 @@ void ciLibXtract::init()
         mAutocorrelation.get()[k]       = 0.0f;
         mAutocorrelationFft.get()[k]    = 0.0f;
     }
+    
+    for( size_t k=0; k < SUBBANDS_N; k++ )
+        mSubBands.get()[k] = 0.0f;
     
     xtract_init_fft( PCM_SIZE << 1, XTRACT_SPECTRUM );
     xtract_init_fft( PCM_SIZE << 1, XTRACT_AUTOCORRELATION_FFT );
@@ -124,6 +128,9 @@ void ciLibXtract::init()
     mCallbacks[XTRACT_AUTOCORRELATION_FFT]      = { "XTRACT_AUTOCORRELATION_FFT", std::bind( &ciLibXtract::updateAutoCorrelationFft, this ), false, VECTOR_FEATURE, { } };
     
     mCallbacks[XTRACT_PEAK_SPECTRUM]            = { "XTRACT_PEAK_SPECTRUM", std::bind( &ciLibXtract::updatePeakSpectrum, this ), false, VECTOR_FEATURE,
+                                                { XTRACT_SPECTRUM } };
+    
+    mCallbacks[XTRACT_SUBBANDS]                 = { "XTRACT_SUBBANDS", std::bind( &ciLibXtract::updateSubBands, this ), false, VECTOR_FEATURE,
                                                 { XTRACT_SPECTRUM } };
     
     mCallbacks[XTRACT_F0]                       = { "XTRACT_F0", std::bind( &ciLibXtract::updateF0, this ), false, SCALAR_FEATURE,
@@ -353,6 +360,9 @@ std::shared_ptr<double> ciLibXtract::getVectorFeature( xtract_features_ feature 
     
     else if ( feature == XTRACT_AUTOCORRELATION_FFT )
         return mAutocorrelationFft;
+    
+    else if ( feature == XTRACT_SUBBANDS )
+        return mSubBands;
     
     else
     {
@@ -614,3 +624,8 @@ void ciLibXtract::updateAutoCorrelationFft()
     xtract_autocorrelation_fft( mPcmData.get(), PCM_SIZE, NULL, mAutocorrelationFft.get() );
 }
 
+void ciLibXtract::updateSubBands()
+{
+    int argd[4] = { XTRACT_MEAN, SUBBANDS_N, XTRACT_OCTAVE_SUBBANDS, 5 };       // { XTRACT_SUM, ...  XTRACT_OCTAVE_SUBBANDS,    XTRACT_LINEAR_SUBBANDS
+    xtract_subbands( mSpectrum.get(), PCM_SIZE >> 1, argd, mSubBands.get() );
+}

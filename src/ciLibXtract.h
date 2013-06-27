@@ -30,7 +30,7 @@ using namespace std;
 #define MFCC_FREQ_BANDS     13
 #define MFCC_FREQ_MIN       20
 #define MFCC_FREQ_MAX       20000
-//#define SUB_BANDS           32
+#define SUBBANDS_N          32
 
 
 class ciLibXtract;
@@ -152,13 +152,13 @@ private:
     void updateBarkCoefficients();
     void updatePeakSpectrum();
     void updateHarmonicSpectrum();
+    void updateSubBands();
     
     //     void updateDct();
     //     void updateAmdf();
     //     void updateAsdf();
     //    void updateLpc();
 //    void updateLpcc();
-//    void updateSubbands();
 //    
 //    void updateWindowed();
 
@@ -179,6 +179,7 @@ private:
     std::shared_ptr<double>                     mBarks;
     std::shared_ptr<double>                     mAutocorrelation;
     std::shared_ptr<double>                     mAutocorrelationFft;
+    std::shared_ptr<double>                     mSubBands;
     
     std::shared_ptr<int>                        mBarkBandLimits;
 
