@@ -119,30 +119,30 @@ void BasicSampleApp::draw()
         
         if ( f.type == ciLibXtract::SCALAR_FEATURE )
         {
-            drawScalarData( name, mLibXtract->getScalarFeature( it->first ), f.enable, 500.0f, scalarDataOffset, true );
+            drawScalarData( name, mLibXtract->getScalarFeature( it->first ), f.enable, 1.0f, scalarDataOffset, true );
             scalarDataOffset += Vec2f( 0, margin );
         }
         else if ( it->first == XTRACT_SPECTRUM || it->first == XTRACT_PEAK_SPECTRUM || it->first == XTRACT_HARMONIC_SPECTRUM )
         {
-            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), fftSize, f.enable, 500.0f, vectorDataOffset, true );
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), fftSize, f.enable, 1.0f, vectorDataOffset, true );
             vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
         }
         
         else if ( it->first == XTRACT_BARK_COEFFICIENTS )
         {
-            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), XTRACT_BARK_BANDS, f.enable, 500.0f, vectorDataOffset, true );
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), XTRACT_BARK_BANDS, f.enable, 1.0f, vectorDataOffset, true );
             vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
         }
         
         else if ( it->first == XTRACT_MFCC )
         {
-            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), MFCC_FREQ_BANDS, f.enable, 500.0f, vectorDataOffset, true );
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), MFCC_FREQ_BANDS, f.enable, 1.0f, vectorDataOffset, true );
             vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
         }
         
         else if ( it->first == XTRACT_AUTOCORRELATION )
         {
-            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), PCM_SIZE, f.enable, 500.0f, vectorDataOffset, true );
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), PCM_SIZE, f.enable, 1.0f, vectorDataOffset, true );
             vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
         }
         
@@ -154,7 +154,7 @@ void BasicSampleApp::draw()
         
         else if ( it->first == XTRACT_SUBBANDS )
         {
-            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), SUBBANDS_N, f.enable, 500.0f, vectorDataOffset, true );
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), SUBBANDS_N, f.enable, 1.0f, vectorDataOffset, true );
             vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
         }
         

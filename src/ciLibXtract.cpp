@@ -493,7 +493,7 @@ void ciLibXtract::updateFlatness()
 
 void ciLibXtract::updateFlatnessDb()
 {
-    xtract_flatness( NULL, 0, &mScalarValues[XTRACT_FLATNESS], &mScalarValues[XTRACT_FLATNESS_DB] );
+    xtract_flatness_db( NULL, 0, &mScalarValues[XTRACT_FLATNESS], &mScalarValues[XTRACT_FLATNESS_DB] );
 }
 
 void ciLibXtract::updateTonality()
@@ -626,6 +626,6 @@ void ciLibXtract::updateAutoCorrelationFft()
 
 void ciLibXtract::updateSubBands()
 {
-    int argd[4] = { XTRACT_MEAN, SUBBANDS_N, XTRACT_OCTAVE_SUBBANDS, 5 };       // { XTRACT_SUM, ...  XTRACT_OCTAVE_SUBBANDS,    XTRACT_LINEAR_SUBBANDS
+    int argd[4] = { XTRACT_MEAN, SUBBANDS_N, XTRACT_LINEAR_SUBBANDS, 5 };       // { XTRACT_SUM, ...  XTRACT_OCTAVE_SUBBANDS,    XTRACT_LINEAR_SUBBANDS
     xtract_subbands( mSpectrum.get(), PCM_SIZE >> 1, argd, mSubBands.get() );
 }
