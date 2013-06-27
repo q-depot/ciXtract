@@ -103,7 +103,7 @@ void BasicSampleApp::draw()
     
     int fftSize = PCM_SIZE >> 1;
     
-    Rectf r( 430, 15, 720, 100 );
+    Rectf r( 460, 15, 720, 100 );
     drawVectorData( "Spectrum",         mLibXtract->getVectorFeature( XTRACT_SPECTRUM ),        fftSize, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
     drawVectorData( "Peak Spectrum",    mLibXtract->getVectorFeature( XTRACT_PEAK_SPECTRUM ),   fftSize, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
     drawVectorData( "Barks",            mLibXtract->getVectorFeature( XTRACT_BARK_COEFFICIENTS ),XTRACT_BARK_BANDS, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
