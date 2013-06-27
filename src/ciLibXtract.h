@@ -51,7 +51,7 @@ public:
     
     void disableFeature( xtract_features_ feature );
     
-    void debug();
+    void toggleFeature( xtract_features_ feature );
     
     std::shared_ptr<double> getVectorFeature( xtract_features_ feature );
     

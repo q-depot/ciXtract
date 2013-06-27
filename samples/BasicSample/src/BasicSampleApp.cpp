@@ -241,14 +241,13 @@ void BasicSampleApp::initGui()
     mParams->addSeparator();
     
     std::map<xtract_features_,ciLibXtract::FeatureCallback>::iterator it;
+    string name;
     
-    mParams->addText( "Enable" );
     for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
-        mParams->addButton( "on_" + it->second.name, std::bind( &ciLibXtract::enableFeature, mLibXtract, it->first ) );
-    
-    mParams->addText( "Disable" );
-    for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
-        mParams->addButton( "off_" + it->second.name, std::bind( &ciLibXtract::disableFeature, mLibXtract, it->first ) );
+    {
+        name = it->second.name; name.erase( name.begin(), name.begin()+7 );
+        mParams->addButton( name, std::bind( &ciLibXtract::toggleFeature, mLibXtract, it->first ) );
+    }
 }
 
 

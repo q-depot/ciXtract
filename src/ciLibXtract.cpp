@@ -279,19 +279,6 @@ void ciLibXtract::updateCallbacks()
 }
 
 
-void ciLibXtract::debug()
-{
-    Vec2f offset = Vec2f( 515, 25 );
-    
-    std::map<xtract_features_,FeatureCallback>::iterator it;
-    for( it = mCallbacks.begin(); it!=mCallbacks.end(); ++it )
-    {
-        mFontSmall->drawString( to_string( it->second.enable ) + "\t" + it->second.name, offset );
-        offset += Vec2f( 0, 15 );
-    }
-}
-
-
 void ciLibXtract::enableFeature( xtract_features_ feature )
 {
     mCallbacks[feature].enable = true;
@@ -313,6 +300,15 @@ void ciLibXtract::disableFeature( xtract_features_ feature )
         if ( featureDependsOn( it->first, feature ) )
             disableFeature( it->first );
     }
+}
+
+
+void ciLibXtract::toggleFeature( xtract_features_ feature )
+{
+    if ( mCallbacks[feature].enable )
+        disableFeature( feature );
+    else
+        enableFeature( feature );
 }
 
 
