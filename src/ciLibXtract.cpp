@@ -100,7 +100,6 @@ void ciLibXtract::init()
     mParams["spectrum_type"]            = XTRACT_MAGNITUDE_SPECTRUM;    // XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
     mParams["spectrum_dc"]              = 0.0f;
     mParams["spectrum_norm"]            = 0.0f;
-    
     mParams["peak_spectrum_threshold"]  = 0.3f;
     
 // ----------------- //
@@ -108,7 +107,8 @@ void ciLibXtract::init()
 // ----------------- //
     
     // TODO
-    // FIX THE ORDER!!!!!!!    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    // FIX THE ORDER!!!!!!!  std::map doesn't sort the callbacks as below!
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     // .....................................................
     
     mCallbacks[XTRACT_SPECTRUM]                 = { "XTRACT_SPECTRUM", std::bind( &ciLibXtract::updateSpectrum, this ), false, VECTOR_FEATURE, { } };
@@ -587,7 +587,6 @@ void ciLibXtract::updateHarmonicSpectrum()
     double data[2] = { mScalarValues[XTRACT_F0], 0.3f };
     xtract_harmonic_spectrum( mPeakSpectrum.get(), PCM_SIZE >> 1, data, mHarmonicSpectrum.get() );
 }
-
 
 void ciLibXtract::updateMfcc()
 {
