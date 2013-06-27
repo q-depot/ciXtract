@@ -63,28 +63,17 @@ public:
     
 public:
     
-    static std::map<xtract_features_,std::vector<xtract_features_>> xtract_features_dependencies;
-    
-    
     enum FeatureType {
         VECTOR_FEATURE,
         SCALAR_FEATURE
     };
     
-    struct FeatureParams {
-        double      *data;
-        int         N,
-        void        *argv,
-        double      *result
-    };
-    
-    
     struct FeatureCallback {
-        std::string             name;
-        std::function<void()>   cb;
-        bool                    enable;
-        FeatureType             type;
-        FeatureParams           params;
+        std::string                     name;
+        std::function<void()>           cb;
+        bool                            enable;
+        FeatureType                     type;
+        std::vector<xtract_features_>   dependencies;
     };
 
 private:
