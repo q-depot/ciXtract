@@ -65,10 +65,26 @@ public:
     
     static std::map<xtract_features_,std::vector<xtract_features_>> xtract_features_dependencies;
     
+    
+    enum FeatureType {
+        VECTOR_FEATURE,
+        SCALAR_FEATURE
+    };
+    
+    struct FeatureParams {
+        double      *data;
+        int         N,
+        void        *argv,
+        double      *result
+    };
+    
+    
     struct FeatureCallback {
         std::string             name;
         std::function<void()>   cb;
         bool                    enable;
+        FeatureType             type;
+        FeatureParams           params;
     };
 
 private:
@@ -78,6 +94,8 @@ private:
     void init();
 
     void updateCallbacks();
+    
+    void xtractFeature( xtract_features_ feature );
     
     bool featureDependsOn( xtract_features_ this_feature, xtract_features_ test_feature );
     
@@ -123,11 +141,11 @@ private:
     
     
     
-//    void updateSpectralSlope();
-//    void updateLowestValue();
-//    void updateHighestValue();
-//    void updateSum();
-//    void updateNonZeroCount();
+    void updateSpectralSlope();
+    void updateLowestValue();
+    void updateHighestValue();
+    void updateSum();
+    void updateNonZeroCount();
 //    void updateHps();
     void updateF0();
 //    void updateFailsafeF0();
