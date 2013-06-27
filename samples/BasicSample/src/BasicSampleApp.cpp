@@ -35,6 +35,8 @@ public:
     
     void initGui();
     
+    void toggleAllFeatures( bool enable );
+    
     audio::Input            mInput;
     ciLibXtractRef          mLibXtract;
     
@@ -240,6 +242,11 @@ void BasicSampleApp::initGui()
     
     mParams->addSeparator();
     
+    mParams->addButton( "ALL ON", std::bind( &BasicSampleApp::toggleAllFeatures, this, true ) );
+    mParams->addButton( "ALL OFF", std::bind( &BasicSampleApp::toggleAllFeatures, this, false ) );
+    
+    mParams->addSeparator();
+    
     std::map<xtract_features_,ciLibXtract::FeatureCallback>::iterator it;
     string name;
     
@@ -250,6 +257,16 @@ void BasicSampleApp::initGui()
     }
 }
 
+
+void BasicSampleApp::toggleAllFeatures( bool enable )
+{
+    std::map<xtract_features_,ciLibXtract::FeatureCallback>::iterator it;
+    for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
+        if ( enable )
+            mLibXtract->enableFeature( it->first );
+        else
+            mLibXtract->disableFeature( it->first );
+}
 
 CINDER_APP_NATIVE( BasicSampleApp, RendererGl )
 
