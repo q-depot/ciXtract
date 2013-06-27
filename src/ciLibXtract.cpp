@@ -40,6 +40,7 @@ void ciLibXtract::init()
     mSpectrum           = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     mPeakSpectrum       = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     mHarmonicSpectrum   = std::shared_ptr<double>( new double[ PCM_SIZE ] );
+    mAutocorrelation    = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     
     for( size_t k=0; k < PCM_SIZE; k++ )
     {
@@ -47,6 +48,7 @@ void ciLibXtract::init()
         mSpectrum.get()[k]          = 0.0f;
         mPeakSpectrum.get()[k]      = 0.0f;
         mHarmonicSpectrum.get()[k]  = 0.0f;
+        mAutocorrelation.get()[k]   = 0.0f;
     }
     
     xtract_init_fft( PCM_SIZE << 1, XTRACT_SPECTRUM );
@@ -342,6 +344,9 @@ std::shared_ptr<double> ciLibXtract::getVectorFeature( xtract_features_ feature 
     else if ( feature == XTRACT_MFCC )
         return mMfccs;
     
+    else if ( feature == XTRACT_AUTOCORRELATION )
+        return mAutocorrelation;
+    
     else
     {
         console() << "getVectorFeature() feature not found! " << feature << endl;
@@ -591,5 +596,10 @@ void ciLibXtract::updateHarmonicSpectrum()
 void ciLibXtract::updateMfcc()
 {
     xtract_mfcc( mSpectrum.get(), PCM_SIZE >> 1, &mMelFilters, mMfccs.get() );
+}
+
+void ciLibXtract::updateAutocorrelation()
+{
+    xtract_autocorrelation( mPcmData.get(), PCM_SIZE, NULL, mAutocorrelation.get() );
 }
 

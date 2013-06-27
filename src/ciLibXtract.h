@@ -151,7 +151,7 @@ private:
 //    void updateAutoCorrelationFft();
     void updateMfcc();
 //     void updateDct();
-//     void updateAutocorrelation();
+     void updateAutocorrelation();
 //     void updateAmdf();
 //     void updateAsdf();
      void updateBarkCoefficients();
@@ -179,6 +179,7 @@ private:
     std::shared_ptr<double>                     mPeakSpectrum;
     std::shared_ptr<double>                     mHarmonicSpectrum;
     std::shared_ptr<double>                     mBarks;
+    std::shared_ptr<double>                     mAutocorrelation;
     
     std::shared_ptr<int>                        mBarkBandLimits;
 
