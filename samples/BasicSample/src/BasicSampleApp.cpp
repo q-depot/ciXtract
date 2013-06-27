@@ -29,9 +29,9 @@ public:
 	void update();
 	void draw();
     
-    void drawVectorData( string label, std::shared_ptr<double> data, int N, float gain, Rectf rect, bool clamp );
+    void drawVectorData( string label, std::shared_ptr<double> data, int N, bool enable, float gain, Rectf rect, bool clamp );
     
-    void drawScalarData( string label, double val, float gain, Vec2f pos, bool clamp );
+    void drawScalarData( string label, double val, bool enable, float gain, Vec2f pos, bool clamp );
     
     void initGui();
     
@@ -39,8 +39,6 @@ public:
     ciLibXtractRef          mLibXtract;
     
     params::InterfaceGlRef  mParams;
-    
-    bool                    mDebug;
     
     gl::TextureFontRef      mFontSmall;
     
@@ -76,11 +74,11 @@ void BasicSampleApp::setup()
     for( auto k=0; k < XTRACT_FEATURES; k++ )
         mGain[k] = 1.0f;
     
-    mDebug  = true;
-    
     initGui();
     
     mFontSmall = gl::TextureFont::create( Font( "Helvetica", 12 ) );
+
+//    setFullScreen(true, FullScreenOptions().kioskMode() );
 }
 
 
@@ -103,70 +101,65 @@ void BasicSampleApp::draw()
     
     int fftSize = PCM_SIZE >> 1;
     
-    Rectf r( 460, 15, 720, 100 );
-    drawVectorData( "Spectrum",         mLibXtract->getVectorFeature( XTRACT_SPECTRUM ),        fftSize, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
-    drawVectorData( "Peak Spectrum",    mLibXtract->getVectorFeature( XTRACT_PEAK_SPECTRUM ),   fftSize, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
-    drawVectorData( "Barks",            mLibXtract->getVectorFeature( XTRACT_BARK_COEFFICIENTS ),XTRACT_BARK_BANDS, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
-    drawVectorData( "Harmonic Spectrum",mLibXtract->getVectorFeature( XTRACT_HARMONIC_SPECTRUM ),fftSize, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
-    drawVectorData( "Mffcs",            mLibXtract->getVectorFeature( XTRACT_MFCC ),            MFCC_FREQ_BANDS, 500.0f, r, true );    r += Vec2f( 0, 15 + r.getHeight() );
     
-    Vec2f scalarPos( 15, 15 );
+    
+    std::map<xtract_features_,ciLibXtract::FeatureCallback>::iterator it;
+    ciLibXtract::FeatureCallback f;
+    
+    Vec2f scalarDataOffset( 25, 15 );
     float margin = 35;
+    string name;
+    Rectf vectorDataOffset( 480, 15, 760, 100 );
+    for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
+    {
+        f = it->second;
+        name = f.name; name.erase( name.begin(), name.begin() + 7 );
+        
+        if ( f.type == ciLibXtract::SCALAR_FEATURE )
+        {
+            drawScalarData( name, mLibXtract->getScalarFeature( it->first ), f.enable, 500.0f, scalarDataOffset, true );
+            scalarDataOffset += Vec2f( 0, margin );
+        }
+        else if ( it->first == XTRACT_SPECTRUM || it->first == XTRACT_PEAK_SPECTRUM || it->first == XTRACT_HARMONIC_SPECTRUM )
+        {
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), fftSize, f.enable, 500.0f, vectorDataOffset, true );
+            vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
+        }
+        
+        else if ( it->first == XTRACT_BARK_COEFFICIENTS )
+        {
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), XTRACT_BARK_BANDS, f.enable, 500.0f, vectorDataOffset, true );
+            vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
+        }
+        
+        else if ( it->first == XTRACT_MFCC )
+        {
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), MFCC_FREQ_BANDS, f.enable, 500.0f, vectorDataOffset, true );
+            vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
+        }
+        
+        
+        if ( scalarDataOffset.y > getWindowHeight() - 45 )
+        {
+            scalarDataOffset.y = 25;
+            scalarDataOffset.x += 230;
+        }
+    }
     
-    drawScalarData( "Mean", mLibXtract->getScalarFeature( XTRACT_MEAN ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Variance", mLibXtract->getScalarFeature( XTRACT_VARIANCE ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Standard deviation", mLibXtract->getScalarFeature( XTRACT_STANDARD_DEVIATION ), 500.0f, scalarPos, true );             scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Average deviation", mLibXtract->getScalarFeature( XTRACT_AVERAGE_DEVIATION ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Skewness", mLibXtract->getScalarFeature( XTRACT_SKEWNESS ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Kurtosis", mLibXtract->getScalarFeature( XTRACT_KURTOSIS ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral mean", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_MEAN ), 500.0f, scalarPos, true );                       scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral variance", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_VARIANCE ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral standard deviation deviation", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_STANDARD_DEVIATION ), 500.0f, scalarPos, true );     scalarPos += Vec2f( 0, margin );    
-    drawScalarData( "Spectral skewness", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_SKEWNESS ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral kurtosis", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_KURTOSIS ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral centroid", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_CENTROID ), 500.0f, scalarPos, true );               scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Irregularity K", mLibXtract->getScalarFeature( XTRACT_IRREGULARITY_K ), 500.0f, scalarPos, true );                     scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Irregularity J", mLibXtract->getScalarFeature( XTRACT_IRREGULARITY_J ), 500.0f, scalarPos, true );                     scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Smoothness", mLibXtract->getScalarFeature( XTRACT_SMOOTHNESS ), 500.0f, scalarPos, true );                             scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spread", mLibXtract->getScalarFeature( XTRACT_SPREAD ), 500.0f, scalarPos, true );                                     scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Zcr", mLibXtract->getScalarFeature( XTRACT_ZCR  ), 500.0f, scalarPos, true );                                          scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Rolloff", mLibXtract->getScalarFeature( XTRACT_ROLLOFF ), 500.0f, scalarPos, true );                                   scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Flatness", mLibXtract->getScalarFeature( XTRACT_FLATNESS ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Flatness Db", mLibXtract->getScalarFeature( XTRACT_FLATNESS_DB ), 500.0f, scalarPos, true );                           scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Tonality", mLibXtract->getScalarFeature( XTRACT_TONALITY ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
-    drawScalarData( "RMX amplitude", mLibXtract->getScalarFeature( XTRACT_RMS_AMPLITUDE ), 500.0f, scalarPos, true );                       scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Power", mLibXtract->getScalarFeature( XTRACT_POWER ), 500.0f, scalarPos, true );                                       scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Sharpness", mLibXtract->getScalarFeature( XTRACT_SHARPNESS ), 500.0f, scalarPos, true );                               scalarPos += Vec2f( 0, margin );
-    
-    scalarPos = Vec2f( 230, 15 );
-    drawScalarData( "Loudness", mLibXtract->getScalarFeature( XTRACT_LOUDNESS ), 500.0f, scalarPos, true );                                 scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Spectral Inhamonicity", mLibXtract->getScalarFeature( XTRACT_SPECTRAL_INHARMONICITY ), 500.0f, scalarPos, true );      scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Odd even ratio", mLibXtract->getScalarFeature( XTRACT_ODD_EVEN_RATIO ), 500.0f, scalarPos, true );                     scalarPos += Vec2f( 0, margin );
-    drawScalarData( "F0", mLibXtract->getScalarFeature( XTRACT_F0 ), 500.0f, scalarPos, true );                                             scalarPos += Vec2f( 0, margin );
-    drawScalarData( "Tristimulus 1", mLibXtract->getScalarFeature( XTRACT_TRISTIMULUS_1 ), 500.0f, scalarPos, true );                       scalarPos += Vec2f( 0, margin );
-    
-    //    drawScalarData( "Crest", mLibXtract->getScalarFeature( XTRACT_CREST ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
-    //    drawScalarData( "Noisiness", mLibXtract->getScalarFeature( XTRACT_NOISINESS ), 500.0f, scalarPos, true );                                         scalarPos += Vec2f( 0, margin );
-    
-    
-    
-    
-    
-    
-    if ( mDebug )
-        mLibXtract->debug();
     
     mParams->draw();
 }
 
 
-void BasicSampleApp::drawVectorData( string label, std::shared_ptr<double> data, int N, float gain, Rectf rect, bool clamp )
+void BasicSampleApp::drawVectorData( string label, std::shared_ptr<double> data, int N, bool enable, float gain, Rectf rect, bool clamp )
 {
     int padding = 5;
     
+    Color col = enable ? Color::white() : Color::gray(0.5f);
+    
     glPushMatrix();
     
-    gl::color( ColorA( 0.3f, 0.3f, 0.4f, 0.15f ) );
+    gl::color( col * 0.2f );
     gl::drawSolidRect( rect );
     
     rect.inflate( - Vec2i::one() * padding );
@@ -184,30 +177,29 @@ void BasicSampleApp::drawVectorData( string label, std::shared_ptr<double> data,
         if ( clamp )
             barY = math<float>::clamp( barY, 0.0f, h );
         
-        gl::color( Color::white() );
+        gl::color( col );
         glVertex2f( i * step,           h );
         glVertex2f( ( i + 1 ) * step,   h );
-        
-        gl::color( Color::white() + Color( (float)i / (float)N, 0.0f, 1.0f - (float)i / (float)N ) );
         glVertex2f( ( i + 1 ) * step,   h-barY );
         glVertex2f( i * step,           h-barY );
-		
 	}
     
     glEnd();
     
-    gl::color( Color::white() );
+    gl::color( col );
     mFontSmall->drawString( label, Vec2f( 5, 10 ) );
     
     gl::popMatrices();
 }
 
 
-void BasicSampleApp::drawScalarData( string label, double val, float gain, Vec2f pos, bool clamp )
+void BasicSampleApp::drawScalarData( string label, double val, bool enable, float gain, Vec2f pos, bool clamp )
 {
     float h         = 5;
     float w         = 200;
     float margin    = 10;
+    
+    Color col = enable ? Color::white() : Color::gray(0.5f);
     
     val *= gain;
     
@@ -218,18 +210,18 @@ void BasicSampleApp::drawScalarData( string label, double val, float gain, Vec2f
     
     gl::translate( pos );
     
-    gl::color( Color::white() );
+    gl::color( col );
     mFontSmall->drawString( label, Vec2f::zero() );
     
     glBegin( GL_QUADS );
     
-    gl::color( Color::gray(0.2f) );
+    gl::color( col * 0.1f );
     glVertex2f( 0, margin );
     glVertex2f( w, margin );
     glVertex2f( w, margin + h );
     glVertex2f( 0, margin + h );
     
-    gl::color( Color::gray(0.8f) );
+    gl::color( col );
     glVertex2f( 0, margin );
     glVertex2f( w * val, margin );
     glVertex2f( w * val, margin + h );
@@ -245,8 +237,6 @@ void BasicSampleApp::initGui()
 {
     mParams = params::InterfaceGl::create( "Params", Vec2f( 350, getWindowHeight() - 45 ) );
     mParams->setOptions( "", "position='" + toString( getWindowWidth() - 380 ) + " " + toString( 15 ) + "'");
-    
-    mParams->addParam( "Debug", &mDebug );
     
     mParams->addSeparator();
     
