@@ -41,17 +41,21 @@ void ciLibXtract::init()
     mPeakSpectrum       = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     mHarmonicSpectrum   = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     mAutocorrelation    = std::shared_ptr<double>( new double[ PCM_SIZE ] );
+    mAutocorrelationFft = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     
     for( size_t k=0; k < PCM_SIZE; k++ )
     {
-        mPcmData.get()[k]           = 0.0f;
-        mSpectrum.get()[k]          = 0.0f;
-        mPeakSpectrum.get()[k]      = 0.0f;
-        mHarmonicSpectrum.get()[k]  = 0.0f;
-        mAutocorrelation.get()[k]   = 0.0f;
+        mPcmData.get()[k]               = 0.0f;
+        mSpectrum.get()[k]              = 0.0f;
+        mPeakSpectrum.get()[k]          = 0.0f;
+        mHarmonicSpectrum.get()[k]      = 0.0f;
+        mAutocorrelation.get()[k]       = 0.0f;
+        mAutocorrelationFft.get()[k]    = 0.0f;
     }
     
     xtract_init_fft( PCM_SIZE << 1, XTRACT_SPECTRUM );
+    xtract_init_fft( PCM_SIZE << 1, XTRACT_AUTOCORRELATION_FFT );
+    
 //    xtract_init_fft( PCM_SIZE, XTRACT_SPECTRUM );
     
     
@@ -114,6 +118,10 @@ void ciLibXtract::init()
     // .....................................................
     
     mCallbacks[XTRACT_SPECTRUM]                 = { "XTRACT_SPECTRUM", std::bind( &ciLibXtract::updateSpectrum, this ), false, VECTOR_FEATURE, { } };
+    
+    mCallbacks[XTRACT_AUTOCORRELATION]          = { "XTRACT_AUTOCORRELATION", std::bind( &ciLibXtract::updateAutoCorrelation, this ), false, VECTOR_FEATURE, { } };
+    
+    mCallbacks[XTRACT_AUTOCORRELATION_FFT]      = { "XTRACT_AUTOCORRELATION_FFT", std::bind( &ciLibXtract::updateAutoCorrelationFft, this ), false, VECTOR_FEATURE, { } };
     
     mCallbacks[XTRACT_PEAK_SPECTRUM]            = { "XTRACT_PEAK_SPECTRUM", std::bind( &ciLibXtract::updatePeakSpectrum, this ), false, VECTOR_FEATURE,
                                                 { XTRACT_SPECTRUM } };
@@ -239,7 +247,7 @@ void ciLibXtract::init()
 //    mCallbacks[XTRACT_ATTACK_TIME]                  = { "XTRACT_ATTACK_TIME", std::bind( &ciLibXtract::updateAttackTime, this ), false };
 //    mCallbacks[XTRACT_DECAY_TIME]                   = { "XTRACT_DECAY_TIME", std::bind( &ciLibXtract::updateDecayTime, this ), false };
 //    mCallbacks[XTRACT_DIFFERENCE_VECTOR]            = { "XTRACT_DIFFERENCE_VECTOR", std::bind( &ciLibXtract::updateDifferenceVector, this ), false };
-//    mCallbacks[XTRACT_AUTOCORRELATION]              = { "XTRACT_AUTOCORRELATION", std::bind( &ciLibXtract::updateAutocorrelation, this ), false };
+
 //    mCallbacks[XTRACT_AMDF]                         = { "XTRACT_AMDF", std::bind( &ciLibXtract::updateAmdf, this ), false };
 //    mCallbacks[XTRACT_ASDF]                         = { "XTRACT_ASDF", std::bind( &ciLibXtract::updateAsdf, this ), false };
 //    mCallbacks[XTRACT_LPC]                          = { "XTRACT_LPC", std::bind( &ciLibXtract::updateLpc, this ), false };
@@ -343,12 +351,14 @@ std::shared_ptr<double> ciLibXtract::getVectorFeature( xtract_features_ feature 
     else if ( feature == XTRACT_AUTOCORRELATION )
         return mAutocorrelation;
     
+    else if ( feature == XTRACT_AUTOCORRELATION_FFT )
+        return mAutocorrelationFft;
+    
     else
     {
         console() << "getVectorFeature() feature not found! " << feature << endl;
         exit(-1);
     }
-//    return std::shared_ptr<double>();
 }
 
 
@@ -594,8 +604,13 @@ void ciLibXtract::updateMfcc()
     xtract_mfcc( mSpectrum.get(), PCM_SIZE >> 1, &mMelFilters, mMfccs.get() );
 }
 
-void ciLibXtract::updateAutocorrelation()
+void ciLibXtract::updateAutoCorrelation()
 {
     xtract_autocorrelation( mPcmData.get(), PCM_SIZE, NULL, mAutocorrelation.get() );
+}
+
+void ciLibXtract::updateAutoCorrelationFft()
+{
+    xtract_autocorrelation_fft( mPcmData.get(), PCM_SIZE, NULL, mAutocorrelationFft.get() );
 }
 

@@ -140,6 +140,18 @@ void BasicSampleApp::draw()
             vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
         }
         
+        else if ( it->first == XTRACT_AUTOCORRELATION )
+        {
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), PCM_SIZE, f.enable, 500.0f, vectorDataOffset, true );
+            vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
+        }
+        
+        else if ( it->first == XTRACT_AUTOCORRELATION_FFT )
+        {
+            drawVectorData( name, mLibXtract->getVectorFeature( it->first ), PCM_SIZE, f.enable, 500.0f, vectorDataOffset, true );
+            vectorDataOffset += Vec2f( 0, 15 + vectorDataOffset.getHeight() );
+        }
+        
         
         if ( scalarDataOffset.y > getWindowHeight() - 45 )
         {

@@ -135,30 +135,28 @@ private:
     void updateHighestValue();
     void updateSum();
     void updateNonZeroCount();
-//    void updateHps();
     void updateF0();
+    
 //    void updateFailsafeF0();
 //    void updateLnorm();
 //    void updateFlux();
 //    void updateAttackTime();
 //    void updateDecayTime();
 //    void updateDifferenceVector();
-
+//    void updateHps();
     
     void updateSpectrum();
-    
-
-//    void updateAutoCorrelationFft();
+    void updateAutoCorrelationFft();
+    void updateAutoCorrelation();
     void updateMfcc();
-//     void updateDct();
-     void updateAutocorrelation();
-//     void updateAmdf();
-//     void updateAsdf();
-     void updateBarkCoefficients();
-//
+    void updateBarkCoefficients();
     void updatePeakSpectrum();
     void updateHarmonicSpectrum();
-//    void updateLpc();
+    
+    //     void updateDct();
+    //     void updateAmdf();
+    //     void updateAsdf();
+    //    void updateLpc();
 //    void updateLpcc();
 //    void updateSubbands();
 //    
@@ -180,6 +178,7 @@ private:
     std::shared_ptr<double>                     mHarmonicSpectrum;
     std::shared_ptr<double>                     mBarks;
     std::shared_ptr<double>                     mAutocorrelation;
+    std::shared_ptr<double>                     mAutocorrelationFft;
     
     std::shared_ptr<int>                        mBarkBandLimits;
 
