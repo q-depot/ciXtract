@@ -118,7 +118,7 @@ void GwenSampleApp::update()
 void GwenSampleApp::draw()
 {
 	// clear out the window with black
-	gl::clear( Color( 0, 0, 0 ) );
+	gl::clear( Color( 0.93f, 0.94f, 0.95f ) );
     gl::enableAlphaBlending();
     
     int fftSize = PCM_SIZE >> 1;
