@@ -181,7 +181,7 @@ void GwenSampleApp::draw()
         }
     }
     
-//	mCanvas->RenderCanvas();
+	mCanvas->RenderCanvas();
     
     mParams->draw();
 }
@@ -271,7 +271,6 @@ void GwenSampleApp::drawScalarData( string label, double val, bool enable, float
 
 void GwenSampleApp::initGui()
 {
-    /*
     // TODO: find a better way.. WTF is this for?
 	fs::path rootPath = getAppPath().parent_path().parent_path().parent_path().parent_path().parent_path().parent_path();
 	addAssetDirectory( rootPath / "assets" );
@@ -283,9 +282,9 @@ void GwenSampleApp::initGui()
 	skin->Init( "DefaultSkin.png" );
     
 	mCanvas = new Gwen::Controls::Canvas( skin );
-	mCanvas->SetSize( 998, 650 - 24 );
-	mCanvas->SetDrawBackground( true );
-	mCanvas->SetBackgroundColor( cigwen::toGwen( Color::gray( 0.2 ) ) );
+	mCanvas->SetSize( getWindowWidth(), getWindowHeight() );
+//	mCanvas->SetDrawBackground( true );
+//	mCanvas->SetBackgroundColor( cigwen::toGwen( Color::gray( 0.2 ) ) );
     
 	mGwenInput = cigwen::GwenInput::create( mCanvas );
     
@@ -314,14 +313,21 @@ void GwenSampleApp::initGui()
 //            drawScalarData( name, mLibXtract->getScalarFeature( it->first ), f.enable, 1.0f, scalarDataOffset, true );
 //            scalarDataOffset += Vec2f( 0, margin );
 //        }
+//    }
     
-      ScalarControl *control = new ScalarControl( window, "Mean", mLibXtract->getScalarFeaturePtr( XTRACT_MEAN ) );
-//    ScalarControl *control = new ScalarControl( window );
-    control->SetPos( 0, 0 );
-    control->Dock( Gwen::Pos::Fill );
-//
+    Vec2i topLeft( 15, 15 );
+    ScalarControl *control = new ScalarControl( window, "Mean", mLibXtract->getScalarFeaturePtr( XTRACT_MEAN ) );
+    control->Dock( Gwen::Pos::Top );
+    control->SetPos( topLeft.x, topLeft.y );
+
     
-    */
+    topLeft.y += 200;
+    
+    ScalarControl *control2 = new ScalarControl( window, "Irregularity K", mLibXtract->getScalarFeaturePtr( XTRACT_IRREGULARITY_K ) );
+    control2->Dock( Gwen::Pos::Bottom );
+    control2->SetPos( topLeft.x, topLeft.y );
+    
+    
     
     
     mParams = params::InterfaceGl::create( "Params", Vec2f( 350, getWindowHeight() - 45 ) );

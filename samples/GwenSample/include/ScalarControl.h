@@ -1,10 +1,6 @@
 #pragma once
 
 #include "Gwen/Controls/Base.h"
-#include "cinder/Matrix44.h"
-#include "cinder/Camera.h"
-#include "cinder/gl/Texture.h"
-
 #include "Gwen/Controls/ProgressBar.h"
 
 class ScalarControl : public Gwen::Controls::Base {
@@ -22,11 +18,6 @@ public:
 private:
 
 	void draw2d();
-	void draw3d();
-
-	ci::Matrix44f           mCubeRotation;
-	ci::CameraPersp         mCamera;
-	ci::gl::Texture         mImageTex;
     
     Gwen::Controls::ProgressBar *mValBar;
 	
