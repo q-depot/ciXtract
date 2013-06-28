@@ -181,7 +181,7 @@ void GwenSampleApp::draw()
         }
     }
     
-	mCanvas->RenderCanvas();
+//	mCanvas->RenderCanvas();
     
     mParams->draw();
 }
@@ -271,6 +271,7 @@ void GwenSampleApp::drawScalarData( string label, double val, bool enable, float
 
 void GwenSampleApp::initGui()
 {
+    /*
     // TODO: find a better way.. WTF is this for?
 	fs::path rootPath = getAppPath().parent_path().parent_path().parent_path().parent_path().parent_path().parent_path();
 	addAssetDirectory( rootPath / "assets" );
@@ -295,11 +296,32 @@ void GwenSampleApp::initGui()
     window->SetDeleteOnClose( true );
     window->SetClampMovement( false );
     
-    ScalarControl *control = new ScalarControl( window );
+    
+//    std::map<xtract_features_,ciLibXtract::FeatureCallback>::iterator it;
+//    ciLibXtract::FeatureCallback f;
+//    
+//    Vec2f scalarDataOffset( 25, 15 );
+//    float margin = 35;
+//    string name;
+//    Rectf vectorDataOffset( 480, 15, 760, 100 );
+//    for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
+//    {
+//        f = it->second;
+//        name = f.name; name.erase( name.begin(), name.begin() + 7 );
+//        
+//        if ( f.type == ciLibXtract::SCALAR_FEATURE )
+//        {
+//            drawScalarData( name, mLibXtract->getScalarFeature( it->first ), f.enable, 1.0f, scalarDataOffset, true );
+//            scalarDataOffset += Vec2f( 0, margin );
+//        }
+    
+      ScalarControl *control = new ScalarControl( window, "Mean", mLibXtract->getScalarFeaturePtr( XTRACT_MEAN ) );
+//    ScalarControl *control = new ScalarControl( window );
     control->SetPos( 0, 0 );
     control->Dock( Gwen::Pos::Fill );
+//
     
-    
+    */
     
     
     mParams = params::InterfaceGl::create( "Params", Vec2f( 350, getWindowHeight() - 45 ) );

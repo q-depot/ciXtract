@@ -59,7 +59,12 @@ public:
     {
         return mScalarValues[feature];
     }
-    
+
+    double* getScalarFeaturePtr( xtract_features_ feature )
+    {
+        return &mScalarValues[feature];
+    }
+
     
 public:
     

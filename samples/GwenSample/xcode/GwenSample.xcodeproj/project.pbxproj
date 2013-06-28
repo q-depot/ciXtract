@@ -15,7 +15,6 @@
 		015C6CB3B33E45969BDCB5DF /* HSVColorPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7036F8AE9BA48A9922B9B44 /* HSVColorPicker.cpp */; };
 		105B71AB837F4C5C8B6D6D69 /* WindowControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80EEE289F2D549848F57D502 /* WindowControl.cpp */; };
 		10D64AA7177D7B8900890BC8 /* ScalarControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 10D64AA6177D7B8900890BC8 /* ScalarControl.cpp */; };
-		10D64D6A177D7E0B00890BC8 /* ciLibXtract in Resources */ = {isa = PBXBuildFile; fileRef = 10D64C0F177D7E0B00890BC8 /* ciLibXtract */; };
 		10D64D6B177D7E0B00890BC8 /* ciLibXtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C10177D7E0B00890BC8 /* ciLibXtract.cpp */; };
 		10D64D6C177D7E0B00890BC8 /* delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C12177D7E0B00890BC8 /* delta.c */; };
 		10D64D6D177D7E0B00890BC8 /* descriptors.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C13177D7E0B00890BC8 /* descriptors.c */; };
@@ -123,7 +122,6 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		10D64AA5177D7B8500890BC8 /* ScalarControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ScalarControl.h; path = ../include/ScalarControl.h; sourceTree = "<group>"; };
 		10D64AA6177D7B8900890BC8 /* ScalarControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScalarControl.cpp; path = ../src/ScalarControl.cpp; sourceTree = "<group>"; };
-		10D64C0F177D7E0B00890BC8 /* ciLibXtract */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ciLibXtract; sourceTree = "<group>"; };
 		10D64C10177D7E0B00890BC8 /* ciLibXtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ciLibXtract.cpp; sourceTree = "<group>"; };
 		10D64C11177D7E0B00890BC8 /* ciLibXtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciLibXtract.h; sourceTree = "<group>"; };
 		10D64C12177D7E0B00890BC8 /* delta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = delta.c; sourceTree = "<group>"; };
@@ -454,25 +452,9 @@
 		10D64C0E177D7E0B00890BC8 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				10D64C0F177D7E0B00890BC8 /* ciLibXtract */,
+				10D64D7B177D844F00890BC8 /* LibXtract */,
 				10D64C10177D7E0B00890BC8 /* ciLibXtract.cpp */,
 				10D64C11177D7E0B00890BC8 /* ciLibXtract.h */,
-				10D64C12177D7E0B00890BC8 /* delta.c */,
-				10D64C13177D7E0B00890BC8 /* descriptors.c */,
-				10D64C14177D7E0B00890BC8 /* fft.h */,
-				10D64C15177D7E0B00890BC8 /* fini.c */,
-				10D64C16177D7E0B00890BC8 /* helper.c */,
-				10D64C17177D7E0B00890BC8 /* init.c */,
-				10D64C18177D7E0B00890BC8 /* libxtract.c */,
-				10D64C19177D7E0B00890BC8 /* Makefile.am */,
-				10D64C1A177D7E0B00890BC8 /* ooura */,
-				10D64C1D177D7E0B00890BC8 /* scalar.c */,
-				10D64C1E177D7E0B00890BC8 /* vector.c */,
-				10D64C1F177D7E0B00890BC8 /* window.c */,
-				10D64C20177D7E0B00890BC8 /* xtract */,
-				10D64C29177D7E0B00890BC8 /* xtract_globals_private.h */,
-				10D64C2A177D7E0B00890BC8 /* xtract_macros_private.h */,
-				10D64C2B177D7E0B00890BC8 /* xtract_window_private.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -499,6 +481,29 @@
 				10D64C28177D7E0B00890BC8 /* xtract_vector.h */,
 			);
 			path = xtract;
+			sourceTree = "<group>";
+		};
+		10D64D7B177D844F00890BC8 /* LibXtract */ = {
+			isa = PBXGroup;
+			children = (
+				10D64C12177D7E0B00890BC8 /* delta.c */,
+				10D64C13177D7E0B00890BC8 /* descriptors.c */,
+				10D64C14177D7E0B00890BC8 /* fft.h */,
+				10D64C15177D7E0B00890BC8 /* fini.c */,
+				10D64C16177D7E0B00890BC8 /* helper.c */,
+				10D64C17177D7E0B00890BC8 /* init.c */,
+				10D64C18177D7E0B00890BC8 /* libxtract.c */,
+				10D64C19177D7E0B00890BC8 /* Makefile.am */,
+				10D64C1A177D7E0B00890BC8 /* ooura */,
+				10D64C1D177D7E0B00890BC8 /* scalar.c */,
+				10D64C1E177D7E0B00890BC8 /* vector.c */,
+				10D64C1F177D7E0B00890BC8 /* window.c */,
+				10D64C20177D7E0B00890BC8 /* xtract */,
+				10D64C29177D7E0B00890BC8 /* xtract_globals_private.h */,
+				10D64C2A177D7E0B00890BC8 /* xtract_macros_private.h */,
+				10D64C2B177D7E0B00890BC8 /* xtract_window_private.h */,
+			);
+			name = LibXtract;
 			sourceTree = "<group>";
 		};
 		14BE4D5C060A4194B21CD245 /* Property */ = {
@@ -865,7 +870,6 @@
 			files = (
 				5C034FAEFAA84F82930B5927 /* CinderApp.icns in Resources */,
 				520136A09C594937A7937BB8 /* DefaultSkin.png in Resources */,
-				10D64D6A177D7E0B00890BC8 /* ciLibXtract in Resources */,
 				10D64D72177D7E0B00890BC8 /* Makefile.am in Resources */,
 				10D64D77177D7E0B00890BC8 /* Makefile.am in Resources */,
 			);

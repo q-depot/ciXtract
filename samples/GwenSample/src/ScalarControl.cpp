@@ -10,6 +10,18 @@
 using namespace Gwen;
 using namespace ci;
 
+ScalarControl::ScalarControl( Gwen::Controls::Base *parent, std::string label, double *val )
+: ScalarControl::ScalarControl( parent )
+{
+    mLabel  = label;
+    mVal    = val;
+    
+    mValBar = new Gwen::Controls::ProgressBar( parent );
+    mValBar->SetBounds( Gwen::Rect( 12, 40, 200, 20 ) );
+    mValBar->SetValue( 0.0f );
+}
+
+
 ScalarControl::ScalarControl( Gwen::Controls::Base *parent )
 : Controls::Base( parent, "cigwen sample ScalarControl" )
 {
@@ -23,8 +35,9 @@ ScalarControl::~ScalarControl()
 
 void ScalarControl::Render( Skin::Base* skin )
 {
+    mValBar->SetValue( *mVal );
+    
 	Vec2f pos( cigwen::fromGwen( LocalPosToCanvas() ) );
-	ci::Rectf bounds( cigwen::fromGwen( GetBounds() ) );
 
 //	draw2d();
 	draw3d();
@@ -32,10 +45,12 @@ void ScalarControl::Render( Skin::Base* skin )
 	gl::pushMatrices();
 
 	gl::translate( pos );
-	float yOffset = 10;
-	float yHeight = 20;
-	gl::drawString( std::string( "pos: " ) + ci::toString( pos ), Vec2f( 10, yOffset ), ci::Color::black() );		yOffset += yHeight;
-	gl::drawString( std::string( "bounds: " ) + ci::toString( bounds ), Vec2f( 10, yOffset ), ci::Color::black() );		yOffset += yHeight;
+    Vec2i offset( 12, 12 );
+    gl::drawString( mLabel, offset, ci::Color::black() );                                               offset += Vec2i( 0, 15 );
+	gl::drawString( ci::toString( *mVal ), offset, ci::Color::black() );                                offset += Vec2i( 0, 15 );
+
+    //	ci::Rectf bounds( cigwen::fromGwen( GetBounds() ) );
+    //	gl::drawString( std::string( "bounds: " ) + ci::toString( bounds ), offset, ci::Color::black() );	offset += Vec2i( 0, 15 );
 
 	gl::popMatrices();
 }
@@ -93,3 +108,7 @@ void ScalarControl::draw3d()
 	gl::popMatrices();
 	gl::setViewport( viewport );
 }
+
+
+
+
