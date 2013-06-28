@@ -15,6 +15,20 @@
 		015C6CB3B33E45969BDCB5DF /* HSVColorPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7036F8AE9BA48A9922B9B44 /* HSVColorPicker.cpp */; };
 		105B71AB837F4C5C8B6D6D69 /* WindowControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80EEE289F2D549848F57D502 /* WindowControl.cpp */; };
 		10D64AA7177D7B8900890BC8 /* ScalarControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 10D64AA6177D7B8900890BC8 /* ScalarControl.cpp */; };
+		10D64D6A177D7E0B00890BC8 /* ciLibXtract in Resources */ = {isa = PBXBuildFile; fileRef = 10D64C0F177D7E0B00890BC8 /* ciLibXtract */; };
+		10D64D6B177D7E0B00890BC8 /* ciLibXtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C10177D7E0B00890BC8 /* ciLibXtract.cpp */; };
+		10D64D6C177D7E0B00890BC8 /* delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C12177D7E0B00890BC8 /* delta.c */; };
+		10D64D6D177D7E0B00890BC8 /* descriptors.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C13177D7E0B00890BC8 /* descriptors.c */; };
+		10D64D6E177D7E0B00890BC8 /* fini.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C15177D7E0B00890BC8 /* fini.c */; };
+		10D64D6F177D7E0B00890BC8 /* helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C16177D7E0B00890BC8 /* helper.c */; };
+		10D64D70177D7E0B00890BC8 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C17177D7E0B00890BC8 /* init.c */; };
+		10D64D71177D7E0B00890BC8 /* libxtract.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C18177D7E0B00890BC8 /* libxtract.c */; };
+		10D64D72177D7E0B00890BC8 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 10D64C19177D7E0B00890BC8 /* Makefile.am */; };
+		10D64D73177D7E0B00890BC8 /* fftsg.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C1B177D7E0B00890BC8 /* fftsg.c */; };
+		10D64D74177D7E0B00890BC8 /* scalar.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C1D177D7E0B00890BC8 /* scalar.c */; };
+		10D64D75177D7E0B00890BC8 /* vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C1E177D7E0B00890BC8 /* vector.c */; };
+		10D64D76177D7E0B00890BC8 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C1F177D7E0B00890BC8 /* window.c */; };
+		10D64D77177D7E0B00890BC8 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 10D64C22177D7E0B00890BC8 /* Makefile.am */; };
 		12E45E6A118F45529A5224B0 /* Gwen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDCCBCFD20841A4AEE1C17A /* Gwen.cpp */; };
 		1C95E90FEC0B4A0CB42D4159 /* ToolTip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A797445E4EA54B3EAE61B79F /* ToolTip.cpp */; };
 		1CC3DE22A4344DF597823685 /* VerticalScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7578CCE413BB457E9B287733 /* VerticalScrollBar.cpp */; };
@@ -109,6 +123,33 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		10D64AA5177D7B8500890BC8 /* ScalarControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ScalarControl.h; path = ../include/ScalarControl.h; sourceTree = "<group>"; };
 		10D64AA6177D7B8900890BC8 /* ScalarControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScalarControl.cpp; path = ../src/ScalarControl.cpp; sourceTree = "<group>"; };
+		10D64C0F177D7E0B00890BC8 /* ciLibXtract */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ciLibXtract; sourceTree = "<group>"; };
+		10D64C10177D7E0B00890BC8 /* ciLibXtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ciLibXtract.cpp; sourceTree = "<group>"; };
+		10D64C11177D7E0B00890BC8 /* ciLibXtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciLibXtract.h; sourceTree = "<group>"; };
+		10D64C12177D7E0B00890BC8 /* delta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = delta.c; sourceTree = "<group>"; };
+		10D64C13177D7E0B00890BC8 /* descriptors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = descriptors.c; sourceTree = "<group>"; };
+		10D64C14177D7E0B00890BC8 /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
+		10D64C15177D7E0B00890BC8 /* fini.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fini.c; sourceTree = "<group>"; };
+		10D64C16177D7E0B00890BC8 /* helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = helper.c; sourceTree = "<group>"; };
+		10D64C17177D7E0B00890BC8 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
+		10D64C18177D7E0B00890BC8 /* libxtract.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libxtract.c; sourceTree = "<group>"; };
+		10D64C19177D7E0B00890BC8 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
+		10D64C1B177D7E0B00890BC8 /* fftsg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fftsg.c; sourceTree = "<group>"; };
+		10D64C1C177D7E0B00890BC8 /* fftsg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fftsg.h; sourceTree = "<group>"; };
+		10D64C1D177D7E0B00890BC8 /* scalar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scalar.c; sourceTree = "<group>"; };
+		10D64C1E177D7E0B00890BC8 /* vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vector.c; sourceTree = "<group>"; };
+		10D64C1F177D7E0B00890BC8 /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = window.c; sourceTree = "<group>"; };
+		10D64C21177D7E0B00890BC8 /* libxtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libxtract.h; sourceTree = "<group>"; };
+		10D64C22177D7E0B00890BC8 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
+		10D64C23177D7E0B00890BC8 /* xtract_delta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtract_delta.h; sourceTree = "<group>"; };
+		10D64C24177D7E0B00890BC8 /* xtract_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtract_helper.h; sourceTree = "<group>"; };
+		10D64C25177D7E0B00890BC8 /* xtract_macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtract_macros.h; sourceTree = "<group>"; };
+		10D64C26177D7E0B00890BC8 /* xtract_scalar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtract_scalar.h; sourceTree = "<group>"; };
+		10D64C27177D7E0B00890BC8 /* xtract_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtract_types.h; sourceTree = "<group>"; };
+		10D64C28177D7E0B00890BC8 /* xtract_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtract_vector.h; sourceTree = "<group>"; };
+		10D64C29177D7E0B00890BC8 /* xtract_globals_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtract_globals_private.h; sourceTree = "<group>"; };
+		10D64C2A177D7E0B00890BC8 /* xtract_macros_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtract_macros_private.h; sourceTree = "<group>"; };
+		10D64C2B177D7E0B00890BC8 /* xtract_window_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xtract_window_private.h; sourceTree = "<group>"; };
 		120EDEE8FA644A919E069DBC /* Button.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Button.h; path = "../../../../Cinder-Gwen/gwen/gwen/include/Gwen/Controls/Button.h"; sourceTree = "<group>"; };
 		12FC2B609E62441090A8723D /* ComboBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ComboBox.h; path = "../../../../Cinder-Gwen/gwen/gwen/include/Gwen/Controls/ComboBox.h"; sourceTree = "<group>"; };
 		1371B72CA8F84EF1B6AC5905 /* GwenSample_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = GwenSample_Prefix.pch; sourceTree = "<group>"; };
@@ -312,6 +353,7 @@
 		01B97315FEAEA392516A2CEA /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				10D64AA8177D7E0900890BC8 /* ciLibXtract */,
 				0C57608F4A5245FE8C1E9188 /* Gwen */,
 			);
 			name = Blocks;
@@ -398,6 +440,65 @@
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		10D64AA8177D7E0900890BC8 /* ciLibXtract */ = {
+			isa = PBXGroup;
+			children = (
+				10D64C0E177D7E0B00890BC8 /* src */,
+			);
+			name = ciLibXtract;
+			path = ../../..;
+			sourceTree = "<group>";
+		};
+		10D64C0E177D7E0B00890BC8 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				10D64C0F177D7E0B00890BC8 /* ciLibXtract */,
+				10D64C10177D7E0B00890BC8 /* ciLibXtract.cpp */,
+				10D64C11177D7E0B00890BC8 /* ciLibXtract.h */,
+				10D64C12177D7E0B00890BC8 /* delta.c */,
+				10D64C13177D7E0B00890BC8 /* descriptors.c */,
+				10D64C14177D7E0B00890BC8 /* fft.h */,
+				10D64C15177D7E0B00890BC8 /* fini.c */,
+				10D64C16177D7E0B00890BC8 /* helper.c */,
+				10D64C17177D7E0B00890BC8 /* init.c */,
+				10D64C18177D7E0B00890BC8 /* libxtract.c */,
+				10D64C19177D7E0B00890BC8 /* Makefile.am */,
+				10D64C1A177D7E0B00890BC8 /* ooura */,
+				10D64C1D177D7E0B00890BC8 /* scalar.c */,
+				10D64C1E177D7E0B00890BC8 /* vector.c */,
+				10D64C1F177D7E0B00890BC8 /* window.c */,
+				10D64C20177D7E0B00890BC8 /* xtract */,
+				10D64C29177D7E0B00890BC8 /* xtract_globals_private.h */,
+				10D64C2A177D7E0B00890BC8 /* xtract_macros_private.h */,
+				10D64C2B177D7E0B00890BC8 /* xtract_window_private.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		10D64C1A177D7E0B00890BC8 /* ooura */ = {
+			isa = PBXGroup;
+			children = (
+				10D64C1B177D7E0B00890BC8 /* fftsg.c */,
+				10D64C1C177D7E0B00890BC8 /* fftsg.h */,
+			);
+			path = ooura;
+			sourceTree = "<group>";
+		};
+		10D64C20177D7E0B00890BC8 /* xtract */ = {
+			isa = PBXGroup;
+			children = (
+				10D64C21177D7E0B00890BC8 /* libxtract.h */,
+				10D64C22177D7E0B00890BC8 /* Makefile.am */,
+				10D64C23177D7E0B00890BC8 /* xtract_delta.h */,
+				10D64C24177D7E0B00890BC8 /* xtract_helper.h */,
+				10D64C25177D7E0B00890BC8 /* xtract_macros.h */,
+				10D64C26177D7E0B00890BC8 /* xtract_scalar.h */,
+				10D64C27177D7E0B00890BC8 /* xtract_types.h */,
+				10D64C28177D7E0B00890BC8 /* xtract_vector.h */,
+			);
+			path = xtract;
 			sourceTree = "<group>";
 		};
 		14BE4D5C060A4194B21CD245 /* Property */ = {
@@ -764,6 +865,9 @@
 			files = (
 				5C034FAEFAA84F82930B5927 /* CinderApp.icns in Resources */,
 				520136A09C594937A7937BB8 /* DefaultSkin.png in Resources */,
+				10D64D6A177D7E0B00890BC8 /* ciLibXtract in Resources */,
+				10D64D72177D7E0B00890BC8 /* Makefile.am in Resources */,
+				10D64D77177D7E0B00890BC8 /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -846,6 +950,17 @@
 				E7FAD403BC264BD58D982519 /* FolderOpen.cpp in Sources */,
 				F0917AB9492B48C7BD0DE577 /* Query.cpp in Sources */,
 				10D64AA7177D7B8900890BC8 /* ScalarControl.cpp in Sources */,
+				10D64D6B177D7E0B00890BC8 /* ciLibXtract.cpp in Sources */,
+				10D64D6C177D7E0B00890BC8 /* delta.c in Sources */,
+				10D64D6D177D7E0B00890BC8 /* descriptors.c in Sources */,
+				10D64D6E177D7E0B00890BC8 /* fini.c in Sources */,
+				10D64D6F177D7E0B00890BC8 /* helper.c in Sources */,
+				10D64D70177D7E0B00890BC8 /* init.c in Sources */,
+				10D64D71177D7E0B00890BC8 /* libxtract.c in Sources */,
+				10D64D73177D7E0B00890BC8 /* fftsg.c in Sources */,
+				10D64D74177D7E0B00890BC8 /* scalar.c in Sources */,
+				10D64D75177D7E0B00890BC8 /* vector.c in Sources */,
+				10D64D76177D7E0B00890BC8 /* window.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
