@@ -38,6 +38,23 @@ typedef std::shared_ptr<ciLibXtract>    ciLibXtractRef;
 
 
 class ciLibXtract {
+
+public:
+    
+    enum FeatureType {
+        VECTOR_FEATURE,
+        SCALAR_FEATURE
+    };
+    
+    typedef struct {
+        xtract_features_                feature;
+        std::string                     name;
+        std::function<void()>           cb;
+        bool                            enable;
+        FeatureType                     type;
+        std::vector<xtract_features_>   dependencies;
+    }  FeatureCallback;
+    
     
 public:
     
@@ -59,22 +76,12 @@ public:
     {
         return mScalarValues[feature];
     }
-    
-    
-public:
-    
-    enum FeatureType {
-        VECTOR_FEATURE,
-        SCALAR_FEATURE
-    };
-    
-    struct FeatureCallback {
-        std::string                     name;
-        std::function<void()>           cb;
-        bool                            enable;
-        FeatureType                     type;
-        std::vector<xtract_features_>   dependencies;
-    };
+
+    double* getScalarFeaturePtr( xtract_features_ feature )
+    {
+        return &mScalarValues[feature];
+    }
+
 
 private:
     
@@ -88,6 +95,8 @@ private:
     
     bool featureDependsOn( xtract_features_ this_feature, xtract_features_ test_feature );
     
+    FeatureCallback* findFeatureCbRef( xtract_features_ feature );
+
     // ------------------------------------ //
     //              Callbacks               //
     // ------------------------------------ //
@@ -166,7 +175,8 @@ private:
 
     // TEMPORARY PUBLIC !!! <<<<<<<<<<<<<<
 public:
-    std::map<xtract_features_,FeatureCallback>  mCallbacks;
+//    std::map<xtract_features_,FeatureCallback>  mCallbacks;
+    std::vector<FeatureCallback>  mCallbacks;
     
 private:
     
