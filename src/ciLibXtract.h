@@ -53,7 +53,7 @@ public:
         bool                            enable;
         FeatureType                     type;
         std::vector<xtract_features_>   dependencies;
-    }  FeatureCallback;
+    } FeatureCallback;
     
     
 public:
@@ -81,7 +81,8 @@ public:
     {
         return &mScalarValues[feature];
     }
-
+    
+    FeatureCallback* findFeatureCbRef( xtract_features_ feature );
 
 private:
     
@@ -89,14 +90,19 @@ private:
     
     void init();
 
+    void initFft();
+    void initMfccs();
+    void initBarks();
+    void initParams();
+    void initCallbacks();
+    
     void updateCallbacks();
     
     void xtractFeature( xtract_features_ feature );
     
     bool featureDependsOn( xtract_features_ this_feature, xtract_features_ test_feature );
     
-    FeatureCallback* findFeatureCbRef( xtract_features_ feature );
-
+    
     // ------------------------------------ //
     //              Callbacks               //
     // ------------------------------------ //

@@ -22,7 +22,6 @@
 		10D64D6F177D7E0B00890BC8 /* helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C16177D7E0B00890BC8 /* helper.c */; };
 		10D64D70177D7E0B00890BC8 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C17177D7E0B00890BC8 /* init.c */; };
 		10D64D71177D7E0B00890BC8 /* libxtract.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C18177D7E0B00890BC8 /* libxtract.c */; };
-		10D64D72177D7E0B00890BC8 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 10D64C19177D7E0B00890BC8 /* Makefile.am */; };
 		10D64D73177D7E0B00890BC8 /* fftsg.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C1B177D7E0B00890BC8 /* fftsg.c */; };
 		10D64D74177D7E0B00890BC8 /* scalar.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C1D177D7E0B00890BC8 /* scalar.c */; };
 		10D64D75177D7E0B00890BC8 /* vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 10D64C1E177D7E0B00890BC8 /* vector.c */; };
@@ -131,7 +130,6 @@
 		10D64C16177D7E0B00890BC8 /* helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = helper.c; sourceTree = "<group>"; };
 		10D64C17177D7E0B00890BC8 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
 		10D64C18177D7E0B00890BC8 /* libxtract.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libxtract.c; sourceTree = "<group>"; };
-		10D64C19177D7E0B00890BC8 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		10D64C1B177D7E0B00890BC8 /* fftsg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fftsg.c; sourceTree = "<group>"; };
 		10D64C1C177D7E0B00890BC8 /* fftsg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fftsg.h; sourceTree = "<group>"; };
 		10D64C1D177D7E0B00890BC8 /* scalar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scalar.c; sourceTree = "<group>"; };
@@ -493,7 +491,6 @@
 				10D64C16177D7E0B00890BC8 /* helper.c */,
 				10D64C17177D7E0B00890BC8 /* init.c */,
 				10D64C18177D7E0B00890BC8 /* libxtract.c */,
-				10D64C19177D7E0B00890BC8 /* Makefile.am */,
 				10D64C1A177D7E0B00890BC8 /* ooura */,
 				10D64C1D177D7E0B00890BC8 /* scalar.c */,
 				10D64C1E177D7E0B00890BC8 /* vector.c */,
@@ -870,7 +867,6 @@
 			files = (
 				5C034FAEFAA84F82930B5927 /* CinderApp.icns in Resources */,
 				520136A09C594937A7937BB8 /* DefaultSkin.png in Resources */,
-				10D64D72177D7E0B00890BC8 /* Makefile.am in Resources */,
 				10D64D77177D7E0B00890BC8 /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

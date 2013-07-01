@@ -10,75 +10,71 @@
 using namespace Gwen;
 using namespace ci;
 
-#define CONTROL_WIDTH   200
-#define CONTROL_HEIGHT  45
 
-ScalarControl::ScalarControl( Gwen::Controls::Base *parent, std::string label, double *val)
+ScalarControl::ScalarControl( Gwen::Controls::Base *parent, std::string label, ciLibXtract::FeatureCallback *cb, ciLibXtractRef xtract )
 : ScalarControl::ScalarControl( parent )
 {
-    mLabel  = label;
-    mVal    = val;
+    mLabel      = label;
+    mXtract     = xtract;
+    mCb         = cb;
+    mVal        = mXtract->getScalarFeaturePtr( cb->feature );
+    
+    Gwen::Controls::CheckBoxWithLabel* labeled = new Gwen::Controls::CheckBoxWithLabel( this );
+    labeled->SetPos( 12, 0 );
+    labeled->Label()->SetText( label );
+    
+    labeled->Checkbox()->onCheckChanged.Add( this, &ScalarControl::toggleFeature  );
     
     mValBar = new Gwen::Controls::ProgressBar( this );
-    mValBar->SetBounds( Gwen::Rect( 0, 22, CONTROL_WIDTH, 20 ) );
+    mValBar->SetBounds( Gwen::Rect( 12, 19, SCALAR_CONTROL_WIDTH - 70, 20 ) );
+    mValBar->SetAutoLabel( false );
     mValBar->SetValue( *mVal );
-    SetBounds( 0, 0, CONTROL_WIDTH, CONTROL_HEIGHT );
-}
 
+    mGainNumeric = new Controls::NumericUpDown( this );
+    mGainNumeric->SetBounds( SCALAR_CONTROL_WIDTH - 50, 19, 50, 20 );
+    mGainNumeric->SetValue( 50 );
+    mGainNumeric->SetMax( 1000 );
+    mGainNumeric->SetMin( -1000 );
+
+    SetBounds( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT );
+}
 
 ScalarControl::ScalarControl( Gwen::Controls::Base *parent ) : Controls::Base( parent, "cigwen sample ScalarControl" ) {}
 
 
-ScalarControl::~ScalarControl()
+ScalarControl::~ScalarControl() {}
+
+
+void ScalarControl::toggleFeature( Gwen::Controls::Base* pControl )
 {
-//	app::console() << "ScalarControl destroyed." << std::endl;
+    Gwen::Controls::CheckBox*           checkbox    = ( Gwen::Controls::CheckBox* )pControl;
+
+    if ( checkbox->IsChecked() )
+        mXtract->enableFeature( mCb->feature );
+    else
+    {
+        mXtract->disableFeature( mCb->feature );
+        *mVal = 0.0f;
+    }
 }
 
 
 void ScalarControl::Render( Skin::Base* skin )
 {
-    mValBar->SetValue( *mVal );
+    float val = (*mVal) * std::atof( mGainNumeric->GetValue().c_str() );
+
+    mValBar->SetValue( val );
     
 	Vec2f pos( cigwen::fromGwen( LocalPosToCanvas() ) );
 
-//	draw2d();
     char buff[50];
-    sprintf( buff, "%.2f", *mVal );
+    sprintf( buff, "%.2f", val );
     std::string valStr = buff;
-    
-	gl::pushMatrices();
-	gl::translate( pos );
-    Vec2i offset( 12, 22 );
-    gl::drawString( mLabel, Vec2f(0,11), ci::Color::black() );                                               offset += Vec2i( 0, 15 );
-	gl::drawString( valStr, Vec2f( CONTROL_WIDTH - 22, 12 ), ci::Color::black() );                                offset += Vec2i( 0, 15 );
-
-	gl::popMatrices();
+	gl::drawString( valStr, pos + Vec2f( SCALAR_CONTROL_WIDTH - 22, 6 ), ci::Color::gray( 0.7f ) );
 }
+
 
 void ScalarControl::RenderUnder( Skin::Base* skin )
 {
 }
-
-void ScalarControl::draw2d()
-{
-//	static float rot = 0;
-//	rot += 0.5f;
-//
-//	float w = 40;
-//	Rectf r( -w, -w, w, w );
-//	ci::Rectf bounds( cigwen::fromGwen( GetBounds() ) );
-//
-//	gl::pushMatrices();
-//
-//	gl::translate( cigwen::fromGwen( LocalPosToCanvas() ) );
-//	gl::translate( bounds.getCenter() );
-//	gl::rotate( rot );
-//	gl::color( ci::Color( 0, 0.8, 0 ) );
-//	gl::drawSolidRect( r );
-//	gl::color( ci::Color( 0, 0, 0.8 ) );
-//	gl::drawStrokedRect( r );
-//
-//	gl::popMatrices();
-}
-
 

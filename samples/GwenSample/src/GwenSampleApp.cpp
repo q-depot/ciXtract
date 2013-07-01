@@ -25,7 +25,10 @@
 #include "Gwen/Controls/Button.h"
 #include "Gwen/Controls/WindowControl.h"
 #include "Gwen/Controls/CollapsibleList.h"
+#include "Gwen/Controls/CheckBox.h"
 #include "Gwen/Events.h"
+
+
 #include "ScalarControl.h"
 
 
@@ -65,6 +68,7 @@ public:
 	cigwen::GwenRendererGl  *mRenderer;
 	cigwen::GwenInputRef    mGwenInput;
 	Gwen::Controls::Canvas  *mCanvas;
+    Gwen::Controls::WindowControl* mWindow;
 };
 
 
@@ -118,12 +122,12 @@ void GwenSampleApp::update()
 void GwenSampleApp::draw()
 {
 	// clear out the window with black
-	gl::clear( Color( 0.93f, 0.94f, 0.95f ) );
+//	gl::clear( Color( 0.93f, 0.94f, 0.95f ) );
+	gl::clear( Color( 0.91f, 0.94f, 0.96f ) );
+    
     gl::enableAlphaBlending();
     
     int fftSize = PCM_SIZE >> 1;
-    
-    
     
     std::vector<ciLibXtract::FeatureCallback>::iterator it;
     
@@ -137,8 +141,8 @@ void GwenSampleApp::draw()
         
         if ( it->type == ciLibXtract::SCALAR_FEATURE )
         {
-            drawScalarData( name, mLibXtract->getScalarFeature( it->feature ), it->enable, 1.0f, scalarDataOffset, true );
-            scalarDataOffset += Vec2f( 0, margin );
+//            drawScalarData( name, mLibXtract->getScalarFeature( it->feature ), it->enable, 1.0f, scalarDataOffset, true );
+//            scalarDataOffset += Vec2f( 0, margin );
         }
         else if ( it->feature == XTRACT_SPECTRUM || it->feature == XTRACT_PEAK_SPECTRUM || it->feature == XTRACT_HARMONIC_SPECTRUM )
         {
@@ -237,7 +241,10 @@ void GwenSampleApp::drawScalarData( string label, double val, bool enable, float
     float w         = 200;
     float margin    = 10;
     
-    Color col = enable ? Color::white() : Color::gray(0.5f);
+    ColorA col = ColorA::black();
+
+    if ( !enable )
+        col.a = 0.3f;
     
     val *= gain;
     
@@ -271,6 +278,7 @@ void GwenSampleApp::drawScalarData( string label, double val, bool enable, float
 }
 
 
+
 void GwenSampleApp::initGui()
 {
     // TODO: find a better way.. WTF is this for?
@@ -281,80 +289,59 @@ void GwenSampleApp::initGui()
 	mRenderer->Init();
     
 	Gwen::Skin::TexturedBase* skin = new Gwen::Skin::TexturedBase( mRenderer );
-	skin->Init( "NocteSkin.png" );
+	skin->Init( "DefaultSkin.png" );
     
 	mCanvas = new Gwen::Controls::Canvas( skin );
 	mCanvas->SetSize( getWindowWidth(), getWindowHeight() );
 	mGwenInput = cigwen::GwenInput::create( mCanvas );
     
-    auto pList = new Gwen::Controls::CollapsibleList( mCanvas );
-    pList->Dock( Gwen::Pos::Right );
-    pList->SetSize( 224, getWindowHeight() - 12 );
-    auto vectorCat = pList->Add( "Vector Features" );
-    auto scalarCat = pList->Add( "Scalar Features" );
+    Vec2f offset( 15, 15 );
     
-    Gwen::Controls::Button* pButton;
+    // Features toggle
     std::vector<ciLibXtract::FeatureCallback>::iterator itr;
     for( itr = mLibXtract->mCallbacks.begin(); itr != mLibXtract->mCallbacks.end(); ++itr )
     {
-        string name = itr->name; name.erase( name.begin(), name.begin() + 7 );
         if ( itr->type == ciLibXtract::SCALAR_FEATURE )
-            pButton = scalarCat->Add( name );
-        else
-            pButton = vectorCat->Add( name );
+        {
+            // Custom Control
+            ScalarControl *control = new ScalarControl( mCanvas, itr->name, &(*itr), mLibXtract );
+            control->SetPos( offset.x, offset.y );
+            
+            offset.y += SCALAR_CONTROL_HEIGHT;
 
-        Gwen::Event::Packet p;
-        p.Integer = itr->feature;
-        pButton->onPress.Add( this, &GwenSampleApp::toggleFeature, p );
-    }
-    
-    // Custom Control
-    // ScalarControl *control = new ScalarControl( cat, name, mLibXtract->getScalarFeaturePtr( itr->feature ) );
-    // control->Dock( Gwen::Pos::Top );
-    
-    return;
-    
-    mParams = params::InterfaceGl::create( "Params", Vec2f( 350, getWindowHeight() - 45 ) );
-    mParams->setOptions( "", "position='" + toString( getWindowWidth() - 380 ) + " " + toString( 15 ) + "'");
-    
-    mParams->addSeparator();
-    
-    mParams->addButton( "ALL ON", std::bind( &GwenSampleApp::toggleAllFeatures, this, true ) );
-    mParams->addButton( "ALL OFF", std::bind( &GwenSampleApp::toggleAllFeatures, this, false ) );
-    
-    mParams->addSeparator();
-    
-    std::vector<ciLibXtract::FeatureCallback>::iterator it;
-    string name;
-    
-    for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
-    {
-        name = it->name; name.erase( name.begin(), name.begin()+7 );
-        mParams->addButton( name, std::bind( &ciLibXtract::toggleFeature, mLibXtract, it->feature ) );
+            if ( offset.y >= getWindowHeight() - SCALAR_CONTROL_HEIGHT )
+            {
+                offset.x += SCALAR_CONTROL_WIDTH + 15;
+                offset.y = 15;
+            }
+        }
     }
 }
+
+//    mParams->addButton( "ALL ON", std::bind( &GwenSampleApp::toggleAllFeatures, this, true ) );
+//    mParams->addButton( "ALL OFF", std::bind( &GwenSampleApp::toggleAllFeatures, this, false ) );
+//    mParams->addSeparator();
+//    std::vector<ciLibXtract::FeatureCallback>::iterator it;
+//    string name;
+//    for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
+//    {
+//        name = it->name; name.erase( name.begin(), name.begin()+7 );
+//        mParams->addButton( name, std::bind( &ciLibXtract::toggleFeature, mLibXtract, it->feature ) );
+//    }
+
 
 void GwenSampleApp::toggleFeature( Gwen::Event::Info info )
 {
-    //            Gwen::Event::Packet p;
-    //            struct Packet
-    //            {
-    //                Packet( Gwen::Controls::Base* pControl = NULL ) { Control = pControl; }
-    //
-    //                Gwen::Controls::Base*	Control;
-    //                Gwen::String			String;
-    //                Gwen::UnicodeString		UnicodeString;
-    //                int						Integer;
-    //                float					Float;
-    //                unsigned long long		UnsignedLongLong;
-    //            };
-    
-    console() << "event!" << endl;
-    mLibXtract->toggleFeature( (xtract_features_)info.Packet->Integer );
-	console() << info.Packet->Integer << endl;
-    //->Control->Show();
-//	m_pLastControl = info.Packet->Control;
+    if ( info.Packet->Integer == -1 )
+        toggleAllFeatures(true);
+    else if ( info.Packet->Integer == -2 )
+        toggleAllFeatures(false);
+    else
+    {
+        mLibXtract->toggleFeature( (xtract_features_)info.Packet->Integer );
+    }
 }
+
 
 void GwenSampleApp::toggleAllFeatures( bool enable )
 {
