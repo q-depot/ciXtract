@@ -1,14 +1,17 @@
 #pragma once
 
 #include "Gwen/Controls/Base.h"
-#include "Gwen/Controls/ProgressBar.h"
-#include "Gwen/Controls/NumericUpDown.h"
 #include "Gwen/Controls/CheckBox.h"
+#include "Gwen/Controls/VerticalSlider.h"
+
+#include <boost/circular_buffer.hpp>
 
 #include "ciLibXtract.h"
 
-#define SCALAR_CONTROL_WIDTH   250
-#define SCALAR_CONTROL_HEIGHT  50
+#define SCALAR_CONTROL_WIDTH        210
+#define SCALAR_CONTROL_HEIGHT       80
+#define SCALAR_CONTROL_PADDING      5
+#define SCALAR_CONTROL_BUFF_SIZE    100
 
 class ScalarControl : public Gwen::Controls::Base {
     
@@ -26,9 +29,7 @@ private:
 
     void toggleFeature( Gwen::Controls::Base* pControl );
     
-    
-    Gwen::Controls::ProgressBar     *mValBar;
-    Gwen::Controls::NumericUpDown   *mGainNumeric;
+    Gwen::Controls::VerticalSlider  *mGainSlider;
     Gwen::Controls::CheckBox        *mCheckBox;
     
     std::string                     mLabel;
@@ -36,4 +37,10 @@ private:
     
     ciLibXtractRef                  mXtract;
     ciLibXtract::FeatureCallback    *mCb;
+    
+    boost::circular_buffer<double>  mBuff;
+    
+    ci::Rectf                       mBuffRect;
+    ci::Rectf                       mValRect;
+    ci::Rectf                       mWidgetRect;
 };

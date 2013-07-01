@@ -253,6 +253,20 @@ void ciLibXtract::initCallbacks()
     //    mCallbacks[XTRACT_DCT]                          = { "XTRACT_DCT", std::bind( &ciLibXtract::updateDct, this ), false };
     //    mCallbacks[XTRACT_SUBBANDS]                     = { "XTRACT_SUBBANDS", std::bind( &ciLibXtract::updateSubbands, this ), false };
     //    mCallbacks[XTRACT_WINDOWED]                     = { "XTRACT_WINDOWED", std::bind( &ciLibXtract::updateWindowed, this ), false };
+    
+    
+    
+    // iterate descriptors to get min/max values for each function.
+    // possibly I need to implement FeatureCallback as a class instead a struct, this could be part of the constructor.    
+    xtract_function_descriptor_t *descriptor = xtract_make_descriptors();
+    
+    for( auto k=0; k < mCallbacks.size(); k++ )
+    {
+        mCallbacks[k].min = descriptor[ mCallbacks[k].feature ].result.scalar.min;
+        mCallbacks[k].max = descriptor[ mCallbacks[k].feature ].result.scalar.max;
+    }
+    
+    delete descriptor;
 }
 
 

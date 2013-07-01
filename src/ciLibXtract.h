@@ -53,6 +53,8 @@ public:
         bool                            enable;
         FeatureType                     type;
         std::vector<xtract_features_>   dependencies;
+        double                          min;
+        double                          max;
     } FeatureCallback;
     
     

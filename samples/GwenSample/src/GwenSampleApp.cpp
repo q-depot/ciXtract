@@ -32,10 +32,16 @@
 #include "ScalarControl.h"
 
 
-
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+
+
+gl::TextureFontRef      mFontSmall;
+gl::TextureFontRef      mFontMedium;
+gl::TextureFontRef      mFontBig;
+
+
 
 class GwenSampleApp : public AppNative, public Gwen::Event::Handler {
 public:
@@ -59,8 +65,6 @@ public:
     ciLibXtractRef          mLibXtract;
     
     params::InterfaceGlRef  mParams;
-    
-    gl::TextureFontRef      mFontSmall;
     
     float                   mGain[XTRACT_FEATURES];
     
@@ -102,7 +106,9 @@ void GwenSampleApp::setup()
     
     initGui();
     
-    mFontSmall = gl::TextureFont::create( Font( "Helvetica", 12 ) );
+    mFontSmall  = gl::TextureFont::create( Font( "Helvetica", 12 ) );
+    mFontMedium = gl::TextureFont::create( Font( "Helvetica", 14 ) );
+    mFontBig    = gl::TextureFont::create( Font( "Helvetica", 18 ) );
     
     //    setFullScreen(true, FullScreenOptions().kioskMode() );
 }
@@ -297,6 +303,10 @@ void GwenSampleApp::initGui()
     
     Vec2f offset( 15, 15 );
     
+//    ScalarControl *control = new ScalarControl( mCanvas, "IRREGULARITY_K", mLibXtract->findFeatureCbRef( XTRACT_IRREGULARITY_K ), mLibXtract );
+//    control->SetPos( offset.x, offset.y );
+
+    
     // Features toggle
     std::vector<ciLibXtract::FeatureCallback>::iterator itr;
     for( itr = mLibXtract->mCallbacks.begin(); itr != mLibXtract->mCallbacks.end(); ++itr )
@@ -307,7 +317,7 @@ void GwenSampleApp::initGui()
             ScalarControl *control = new ScalarControl( mCanvas, itr->name, &(*itr), mLibXtract );
             control->SetPos( offset.x, offset.y );
             
-            offset.y += SCALAR_CONTROL_HEIGHT;
+            offset.y += SCALAR_CONTROL_HEIGHT + 25;
 
             if ( offset.y >= getWindowHeight() - SCALAR_CONTROL_HEIGHT )
             {
@@ -316,6 +326,7 @@ void GwenSampleApp::initGui()
             }
         }
     }
+
 }
 
 //    mParams->addButton( "ALL ON", std::bind( &GwenSampleApp::toggleAllFeatures, this, true ) );
