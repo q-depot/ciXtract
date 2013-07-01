@@ -401,7 +401,6 @@
 			children = (
 				AFE6353845C04961B526B658 /* src */,
 				80915909E77247E6ACDBEED4 /* gwen */,
-				9FC40ACB60BA4D2A9C8AB50F /* assets */,
 			);
 			name = Gwen;
 			sourceTree = "<group>";
@@ -671,6 +670,7 @@
 			isa = PBXGroup;
 			children = (
 				23B24D1FBCC54294B4F6AA7C /* gwen */,
+				9FC40ACB60BA4D2A9C8AB50F /* assets */,
 			);
 			name = gwen;
 			sourceTree = "<group>";

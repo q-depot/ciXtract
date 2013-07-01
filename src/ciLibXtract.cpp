@@ -112,128 +112,128 @@ void ciLibXtract::initParams()
 
 void ciLibXtract::initCallbacks()
 {
-    mCallbacks.push_back( 	{ XTRACT_SPECTRUM, "XTRACT_SPECTRUM", std::bind( &ciLibXtract::updateSpectrum, this ), false, VECTOR_FEATURE, { } } );
+    mCallbacks.push_back( 	{ XTRACT_SPECTRUM, "XTRACT_SPECTRUM", std::bind( &ciLibXtract::updateSpectrum, this ), false, VECTOR_FEATURE, { }, 0.0f, 1.0f } );
     
-    mCallbacks.push_back( 	{ XTRACT_AUTOCORRELATION, "XTRACT_AUTOCORRELATION", std::bind( &ciLibXtract::updateAutoCorrelation, this ), false, VECTOR_FEATURE, { } } );
+    mCallbacks.push_back( 	{ XTRACT_AUTOCORRELATION, "XTRACT_AUTOCORRELATION", std::bind( &ciLibXtract::updateAutoCorrelation, this ), false, VECTOR_FEATURE, { }, 0.0f, 1.0f } );
     
-    mCallbacks.push_back( 	{ XTRACT_AUTOCORRELATION_FFT, "XTRACT_AUTOCORRELATION_FFT", std::bind( &ciLibXtract::updateAutoCorrelationFft, this ), false, VECTOR_FEATURE, { } } );
+    mCallbacks.push_back( 	{ XTRACT_AUTOCORRELATION_FFT, "XTRACT_AUTOCORRELATION_FFT", std::bind( &ciLibXtract::updateAutoCorrelationFft, this ), false, VECTOR_FEATURE, { }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_PEAK_SPECTRUM, "XTRACT_PEAK_SPECTRUM", std::bind( &ciLibXtract::updatePeakSpectrum, this ), false, VECTOR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SUBBANDS, "XTRACT_SUBBANDS", std::bind( &ciLibXtract::updateSubBands, this ), false, VECTOR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 1.0f} );
     
     mCallbacks.push_back( 	{ XTRACT_F0, "XTRACT_F0", std::bind( &ciLibXtract::updateF0, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_BARK_COEFFICIENTS, "XTRACT_BARK_COEFFICIENTS", std::bind( &ciLibXtract::updateBarkCoefficients, this ), false, VECTOR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_HARMONIC_SPECTRUM, "XTRACT_HARMONIC_SPECTRUM", std::bind( &ciLibXtract::updateHarmonicSpectrum, this ), false, VECTOR_FEATURE,
-                            { XTRACT_PEAK_SPECTRUM, XTRACT_F0 } } );
+                            { XTRACT_PEAK_SPECTRUM, XTRACT_F0 }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_MEAN, "XTRACT_MEAN", std::bind( &ciLibXtract::updateMean, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 0.01f } );
     
     mCallbacks.push_back( 	{ XTRACT_VARIANCE, "XTRACT_VARIANCE", std::bind( &ciLibXtract::updateVariance, this ), false, SCALAR_FEATURE,
-                            { XTRACT_MEAN } } );
+                            { XTRACT_MEAN }, 0.0f, 0.0001f } );
     
     mCallbacks.push_back( 	{ XTRACT_STANDARD_DEVIATION, "XTRACT_STANDARD_DEVIATION", std::bind( &ciLibXtract::updateStandardDeviation, this ), false, SCALAR_FEATURE,
-                            { XTRACT_VARIANCE } } );
+                            { XTRACT_VARIANCE }, 0.0f, 0.1f } );
     
     mCallbacks.push_back( 	{ XTRACT_AVERAGE_DEVIATION, "XTRACT_AVERAGE_DEVIATION", std::bind( &ciLibXtract::updateAverageDeviation, this ), false, SCALAR_FEATURE ,
-                            { XTRACT_MEAN } } );
+                            { XTRACT_MEAN }, 0.0f, 0.01f } );
     
     mCallbacks.push_back( 	{ XTRACT_SKEWNESS, "XTRACT_SKEWNESS", std::bind( &ciLibXtract::updateSkewness, this ), false, SCALAR_FEATURE,
-                            { XTRACT_STANDARD_DEVIATION } } );
+                            { XTRACT_STANDARD_DEVIATION }, 0.0f, 100.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_KURTOSIS, "XTRACT_KURTOSIS", std::bind( &ciLibXtract::updateKurtosis, this ), false, SCALAR_FEATURE,
-                            { XTRACT_STANDARD_DEVIATION } } );
+                            { XTRACT_STANDARD_DEVIATION }, 0.0f, 1000.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_MEAN, "XTRACT_SPECTRAL_MEAN", std::bind( &ciLibXtract::updateSpectralMean, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 0.001f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_VARIANCE, "XTRACT_SPECTRAL_VARIANCE", std::bind( &ciLibXtract::updateSpectralVariance, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRAL_MEAN } } );
+                            { XTRACT_SPECTRAL_MEAN }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_STANDARD_DEVIATION, "XTRACT_SPECTRAL_STANDARD_DEVIATION", std::bind( &ciLibXtract::updateSpectralStandardDeviation, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRAL_VARIANCE } } );
+                            { XTRACT_SPECTRAL_VARIANCE }, 0.0f, 0.0001f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_SKEWNESS, "XTRACT_SPECTRAL_SKEWNESS", std::bind( &ciLibXtract::updateSpectralSkewness, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRAL_MEAN } } );
+                            { XTRACT_SPECTRAL_MEAN }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_KURTOSIS, "XTRACT_SPECTRAL_KURTOSIS", std::bind( &ciLibXtract::updateSpectralKurtosis, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRAL_MEAN,XTRACT_SPECTRAL_STANDARD_DEVIATION,XTRACT_SPECTRAL_STANDARD_DEVIATION } } );
+                            { XTRACT_SPECTRAL_MEAN,XTRACT_SPECTRAL_STANDARD_DEVIATION,XTRACT_SPECTRAL_STANDARD_DEVIATION }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_CENTROID, "XTRACT_SPECTRAL_CENTROID", std::bind( &ciLibXtract::updateSpectralCentroid, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 0.001f } );
     
     mCallbacks.push_back( 	{ XTRACT_IRREGULARITY_K, "XTRACT_IRREGULARITY_K", std::bind( &ciLibXtract::updateIrregularityK, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_IRREGULARITY_J, "XTRACT_IRREGULARITY_J", std::bind( &ciLibXtract::updateIrregularityJ, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 500000000.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_TRISTIMULUS_1, "XTRACT_TRISTIMULUS_1", std::bind( &ciLibXtract::updateTristimulus1, this ), false, SCALAR_FEATURE,
-                            { XTRACT_HARMONIC_SPECTRUM } } );
+                            { XTRACT_HARMONIC_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SMOOTHNESS, "XTRACT_SMOOTHNESS", std::bind( &ciLibXtract::updateSmoothness, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRUM } } );
+                            { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPREAD, "XTRACT_SPREAD", std::bind( &ciLibXtract::updateSpread, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRAL_CENTROID } } );
+        { XTRACT_SPECTRAL_CENTROID }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_ZCR, "XTRACT_ZCR", std::bind( &ciLibXtract::updateZcr, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_ROLLOFF, "XTRACT_ROLLOFF", std::bind( &ciLibXtract::updateRollOff, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_LOUDNESS, "XTRACT_LOUDNESS", std::bind( &ciLibXtract::updateLoudness, this ), false, SCALAR_FEATURE,
-        { XTRACT_BARK_COEFFICIENTS } } );
+        { XTRACT_BARK_COEFFICIENTS }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_FLATNESS, "XTRACT_FLATNESS", std::bind( &ciLibXtract::updateFlatness, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_FLATNESS_DB, "XTRACT_FLATNESS_DB", std::bind( &ciLibXtract::updateFlatnessDb, this ), false, SCALAR_FEATURE,
-        { XTRACT_FLATNESS } } );
+        { XTRACT_FLATNESS }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_TONALITY, "XTRACT_TONALITY", std::bind( &ciLibXtract::updateTonality, this ), false, SCALAR_FEATURE,
-        { XTRACT_FLATNESS_DB } } );
+        { XTRACT_FLATNESS_DB }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_RMS_AMPLITUDE, "XTRACT_RMS_AMPLITUDE", std::bind( &ciLibXtract::updateRmsAmplitude, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_INHARMONICITY, "XTRACT_SPECTRAL_INHARMONICITY", std::bind( &ciLibXtract::updateSpectralInharmonicity, this ), false, SCALAR_FEATURE,
-        { XTRACT_PEAK_SPECTRUM, XTRACT_F0 } } );
+        { XTRACT_PEAK_SPECTRUM, XTRACT_F0 }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_POWER, "XTRACT_POWER", std::bind( &ciLibXtract::updatePower, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_ODD_EVEN_RATIO, "XTRACT_ODD_EVEN_RATIO", std::bind( &ciLibXtract::updateOddEvenRatio, this ), false, SCALAR_FEATURE,
-        { XTRACT_HARMONIC_SPECTRUM } } );
+        { XTRACT_HARMONIC_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SHARPNESS, "XTRACT_SHARPNESS", std::bind( &ciLibXtract::updateSharpness, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_SLOPE, "XTRACT_SPECTRAL_SLOPE", std::bind( &ciLibXtract::updateSpectralSlope, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_LOWEST_VALUE, "XTRACT_LOWEST_VALUE", std::bind( &ciLibXtract::updateLowestValue, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_HIGHEST_VALUE, "XTRACT_HIGHEST_VALUE", std::bind( &ciLibXtract::updateHighestValue, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SUM, "XTRACT_SUM", std::bind( &ciLibXtract::updateSum, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_NONZERO_COUNT, "XTRACT_NONZERO_COUNT", std::bind( &ciLibXtract::updateNonZeroCount, this ), false, SCALAR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_MFCC, "XTRACT_MFCC", std::bind( &ciLibXtract::updateMfcc, this ), false,  VECTOR_FEATURE,
-        { XTRACT_SPECTRUM } } );
+        { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     
     //    mCallbacks[XTRACT_CREST]                        = { "XTRACT_CREST", std::bind( &ciLibXtract::updateCrest, this ), false };
@@ -253,20 +253,6 @@ void ciLibXtract::initCallbacks()
     //    mCallbacks[XTRACT_DCT]                          = { "XTRACT_DCT", std::bind( &ciLibXtract::updateDct, this ), false };
     //    mCallbacks[XTRACT_SUBBANDS]                     = { "XTRACT_SUBBANDS", std::bind( &ciLibXtract::updateSubbands, this ), false };
     //    mCallbacks[XTRACT_WINDOWED]                     = { "XTRACT_WINDOWED", std::bind( &ciLibXtract::updateWindowed, this ), false };
-    
-    
-    
-    // iterate descriptors to get min/max values for each function.
-    // possibly I need to implement FeatureCallback as a class instead a struct, this could be part of the constructor.    
-    xtract_function_descriptor_t *descriptor = xtract_make_descriptors();
-    
-    for( auto k=0; k < mCallbacks.size(); k++ )
-    {
-        mCallbacks[k].min = descriptor[ mCallbacks[k].feature ].result.scalar.min;
-        mCallbacks[k].max = descriptor[ mCallbacks[k].feature ].result.scalar.max;
-    }
-    
-    delete descriptor;
 }
 
 

@@ -3,6 +3,7 @@
 #include "Gwen/Controls/Base.h"
 #include "Gwen/Controls/CheckBox.h"
 #include "Gwen/Controls/VerticalSlider.h"
+#include "Gwen/Controls/NumericUpDown.h"
 
 #include <boost/circular_buffer.hpp>
 
@@ -31,7 +32,12 @@ private:
     
     Gwen::Controls::VerticalSlider  *mGainSlider;
     Gwen::Controls::CheckBox        *mCheckBox;
-    
+//    Gwen::Controls::NumericUpDown   *mNumericMin;
+//    Gwen::Controls::NumericUpDown   *mNumericMax;
+    Gwen::Controls::TextBoxNumeric  *mNumericMin;
+    Gwen::Controls::TextBoxNumeric  *mNumericMax;
+
+
     std::string                     mLabel;
     double                          *mVal;
     

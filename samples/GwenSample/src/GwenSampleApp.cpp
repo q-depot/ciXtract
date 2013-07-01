@@ -69,10 +69,10 @@ public:
     float                   mGain[XTRACT_FEATURES];
     
     
-	cigwen::GwenRendererGl  *mRenderer;
-	cigwen::GwenInputRef    mGwenInput;
-	Gwen::Controls::Canvas  *mCanvas;
-    Gwen::Controls::WindowControl* mWindow;
+	cigwen::GwenRendererGl          *mRenderer;
+	cigwen::GwenInputRef            mGwenInput;
+	Gwen::Controls::Canvas          *mCanvas;
+    Gwen::Controls::WindowControl   *mWindow;
 };
 
 
@@ -138,9 +138,10 @@ void GwenSampleApp::draw()
     std::vector<ciLibXtract::FeatureCallback>::iterator it;
     
     Vec2f scalarDataOffset( 25, 15 );
-    float margin = 35;
     string name;
-    Rectf vectorDataOffset( 480, 15, 760, 100 );
+    Rectf vectorDataOffset( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT );
+    vectorDataOffset.offset( Vec2f( 940, 220 ) );
+    
     for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
     {
         name = it->name; name.erase( name.begin(), name.begin() + 7 );

@@ -36,19 +36,24 @@ ScalarControl::ScalarControl( Gwen::Controls::Base *parent, std::string label, c
     
     SetBounds( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT );
     
-    
-    
     Gwen::Controls::CheckBox* check = new Gwen::Controls::CheckBox( this );
     check->SetPos( SCALAR_CONTROL_WIDTH - 15, 0 );
     check->onCheckChanged.Add( this, &ScalarControl::toggleFeature  );
-    
     
     mGainSlider = new Gwen::Controls::VerticalSlider( this );
     mGainSlider->SetPos( 0, mValRect.y1 );
     mGainSlider->SetSize( 15, mValRect.getHeight() );
     mGainSlider->SetRange( 0.0f, 2.0f );
-    mGainSlider->SetFloatValue( 0.4f );
+    mGainSlider->SetFloatValue( 1.0f );
 //    pSlider->onValueChanged.Add( this, &Slider::SliderMoved );
+    
+    mNumericMin = new Gwen::Controls::TextBoxNumeric( this );
+    mNumericMin->SetBounds( mBuffRect.x2 - 76, mBuffRect.y1 + 3, 35, 20 );
+    mNumericMin->SetText( to_string( mCb->min ) );
+    
+    mNumericMax = new Gwen::Controls::TextBoxNumeric( this );
+    mNumericMax->SetBounds( mBuffRect.x2 - 38, mBuffRect.y1 + 3, 35, 20 );
+    mNumericMax->SetText( to_string( mCb->max ) );
 }
 
 ScalarControl::ScalarControl( Gwen::Controls::Base *parent ) : Controls::Base( parent, "cigwen sample ScalarControl" ) {}
@@ -59,7 +64,7 @@ ScalarControl::~ScalarControl() {}
 
 void ScalarControl::toggleFeature( Gwen::Controls::Base* pControl )
 {
-    Gwen::Controls::CheckBox*           checkbox    = ( Gwen::Controls::CheckBox* )pControl;
+    Gwen::Controls::CheckBox* checkbox = ( Gwen::Controls::CheckBox* )pControl;
 
     if ( checkbox->IsChecked() )
         mXtract->enableFeature( mCb->feature );
@@ -75,24 +80,19 @@ void ScalarControl::Render( Skin::Base* skin )
 {
     Vec2f widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
     
-    
 //    double val  = ( ( *mVal ) - mCb->min ) / ( mCb->max - mCb->min );//* (float)mGainSlider->GetFloatValue();
-    double val  = ( *mVal ) * (float)mGainSlider->GetFloatValue();
-    val         = math<double>::clamp( val, 0.0f, 1.0f );
+//    double val  = ( *mVal ) * (float)mGainSlider->GetFloatValue();
+
+    float min   = mNumericMin->GetFloatFromText();
+    float max   = mNumericMax->GetFloatFromText();
+    float val   = (float)mGainSlider->GetFloatValue() * ( (*mVal) - min ) / ( max - min );
+    val         = math<float>::clamp( val, 0.0f, 1.0f );
     mBuff.push_front( val );
-    
-    
-    
-    if ( mCb->feature == XTRACT_IRREGULARITY_K )
-    {
-        console() << mCb->min << " " << mCb->max << endl;
-        
-    }
-    
-    
-    
-    
-    
+
+//    if ( isnan(val) )
+//        console() << mCb->name << " " << (*mVal);
+//    if ( mCb->feature == XTRACT_SKEWNESS )
+//        console() << min << " " << max << " " << val << " "  << (*mVal) << endl;
     
     
     PolyLine<Vec2f>	buffLine;
