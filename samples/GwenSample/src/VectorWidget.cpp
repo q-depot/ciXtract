@@ -33,8 +33,8 @@ VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciL
     SetBounds( 0, 0, VECTOR_CONTROL_WIDTH, VECTOR_CONTROL_HEIGHT );
     
     mWidgetRect = Rectf( 0, 0, VECTOR_CONTROL_WIDTH, VECTOR_CONTROL_HEIGHT );
-    mValRect    = Rectf( mWidgetRect.x1 + 18,   mWidgetRect.y1 + 35,    mWidgetRect.x1 + 18 + 5,    mWidgetRect.y2 );
-    mBuffRect   = Rectf( mValRect.x2 + 3,       mValRect.y1,            mWidgetRect.x2,             mValRect.y2 );
+    mValRect    = Rectf( mWidgetRect.x1 + 18,   mWidgetRect.y1 + 25,    mWidgetRect.x1 + 18 + 5,    mWidgetRect.y2 );
+    mBuffRect   = Rectf( mValRect.x2 + 3,       mWidgetRect.y1 + 25,    mWidgetRect.x2,             mWidgetRect.y2 );
     
     mCheckBox = new Gwen::Controls::CheckBox( this );
     mCheckBox->SetPos( VECTOR_CONTROL_WIDTH - 15, 0 );
@@ -76,31 +76,33 @@ void VectorWidget::Render( Skin::Base* skin )
         mCheckBox->SetChecked( mCb->enable );
     
     Vec2f       widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
-    Rectf       rect( widgetPos.x, widgetPos.y, widgetPos.x + VECTOR_CONTROL_WIDTH, widgetPos.y + VECTOR_CONTROL_HEIGHT );
-    int         padding = 5;
-    ci::Color   col     = ci::Color(1,0,0);
+//    Rectf       rect( widgetPos.x, widgetPos.y, widgetPos.x + VECTOR_CONTROL_WIDTH, widgetPos.y + VECTOR_CONTROL_HEIGHT );
     
     std::shared_ptr<double> data = mXtract->getVectorFeature( mCb->feature );
     
     glPushMatrix();
     
-    gl::color( mBuffBgCol );
+//    gl::color( mBuffBgCol );
 //    gl::drawSolidRect( rect );
-
-    gl::translate( rect.getUpperLeft() );
     
+    gl::translate( widgetPos );
+    
+    gl::color( mLabelCol );
+    mFontSmall->drawString( mLabel, Vec2f( 0, 10 ) );
+
+    gl::translate( mBuffRect.getUpperLeft() );
+  
     gl::color( mBuffCol );
+    
     glBegin( GL_QUADS );
     
-    float step  = rect.getWidth() / mCb->buffSize;
-    float h     = rect.getHeight();
+    float step  = mBuffRect.getWidth() / mCb->buffSize;
+    float h     = mBuffRect.getHeight();
     
     float min   = mNumericMin->GetFloatFromText();
     float max   = mNumericMax->GetFloatFromText();
     float val;
-//    = (float)mGainSlider->GetFloatValue() * ( (*mVal) - min ) / ( max - min );
-//    val         = math<float>::clamp( val, 0.0f, 1.0f );
-    
+
     for( int i = 0; i < mCb->buffSize; i++ )
     {
         val = (float)mGainSlider->GetFloatValue() * ( data.get()[i] - min ) / ( max - min );
@@ -114,9 +116,6 @@ void VectorWidget::Render( Skin::Base* skin )
     
     glEnd();
     
-    // label
-    gl::color( mLabelCol );
-    mFontMedium->drawString( mLabel, Vec2f( 0, 10 ) );
     
     gl::popMatrices();
 

@@ -64,6 +64,7 @@ public:
     
     float                   mGain[XTRACT_FEATURES];
     
+    gl::TextureRef                  mLogoTex;
     
 	cigwen::GwenRendererGl          *mRenderer;
 	cigwen::GwenInputRef            mGwenInput;
@@ -107,6 +108,8 @@ void GwenSampleApp::setup()
     mFontBig    = gl::TextureFont::create( Font( "Helvetica", 18 ) );
     
     //    setFullScreen(true, FullScreenOptions().kioskMode() );
+    
+    mLogoTex    = gl::Texture::create( loadImage( loadAsset( "nocte.png" ) ) );
 }
 
 
@@ -128,6 +131,9 @@ void GwenSampleApp::draw()
     gl::enableAlphaBlending();
     
 	mCanvas->RenderCanvas();
+    
+    gl::color( Color::white() );
+    gl::draw( mLogoTex, Vec2f( 15, 8 ) );
 }
 
 
@@ -147,7 +153,7 @@ void GwenSampleApp::initGui()
 	mCanvas->SetSize( getWindowWidth(), getWindowHeight() );
 	mGwenInput = cigwen::GwenInput::create( mCanvas );
     
-    Vec2f offset( 15, 5 );
+    Vec2f offset( getWindowWidth() - 180, 12 );
     
     // Toggle all
     Gwen::Controls::Button* pButtonOn = new Gwen::Controls::Button( mCanvas );
@@ -163,7 +169,7 @@ void GwenSampleApp::initGui()
     string label;
     
     // Scalar Features
-    Vec2f initOffset( 15, 30 );
+    Vec2f initOffset( 15, 50 );
     offset = Vec2f( VECTOR_CONTROL_WIDTH + 30, initOffset.y );
     std::vector<ciLibXtract::FeatureCallback>::iterator itr;
     

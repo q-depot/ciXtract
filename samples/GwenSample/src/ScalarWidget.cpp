@@ -110,7 +110,7 @@ void ScalarWidget::Render( Skin::Base* skin )
     
     // label
     gl::color( mLabelCol );
-    mFontMedium->drawString( mLabel, Vec2f( 0, 10 ) );
+    mFontSmall->drawString( mLabel, Vec2f( 0, 10 ) );
     gl::color( mValCol );
     mFontBig->drawString( valStr, Vec2f( 0, 27 ) );
     
