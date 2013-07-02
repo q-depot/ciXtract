@@ -134,6 +134,9 @@ void GwenSampleApp::draw()
     
     gl::color( Color::white() );
     gl::draw( mLogoTex, Vec2f( 15, 8 ) );
+
+    gl::color( Color::gray( 0.2f ) );
+    mFontSmall->drawString( toString( (int)getAverageFps() ) + " FPS",  Vec2f( 110, 28 ) );
 }
 
 
