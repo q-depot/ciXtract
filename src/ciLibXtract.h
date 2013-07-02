@@ -23,7 +23,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define PCM_SIZE            1024
+#define PCM_SIZE            2048
 #define SAMPLERATE          44100
 
 #define PERIOD              100

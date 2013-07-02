@@ -71,7 +71,7 @@ void ciLibXtract::init()
 void ciLibXtract::initFft()
 {
     xtract_init_fft( PCM_SIZE << 1, XTRACT_SPECTRUM );
-    xtract_init_fft( PCM_SIZE << 1, XTRACT_AUTOCORRELATION_FFT );
+    xtract_init_fft( PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
 }
 
 void ciLibXtract::initMfccs()
@@ -103,7 +103,7 @@ void ciLibXtract::initBarks()
 
 void ciLibXtract::initParams()
 {
-    mParams["spectrum_sample_rate_N"]   = SAMPLERATE / (double)( PCM_SIZE >> 1 );
+    mParams["spectrum_sample_rate_N"]   = SAMPLERATE / (double)PCM_SIZE;
     mParams["spectrum_type"]            = XTRACT_MAGNITUDE_SPECTRUM;    // XTRACT_MAGNITUDE_SPECTRUM, XTRACT_LOG_MAGNITUDE_SPECTRUM, XTRACT_POWER_SPECTRUM, XTRACT_LOG_POWER_SPECTRUM
     mParams["spectrum_dc"]              = 0.0f;
     mParams["spectrum_norm"]            = 0.0f;
@@ -259,7 +259,6 @@ void ciLibXtract::initCallbacks()
 }
 
 
-
 void ciLibXtract::update()
 {
     if ( !mInputSource )
@@ -270,10 +269,19 @@ void ciLibXtract::update()
 	if( !mPcmBuffer )
 		return;
     
-    audio::Buffer32fRef buff = mPcmBuffer->getInterleavedData();
-    
+//    audio::Buffer32fRef buff        = mPcmBuffer->getInterleavedData();
+//	audio::Buffer32fRef leftBuffer  = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
+  	audio::Buffer32fRef buff  = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
     for( size_t k=0; k < PCM_SIZE; k++ )
-        mPcmData.get()[k] = buff->mData[k*2];
+        mPcmData.get()[k] = buff->mData[k];
+    
+//    console() << mPcmBuffer->isInterleaved() << " " << mPcmBuffer->getMaxSampleCount() << " " << mPcmBuffer->getSampleCount() << " " << mPcmBuffer->getChannelCount();
+//    console() << " --- " << buff->mSampleCount << " " << buff->mNumberChannels << " " << PCM_SIZE << endl;
+//    console() << leftBuffer->mNumberChannels << " " << leftBuffer->mSampleCount << " --- ";
+//    console() << buff->mNumberChannels << " " << buff->mSampleCount << endl;
+    
+//    for( size_t k=0; k < PCM_SIZE; k++ )
+//        mPcmData.get()[k] = buff->mData[k*2];
     
     updateCallbacks();
 }
@@ -348,7 +356,6 @@ bool ciLibXtract::featureDependsOn( xtract_features_ this_feature, xtract_featur
 
 
 ciLibXtract::FeatureCallback* ciLibXtract::findFeatureCbRef( xtract_features_ feature )
-//FeatureCallback* ciLibXtract::findFeatureCbRef( xtract_features_ feature )
 {
     std::vector<FeatureCallback>::iterator it;
     for( it = mCallbacks.begin(); it != mCallbacks.end(); ++it )
@@ -592,16 +599,14 @@ void ciLibXtract::updateNonZeroCount()
 }
 
 
-// THIS FUNCTION DOESN'T WORK PROPERLY ast stated in the LibXtract doc!!!
+// THIS FUNCTION DOESN'T WORK PROPERLY as stated in the LibXtract doc!!!
 //void ciLibXtract::updateHps()
 //{
 //    xtract_hps( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_HPS] );
 //}
 
 
-/////////////////////////////////
-
-// Vector ///////////////////////////////////////////////////////////////////////////////
+// Vector /////////////////////////////////
 
 void ciLibXtract::updateSpectrum()
 {
