@@ -57,7 +57,7 @@ public:
     
     void initGui();
     
-    void toggleAllFeatures( bool enable );
+    void toggleAllFeatures( Gwen::Controls::Base* pControl );
 
     void toggleFeature( Gwen::Event::Info info );
     
@@ -302,12 +302,24 @@ void GwenSampleApp::initGui()
 	mCanvas->SetSize( getWindowWidth(), getWindowHeight() );
 	mGwenInput = cigwen::GwenInput::create( mCanvas );
     
-    Vec2f offset( 15, 15 );
+    Vec2f offset( 15, 15 );    
+    
+    // Just image
+    Gwen::Controls::Button* pButtonOn = new Gwen::Controls::Button( mCanvas );
+    pButtonOn->SetText( "All on" );
+    pButtonOn->SetBounds( offset.x, offset.y, 80, 20 );
+    pButtonOn->onPress.Add( this, &GwenSampleApp::toggleAllFeatures );
+    
+    Gwen::Controls::Button* pButtonOff = new Gwen::Controls::Button( mCanvas );
+    pButtonOff->SetText( "All off" );
+    pButtonOff->SetBounds( offset.x + 85, offset.y, 80, 20 );
+    pButtonOff->onPress.Add( this, &GwenSampleApp::toggleAllFeatures );
+    
+    offset.y += SCALAR_CONTROL_HEIGHT + 25;
     
 //    ScalarControl *control = new ScalarControl( mCanvas, "IRREGULARITY_K", mLibXtract->findFeatureCbRef( XTRACT_IRREGULARITY_K ), mLibXtract );
 //    control->SetPos( offset.x, offset.y );
 
-    
     // Features toggle
     std::vector<ciLibXtract::FeatureCallback>::iterator itr;
     for( itr = mLibXtract->mCallbacks.begin(); itr != mLibXtract->mCallbacks.end(); ++itr )
@@ -344,22 +356,28 @@ void GwenSampleApp::initGui()
 
 void GwenSampleApp::toggleFeature( Gwen::Event::Info info )
 {
-    if ( info.Packet->Integer == -1 )
-        toggleAllFeatures(true);
-    else if ( info.Packet->Integer == -2 )
-        toggleAllFeatures(false);
-    else
-    {
-        mLibXtract->toggleFeature( (xtract_features_)info.Packet->Integer );
-    }
+//    if ( info.Packet->Integer == -1 )
+//        toggleAllFeatures(true);
+//    else if ( info.Packet->Integer == -2 )
+//        toggleAllFeatures(false);
+//    else
+//    {
+//        mLibXtract->toggleFeature( (xtract_features_)info.Packet->Integer );
+//    }
 }
 
 
-void GwenSampleApp::toggleAllFeatures( bool enable )
+void GwenSampleApp::toggleAllFeatures( Gwen::Controls::Base* pControl )
 {
+    Gwen::Controls::Button  *button = (Gwen::Controls::Button*)pControl;
+    bool                    enable  = false;
+    
+    if ( button->GetText() == "All on" )
+        enable = true;
+
     std::vector<ciLibXtract::FeatureCallback>::iterator it;
     for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
-        if ( enable )
+        if ( enable && it->type == ciLibXtract::SCALAR_FEATURE )
             mLibXtract->enableFeature( it->feature );
         else
             mLibXtract->disableFeature( it->feature );

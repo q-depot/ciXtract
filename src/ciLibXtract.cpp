@@ -191,7 +191,7 @@ void ciLibXtract::initCallbacks()
         { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_LOUDNESS, "XTRACT_LOUDNESS", std::bind( &ciLibXtract::updateLoudness, this ), false, SCALAR_FEATURE,
-        { XTRACT_BARK_COEFFICIENTS }, 0.0f, 1.0f } );
+        { XTRACT_BARK_COEFFICIENTS }, 0.0f, 100.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_FLATNESS, "XTRACT_FLATNESS", std::bind( &ciLibXtract::updateFlatness, this ), false, SCALAR_FEATURE,
         { XTRACT_SPECTRUM }, 0.0f, 1.0f } );

@@ -36,9 +36,9 @@ ScalarControl::ScalarControl( Gwen::Controls::Base *parent, std::string label, c
     
     SetBounds( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT );
     
-    Gwen::Controls::CheckBox* check = new Gwen::Controls::CheckBox( this );
-    check->SetPos( SCALAR_CONTROL_WIDTH - 15, 0 );
-    check->onCheckChanged.Add( this, &ScalarControl::toggleFeature  );
+    mCheckBox = new Gwen::Controls::CheckBox( this );
+    mCheckBox->SetPos( SCALAR_CONTROL_WIDTH - 15, 0 );
+    mCheckBox->onCheckChanged.Add( this, &ScalarControl::toggleFeature  );
     
     mGainSlider = new Gwen::Controls::VerticalSlider( this );
     mGainSlider->SetPos( 0, mValRect.y1 );
@@ -78,6 +78,9 @@ void ScalarControl::toggleFeature( Gwen::Controls::Base* pControl )
 
 void ScalarControl::Render( Skin::Base* skin )
 {
+    if ( mCheckBox->IsChecked() ^ mCb->enable )
+        mCheckBox->SetChecked( mCb->enable );
+    
     Vec2f widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
     
 //    double val  = ( ( *mVal ) - mCb->min ) / ( mCb->max - mCb->min );//* (float)mGainSlider->GetFloatValue();

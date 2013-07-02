@@ -32,11 +32,8 @@ private:
     
     Gwen::Controls::VerticalSlider  *mGainSlider;
     Gwen::Controls::CheckBox        *mCheckBox;
-//    Gwen::Controls::NumericUpDown   *mNumericMin;
-//    Gwen::Controls::NumericUpDown   *mNumericMax;
     Gwen::Controls::TextBoxNumeric  *mNumericMin;
     Gwen::Controls::TextBoxNumeric  *mNumericMax;
-
 
     std::string                     mLabel;
     double                          *mVal;
