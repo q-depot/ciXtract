@@ -48,6 +48,7 @@ public:
 	void prepareSettings( Settings *settings );
 	void setup();
 	void mouseDown( MouseEvent event );
+	void keyDown( KeyEvent event );
 	void update();
 	void draw();
     
@@ -118,6 +119,18 @@ void GwenSampleApp::mouseDown( MouseEvent event )
 }
 
 
+void GwenSampleApp::keyDown( KeyEvent event )
+{
+    char c = event.getChar();
+    
+    if ( event.isAltDown() )
+    {
+        if ( c == 'f' )
+            setFullScreen( !isFullScreen() );
+    }
+}
+
+
 void GwenSampleApp::update()
 {
     mLibXtract->update();
@@ -136,7 +149,7 @@ void GwenSampleApp::draw()
     gl::draw( mLogoTex, Vec2f( 15, 8 ) );
 
     gl::color( Color::gray( 0.2f ) );
-    mFontSmall->drawString( toString( (int)getAverageFps() ) + " FPS",  Vec2f( 110, 28 ) );
+//    mFontSmall->drawString( toString( (int)getAverageFps() ) + " FPS",  Vec2f( 110, 28 ) );
 }
 
 

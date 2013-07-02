@@ -77,7 +77,7 @@ void ScalarWidget::Render( Skin::Base* skin )
 {
     if ( mCheckBox->IsChecked() ^ mCb->enable )
         mCheckBox->SetChecked( mCb->enable );
-    
+   
     Vec2f widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
     
     float min   = mNumericMin->GetFloatFromText();

@@ -86,7 +86,7 @@ void ciLibXtract::initMfccs()
     for( int n = 0; n < MFCC_FREQ_BANDS; ++n )
         mMelFilters.filters[n] = (double *)malloc(PCM_SIZE * sizeof(double));
     
-    xtract_init_mfcc( PCM_SIZE >> 1, SAMPLERATE >> 1, XTRACT_EQUAL_GAIN, MFCC_FREQ_MIN, MFCC_FREQ_MAX, mMelFilters.n_filters, mMelFilters.filters );
+    xtract_init_mfcc( FFT_SIZE, SAMPLERATE >> 1, XTRACT_EQUAL_GAIN, MFCC_FREQ_MIN, MFCC_FREQ_MAX, mMelFilters.n_filters, mMelFilters.filters );
 }
 
 void ciLibXtract::initBarks()
@@ -97,7 +97,7 @@ void ciLibXtract::initBarks()
     for( size_t k=0; k < XTRACT_BARK_BANDS; k++ )
         mBarks.get()[k] = 0.0f;
     
-    xtract_init_bark( PCM_SIZE >> 1, SAMPLERATE >> 1, mBarkBandLimits.get() );
+    xtract_init_bark( FFT_SIZE, SAMPLERATE >> 1, mBarkBandLimits.get() );
     
 }
 
@@ -113,7 +113,7 @@ void ciLibXtract::initParams()
 void ciLibXtract::initCallbacks()
 {
     mCallbacks.push_back( 	{ XTRACT_SPECTRUM, "XTRACT_SPECTRUM", std::bind( &ciLibXtract::updateSpectrum, this ), false, VECTOR_FEATURE,
-                            { }, 0.0f, 0.01f, PCM_SIZE >> 1 } );
+                            { }, 0.0f, 0.01f, FFT_SIZE } );
     
     mCallbacks.push_back( 	{ XTRACT_AUTOCORRELATION, "XTRACT_AUTOCORRELATION", std::bind( &ciLibXtract::updateAutoCorrelation, this ), false, VECTOR_FEATURE,
                             { }, 0.0f, 0.001f, PCM_SIZE } );
@@ -122,7 +122,7 @@ void ciLibXtract::initCallbacks()
                             { }, 0.0f, 1.0f, PCM_SIZE } );
     
     mCallbacks.push_back( 	{ XTRACT_PEAK_SPECTRUM, "XTRACT_PEAK_SPECTRUM", std::bind( &ciLibXtract::updatePeakSpectrum, this ), false, VECTOR_FEATURE,
-                            { XTRACT_SPECTRUM }, 0.0f, 0.01f, PCM_SIZE >> 1 } );
+                            { XTRACT_SPECTRUM }, 0.0f, 0.01f, FFT_SIZE } );
     
     mCallbacks.push_back( 	{ XTRACT_SUBBANDS, "XTRACT_SUBBANDS", std::bind( &ciLibXtract::updateSubBands, this ), false, VECTOR_FEATURE,
                             { XTRACT_SPECTRUM }, 0.0f, 0.01f, SUBBANDS_N } );
@@ -134,10 +134,10 @@ void ciLibXtract::initCallbacks()
                             { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_BARK_COEFFICIENTS, "XTRACT_BARK_COEFFICIENTS", std::bind( &ciLibXtract::updateBarkCoefficients, this ), false, VECTOR_FEATURE,
-                            { XTRACT_SPECTRUM }, 0.0f, 1.0f, XTRACT_BARK_BANDS } );
+                            { XTRACT_SPECTRUM }, 0.0f, 0.1f, XTRACT_BARK_BANDS } );
     
     mCallbacks.push_back( 	{ XTRACT_HARMONIC_SPECTRUM, "XTRACT_HARMONIC_SPECTRUM", std::bind( &ciLibXtract::updateHarmonicSpectrum, this ), false, VECTOR_FEATURE,
-                            { XTRACT_PEAK_SPECTRUM, XTRACT_F0 }, 0.0f, 1.0f, PCM_SIZE >> 1 } );
+                            { XTRACT_PEAK_SPECTRUM, XTRACT_F0 }, 0.0f, 0.01f, FFT_SIZE } );
     
     mCallbacks.push_back( 	{ XTRACT_MEAN, "XTRACT_MEAN", std::bind( &ciLibXtract::updateMean, this ), false, SCALAR_FEATURE,
                             { XTRACT_SPECTRUM }, 0.0f, 0.01f } );
@@ -152,7 +152,7 @@ void ciLibXtract::initCallbacks()
                             { XTRACT_MEAN }, 0.0f, 0.01f } );
     
     mCallbacks.push_back( 	{ XTRACT_SKEWNESS, "XTRACT_SKEWNESS", std::bind( &ciLibXtract::updateSkewness, this ), false, SCALAR_FEATURE,
-                            { XTRACT_STANDARD_DEVIATION }, 0.0f, 100.0f } );
+                            { XTRACT_STANDARD_DEVIATION }, 0.0f, 1000000000000.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_KURTOSIS, "XTRACT_KURTOSIS", std::bind( &ciLibXtract::updateKurtosis, this ), false, SCALAR_FEATURE,
                             { XTRACT_STANDARD_DEVIATION }, 0.0f, 1000.0f } );
@@ -191,7 +191,7 @@ void ciLibXtract::initCallbacks()
                             { XTRACT_SPECTRAL_CENTROID }, 0.0f, 0.000001f } );
     
     mCallbacks.push_back( 	{ XTRACT_ZCR, "XTRACT_ZCR", std::bind( &ciLibXtract::updateZcr, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRUM }, 0.0f, 1.0f } );
+                            { XTRACT_SPECTRUM }, -1.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_ROLLOFF, "XTRACT_ROLLOFF", std::bind( &ciLibXtract::updateRollOff, this ), false, SCALAR_FEATURE,
                             { XTRACT_SPECTRUM }, 0.0f, 1000.0f } );
@@ -409,80 +409,80 @@ std::shared_ptr<double> ciLibXtract::getVectorFeature( xtract_features_ feature 
 void ciLibXtract::updateMean()
 {
     double *argd = NULL;
-    xtract_mean( mSpectrum.get(), PCM_SIZE >> 1, argd, &mScalarValues[XTRACT_MEAN] );
+    xtract_mean( mSpectrum.get(), FFT_SIZE, argd, &mScalarValues[XTRACT_MEAN] );
 }
 
 void ciLibXtract::updateVariance()
 {
-    xtract_variance( mSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_MEAN], &mScalarValues[XTRACT_VARIANCE] );
+    xtract_variance( mSpectrum.get(), FFT_SIZE, &mScalarValues[XTRACT_MEAN], &mScalarValues[XTRACT_VARIANCE] );
 }
 
 void ciLibXtract::updateStandardDeviation()
 {
-    xtract_standard_deviation( mSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_VARIANCE], &mScalarValues[XTRACT_STANDARD_DEVIATION] );
+    xtract_standard_deviation( mSpectrum.get(), FFT_SIZE, &mScalarValues[XTRACT_VARIANCE], &mScalarValues[XTRACT_STANDARD_DEVIATION] );
 }
 
 void ciLibXtract::updateAverageDeviation()
 {
-    xtract_average_deviation( mSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_MEAN], &mScalarValues[XTRACT_AVERAGE_DEVIATION] );
+    xtract_average_deviation( mSpectrum.get(), FFT_SIZE, &mScalarValues[XTRACT_MEAN], &mScalarValues[XTRACT_AVERAGE_DEVIATION] );
 }
 
 void ciLibXtract::updateSkewness()
 {
     double data[2] = { mScalarValues[XTRACT_MEAN], mScalarValues[XTRACT_STANDARD_DEVIATION] };
-    xtract_skewness( mSpectrum.get(), PCM_SIZE >> 1, data, &mScalarValues[XTRACT_SKEWNESS] );
+    xtract_skewness( mSpectrum.get(), FFT_SIZE, data, &mScalarValues[XTRACT_SKEWNESS] );
 }
 
 void ciLibXtract::updateKurtosis()
 {
     double data[2] = { mScalarValues[XTRACT_MEAN], mScalarValues[XTRACT_STANDARD_DEVIATION] };
-    xtract_kurtosis( mSpectrum.get(), PCM_SIZE >> 1, data, &mScalarValues[XTRACT_KURTOSIS] );
+    xtract_kurtosis( mSpectrum.get(), FFT_SIZE, data, &mScalarValues[XTRACT_KURTOSIS] );
 }
 
 void ciLibXtract::updateSpectralMean()
 {
-    xtract_spectral_mean( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_SPECTRAL_MEAN] );
+    xtract_spectral_mean( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_SPECTRAL_MEAN] );
 }
 
 void ciLibXtract::updateSpectralVariance()
 {
-    xtract_spectral_variance( mSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_SPECTRAL_MEAN], &mScalarValues[XTRACT_SPECTRAL_VARIANCE] );
+    xtract_spectral_variance( mSpectrum.get(), FFT_SIZE, &mScalarValues[XTRACT_SPECTRAL_MEAN], &mScalarValues[XTRACT_SPECTRAL_VARIANCE] );
 }
 
 void ciLibXtract::updateSpectralStandardDeviation()
 {
-    xtract_spectral_standard_deviation( mSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_SPECTRAL_VARIANCE], &mScalarValues[XTRACT_SPECTRAL_STANDARD_DEVIATION] );
+    xtract_spectral_standard_deviation( mSpectrum.get(), FFT_SIZE, &mScalarValues[XTRACT_SPECTRAL_VARIANCE], &mScalarValues[XTRACT_SPECTRAL_STANDARD_DEVIATION] );
 }
 
 void ciLibXtract::updateSpectralSkewness()
 {
-    xtract_spectral_skewness( mSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_SPECTRAL_MEAN], &mScalarValues[XTRACT_SPECTRAL_SKEWNESS] );
+    xtract_spectral_skewness( mSpectrum.get(), FFT_SIZE, &mScalarValues[XTRACT_SPECTRAL_MEAN], &mScalarValues[XTRACT_SPECTRAL_SKEWNESS] );
 }
 
 void ciLibXtract::updateSpectralKurtosis()
 {
     double data[2] = { mScalarValues[XTRACT_SPECTRAL_MEAN], mScalarValues[XTRACT_SPECTRAL_STANDARD_DEVIATION] };
-    xtract_spectral_kurtosis( mSpectrum.get(), PCM_SIZE >> 1, data, &mScalarValues[XTRACT_SPECTRAL_KURTOSIS] );
+    xtract_spectral_kurtosis( mSpectrum.get(), FFT_SIZE, data, &mScalarValues[XTRACT_SPECTRAL_KURTOSIS] );
 }
 
 void ciLibXtract::updateSpectralCentroid()
 {
-    xtract_spectral_centroid( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_SPECTRAL_CENTROID] );
+    xtract_spectral_centroid( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_SPECTRAL_CENTROID] );
 }
 
 void ciLibXtract::updateIrregularityK()
 {
-    xtract_irregularity_k( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_IRREGULARITY_K] );
+    xtract_irregularity_k( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_IRREGULARITY_K] );
 }
 
 void ciLibXtract::updateIrregularityJ()
 {
-    xtract_irregularity_j( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_IRREGULARITY_J] );
+    xtract_irregularity_j( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_IRREGULARITY_J] );
 }
 
 void ciLibXtract::updateTristimulus1()
 {
-    xtract_tristimulus_1( mHarmonicSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_TRISTIMULUS_1] );
+    xtract_tristimulus_1( mHarmonicSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_TRISTIMULUS_1] );
 }
 
 
@@ -490,25 +490,25 @@ void ciLibXtract::updateTristimulus1()
 void ciLibXtract::updateSmoothness()
 {
     int data[3] = { 0, 10, 10 };    // lower bound, upper bound, and pre-scaling factor, whereby array data in the range lower < n < upper will be pre-scaled by p before processing.
-    xtract_smoothness( mSpectrum.get(), PCM_SIZE >> 1, data, &mScalarValues[XTRACT_SMOOTHNESS] );
+    xtract_smoothness( mSpectrum.get(), FFT_SIZE, data, &mScalarValues[XTRACT_SMOOTHNESS] );
 }
 
 void ciLibXtract::updateSpread()
 {
-    xtract_spread( mSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_SPECTRAL_CENTROID], &mScalarValues[XTRACT_SPREAD] );
+    xtract_spread( mSpectrum.get(), FFT_SIZE, &mScalarValues[XTRACT_SPECTRAL_CENTROID], &mScalarValues[XTRACT_SPREAD] );
 }
 
 void ciLibXtract::updateZcr()
 {
-    xtract_zcr( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_ZCR] );
+    xtract_zcr( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_ZCR] );
 }
 
 // TODO: add params!
 void ciLibXtract::updateRollOff()
 {
     //    spectral rolloff in Hz of N values from the array pointed to by *data. This is the point in the spectrum below which argv[0] of the energy is distributed.
-    double data[3] = { (double)SAMPLERATE / (double)( PCM_SIZE >> 1 ), 10 }; //  (samplerate / N ) and a double representing the threshold for rolloff
-    xtract_rolloff( mSpectrum.get(), PCM_SIZE >> 1, data, &mScalarValues[XTRACT_ROLLOFF] );
+    double data[3] = { (double)SAMPLERATE / (double)( FFT_SIZE ), 10 }; //  (samplerate / N ) and a double representing the threshold for rolloff
+    xtract_rolloff( mSpectrum.get(), FFT_SIZE, data, &mScalarValues[XTRACT_ROLLOFF] );
 }
 
 void ciLibXtract::updateLoudness()
@@ -518,7 +518,7 @@ void ciLibXtract::updateLoudness()
 
 void ciLibXtract::updateFlatness()
 {
-    xtract_flatness( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_FLATNESS] );
+    xtract_flatness( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_FLATNESS] );
 }
 
 void ciLibXtract::updateFlatnessDb()
@@ -541,68 +541,68 @@ void ciLibXtract::updateTonality()
 
 void ciLibXtract::updateRmsAmplitude()
 {
-    xtract_rms_amplitude( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_RMS_AMPLITUDE] );
+    xtract_rms_amplitude( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_RMS_AMPLITUDE] );
 }
 
 void ciLibXtract::updateSpectralInharmonicity()
 {
-    xtract_spectral_inharmonicity( mPeakSpectrum.get(), PCM_SIZE >> 1, &mScalarValues[XTRACT_F0], &mScalarValues[XTRACT_SPECTRAL_INHARMONICITY] );
+    xtract_spectral_inharmonicity( mPeakSpectrum.get(), FFT_SIZE, &mScalarValues[XTRACT_F0], &mScalarValues[XTRACT_SPECTRAL_INHARMONICITY] );
 }
 
 void ciLibXtract::updatePower()
 {
-    xtract_power( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_POWER] );
+    xtract_power( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_POWER] );
 }
 
 void ciLibXtract::updateOddEvenRatio()
 {
-    xtract_odd_even_ratio( mHarmonicSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_ODD_EVEN_RATIO] );
+    xtract_odd_even_ratio( mHarmonicSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_ODD_EVEN_RATIO] );
 }
 
 void ciLibXtract::updateSharpness ()
 {
-    xtract_sharpness( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_SHARPNESS] );
+    xtract_sharpness( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_SHARPNESS] );
 }
 
 
 void ciLibXtract::updateF0()
 {
     double sample_rate = SAMPLERATE;
-    xtract_f0( mSpectrum.get(), PCM_SIZE >> 1, &sample_rate, &mScalarValues[XTRACT_F0] );
+    xtract_f0( mSpectrum.get(), FFT_SIZE, &sample_rate, &mScalarValues[XTRACT_F0] );
 }
 
 void ciLibXtract::updateSpectralSlope()
 {
-    xtract_spectral_slope( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_SPECTRAL_SLOPE] );
+    xtract_spectral_slope( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_SPECTRAL_SLOPE] );
 }
 
 // TODO: add params!
 void ciLibXtract::updateLowestValue()
 {
     double lowerLimit = 0.2f;
-    xtract_lowest_value( mSpectrum.get(), PCM_SIZE >> 1, &lowerLimit, &mScalarValues[XTRACT_LOWEST_VALUE] );
+    xtract_lowest_value( mSpectrum.get(), FFT_SIZE, &lowerLimit, &mScalarValues[XTRACT_LOWEST_VALUE] );
 }
 
 void ciLibXtract::updateHighestValue()
 {
-    xtract_highest_value( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_HIGHEST_VALUE] );
+    xtract_highest_value( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_HIGHEST_VALUE] );
 }
 
 void ciLibXtract::updateSum()
 {
-    xtract_sum( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_SUM] );
+    xtract_sum( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_SUM] );
 }
 
 void ciLibXtract::updateNonZeroCount()
 {
-    xtract_nonzero_count( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_NONZERO_COUNT] );
+    xtract_nonzero_count( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_NONZERO_COUNT] );
 }
 
 
 // THIS FUNCTION DOESN'T WORK PROPERLY as stated in the LibXtract doc!!!
 //void ciLibXtract::updateHps()
 //{
-//    xtract_hps( mSpectrum.get(), PCM_SIZE >> 1, NULL, &mScalarValues[XTRACT_HPS] );
+//    xtract_hps( mSpectrum.get(), FFT_SIZE, NULL, &mScalarValues[XTRACT_HPS] );
 //}
 
 
@@ -621,12 +621,12 @@ void ciLibXtract::updateSpectrum()
 void ciLibXtract::updatePeakSpectrum()
 {
     double data[2] = { mParams["spectrum_sample_rate_N"], mParams["peak_spectrum_threshold"] };
-    xtract_peak_spectrum( mSpectrum.get(), PCM_SIZE >> 1, data, mPeakSpectrum.get() );
+    xtract_peak_spectrum( mSpectrum.get(), FFT_SIZE, data, mPeakSpectrum.get() );
 }
 
 void ciLibXtract::updateBarkCoefficients()
 {
-    xtract_bark_coefficients( mSpectrum.get(), PCM_SIZE >> 1, mBarkBandLimits.get(), mBarks.get() );
+    xtract_bark_coefficients( mSpectrum.get(), FFT_SIZE, mBarkBandLimits.get(), mBarks.get() );
 }
 
 // TODO add param
@@ -634,12 +634,12 @@ void ciLibXtract::updateHarmonicSpectrum()
 {
     //    F0 and a threshold (t) where 0<=t<=1.0, and t determines the distance from the nearest harmonic number within which a partial can be considered harmonic
     double data[2] = { mScalarValues[XTRACT_F0], 0.3f };
-    xtract_harmonic_spectrum( mPeakSpectrum.get(), PCM_SIZE >> 1, data, mHarmonicSpectrum.get() );
+    xtract_harmonic_spectrum( mPeakSpectrum.get(), FFT_SIZE, data, mHarmonicSpectrum.get() );
 }
 
 void ciLibXtract::updateMfcc()
 {
-    xtract_mfcc( mSpectrum.get(), PCM_SIZE >> 1, &mMelFilters, mMfccs.get() );
+    xtract_mfcc( mSpectrum.get(), FFT_SIZE, &mMelFilters, mMfccs.get() );
 }
 
 void ciLibXtract::updateAutoCorrelation()
@@ -655,5 +655,5 @@ void ciLibXtract::updateAutoCorrelationFft()
 void ciLibXtract::updateSubBands()
 {
     int argd[4] = { XTRACT_MEAN, SUBBANDS_N, XTRACT_LINEAR_SUBBANDS, 5 };       // { XTRACT_SUM, ...  XTRACT_OCTAVE_SUBBANDS,    XTRACT_LINEAR_SUBBANDS
-    xtract_subbands( mSpectrum.get(), PCM_SIZE >> 1, argd, mSubBands.get() );
+    xtract_subbands( mSpectrum.get(), FFT_SIZE, argd, mSubBands.get() );
 }
