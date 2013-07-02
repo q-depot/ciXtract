@@ -55,6 +55,7 @@ public:
         std::vector<xtract_features_>   dependencies;
         double                          min;
         double                          max;
+        uint32_t                        buffSize;
     } FeatureCallback;
     
     
