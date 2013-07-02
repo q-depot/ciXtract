@@ -170,7 +170,7 @@ void ciLibXtract::initCallbacks()
                             { XTRACT_SPECTRAL_MEAN }, 0.0f, 1.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_KURTOSIS, "XTRACT_SPECTRAL_KURTOSIS", std::bind( &ciLibXtract::updateSpectralKurtosis, this ), false, SCALAR_FEATURE,
-                            { XTRACT_SPECTRAL_MEAN,XTRACT_SPECTRAL_STANDARD_DEVIATION,XTRACT_SPECTRAL_STANDARD_DEVIATION }, 0.0f, 1.0f } );
+                            { XTRACT_SPECTRAL_MEAN,XTRACT_SPECTRAL_STANDARD_DEVIATION,XTRACT_SPECTRAL_STANDARD_DEVIATION }, 0.0f, 10.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_SPECTRAL_CENTROID, "XTRACT_SPECTRAL_CENTROID", std::bind( &ciLibXtract::updateSpectralCentroid, this ), false, SCALAR_FEATURE,
                             { XTRACT_SPECTRUM }, 0.0f, 0.001f } );
@@ -197,7 +197,7 @@ void ciLibXtract::initCallbacks()
                             { XTRACT_SPECTRUM }, 0.0f, 1000.0f } );
     
     mCallbacks.push_back( 	{ XTRACT_LOUDNESS, "XTRACT_LOUDNESS", std::bind( &ciLibXtract::updateLoudness, this ), false, SCALAR_FEATURE,
-                            { XTRACT_BARK_COEFFICIENTS }, 0.0f, 100.0f } );
+                            { XTRACT_BARK_COEFFICIENTS }, -1.0f, 0.001f } );
     
     mCallbacks.push_back( 	{ XTRACT_FLATNESS, "XTRACT_FLATNESS", std::bind( &ciLibXtract::updateFlatness, this ), false, SCALAR_FEATURE,
                             { XTRACT_SPECTRUM }, 0.0f, 10000.0f } );

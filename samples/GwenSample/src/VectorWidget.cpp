@@ -75,15 +75,11 @@ void VectorWidget::Render( Skin::Base* skin )
     if ( mCheckBox->IsChecked() ^ mCb->enable )
         mCheckBox->SetChecked( mCb->enable );
     
-    Vec2f       widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
-//    Rectf       rect( widgetPos.x, widgetPos.y, widgetPos.x + VECTOR_CONTROL_WIDTH, widgetPos.y + VECTOR_CONTROL_HEIGHT );
+    Vec2f widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
     
     std::shared_ptr<double> data = mXtract->getVectorFeature( mCb->feature );
     
     glPushMatrix();
-    
-//    gl::color( mBuffBgCol );
-//    gl::drawSolidRect( rect );
     
     gl::translate( widgetPos );
     
