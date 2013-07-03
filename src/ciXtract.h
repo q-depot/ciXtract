@@ -1,5 +1,5 @@
 /*
- *  ciLibXtract.h
+ *  ciXtract.h
  *
  *  Created by Andrea Cuius
  *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
@@ -9,8 +9,8 @@
  */
 
 
-#ifndef CILIBXTRACT
-#define CILIBXTRACT
+#ifndef CI_XTRACT
+#define CI_XTRACT
 
 #pragma once
 
@@ -18,6 +18,7 @@
 #include "cinder/audio/Input.h"
 
 #include "cinder/gl/TextureFont.h"
+#include "ciXtractFeature.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -34,11 +35,12 @@ using namespace std;
 #define SUBBANDS_N          32
 
 
-class ciLibXtract;
-typedef std::shared_ptr<ciLibXtract>    ciLibXtractRef;
+class ciXtract;
+
+typedef std::shared_ptr<ciXtract>       ciXtractRef;
 
 
-class ciLibXtract {
+class ciXtract {
 
 public:
     
@@ -62,9 +64,9 @@ public:
     
 public:
     
-    static ciLibXtractRef create( audio::Input source ) { return ciLibXtractRef( new ciLibXtract( source ) ); }
+    static ciXtractRef create( audio::Input source ) { return ciXtractRef( new ciXtract( source ) ); }
     
-    ~ciLibXtract();
+    ~ciXtract();
     
     void update();
     
@@ -86,7 +88,7 @@ public:
         return &mScalarValues[feature];
     }
     
-    FeatureCallback* findFeatureCbRef( xtract_features_ feature );
+    ciXtractFeatureRef findFeature( xtract_features_ feature );
     
     double getFeatureMin( xtract_features_ feature ) { return mAutoCalibration[feature].min; }
     double getFeatureMax( xtract_features_ feature ) { return mAutoCalibration[feature].max; }
@@ -110,7 +112,7 @@ private:
     
 private:
     
-    ciLibXtract( audio::Input source );
+    ciXtract( audio::Input source );
     
     void init();
 
@@ -206,7 +208,8 @@ private:
     // TEMPORARY PUBLIC !!! <<<<<<<<<<<<<<
 public:
 //    std::map<xtract_features_,FeatureCallback>  mCallbacks;
-    std::vector<FeatureCallback>  mCallbacks;
+//    std::vector<FeatureCallback>  mCallbacks;
+    std::vector<ciXtractFeatureRef>    mCallbacks;
 
 
 private:

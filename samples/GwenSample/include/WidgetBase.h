@@ -15,14 +15,14 @@
 #include "Gwen/Controls/VerticalSlider.h"
 #include "Gwen/Controls/NumericUpDown.h"
 
-#include "ciLibXtract.h"
+#include "ciXtract.h"
 
 
 class WidgetBase : public Gwen::Controls::Base {
     
 public:
     
-	WidgetBase( Gwen::Controls::Base *parent, std::string label, ciLibXtract::FeatureCallback *cb, ciLibXtractRef xtract )
+	WidgetBase( Gwen::Controls::Base *parent, std::string label, ciXtract::FeatureCallback *cb, ciXtractRef xtract )
     : WidgetBase::WidgetBase( parent )
     {
         mLabel      = label;
@@ -55,8 +55,8 @@ protected:
     std::string                     mLabel;
     double                          *mVal;
     
-    ciLibXtractRef                  mXtract;
-    ciLibXtract::FeatureCallback    *mCb;
+    ciXtractRef                     mXtract;
+    ciXtract::FeatureCallback       *mCb;
     
     ci::Rectf                       mBuffRect;
     ci::Rectf                       mValRect;

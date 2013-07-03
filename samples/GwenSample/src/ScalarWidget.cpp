@@ -27,7 +27,7 @@ extern gl::TextureFontRef      mFontMedium;
 extern gl::TextureFontRef      mFontBig;
 
 
-ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciLibXtract::FeatureCallback *cb, ciLibXtractRef xtract )
+ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciXtract::FeatureCallback *cb, ciXtractRef xtract )
 : WidgetBase::WidgetBase( parent, label, cb, xtract )
 {
     SetBounds( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT );

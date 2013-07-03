@@ -27,7 +27,7 @@ extern gl::TextureFontRef      mFontMedium;
 extern gl::TextureFontRef      mFontBig;
 
 
-VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciLibXtract::FeatureCallback *cb, ciLibXtractRef xtract )
+VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciXtract::FeatureCallback *cb, ciXtractRef xtract )
 : WidgetBase::WidgetBase( parent, label, cb, xtract )
 {
     SetBounds( 0, 0, VECTOR_CONTROL_WIDTH, VECTOR_CONTROL_HEIGHT );

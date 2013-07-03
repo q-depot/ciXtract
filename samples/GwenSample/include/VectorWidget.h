@@ -21,7 +21,7 @@ class VectorWidget : public WidgetBase {
     
 public:
     
-	VectorWidget( Gwen::Controls::Base *parent, std::string label, ciLibXtract::FeatureCallback *cb, ciLibXtractRef xtract );
+	VectorWidget( Gwen::Controls::Base *parent, std::string label, ciXtract::FeatureCallback *cb, ciXtractRef xtract );
 
 	virtual ~VectorWidget() {}
     

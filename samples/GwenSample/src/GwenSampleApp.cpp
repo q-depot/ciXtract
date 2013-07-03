@@ -1,5 +1,5 @@
 /*
- *  ciLibXtract GwenSampleApp
+ *  ciXtract GwenSampleApp
  *
  *  Created by Andrea Cuius
  *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
@@ -15,7 +15,7 @@
 #include "cinder/params/Params.h"
 #include "cinder/Utilities.h"
 
-#include "ciLibXtract.h"
+#include "ciXtract.h"
 
 #include "cigwen/GwenRendererGl.h"
 #include "cigwen/GwenInput.h"
@@ -60,7 +60,7 @@ public:
     void toggleFeature( Gwen::Event::Info info );
     
     audio::Input            mInput;
-    ciLibXtractRef          mLibXtract;
+    ciXtractRef          mLibXtract;
     
     params::InterfaceGlRef  mParams;
     
@@ -97,7 +97,7 @@ void GwenSampleApp::setup()
     if ( !mInput )
         exit(-1);
     
-    mLibXtract = ciLibXtract::create( mInput );
+    mLibXtract = ciXtract::create( mInput );
     mLibXtract->enableFeature( XTRACT_SPECTRUM );
     
     for( auto k=0; k < XTRACT_FEATURES; k++ )
@@ -200,11 +200,11 @@ void GwenSampleApp::initGui()
     // Scalar Features
     Vec2f initOffset( 15, 50 );
     offset = Vec2f( VECTOR_CONTROL_WIDTH + 30, initOffset.y );
-    std::vector<ciLibXtract::FeatureCallback>::iterator itr;
+    std::vector<ciXtract::FeatureCallback>::iterator itr;
     
     for( itr = mLibXtract->mCallbacks.begin(); itr != mLibXtract->mCallbacks.end(); ++itr )
     {
-        if ( itr->type != ciLibXtract::SCALAR_FEATURE )
+        if ( itr->type != ciXtract::SCALAR_FEATURE )
             continue;
 
         label = itr->name;
@@ -227,7 +227,7 @@ void GwenSampleApp::initGui()
     offset = initOffset;
     for( itr = mLibXtract->mCallbacks.begin(); itr != mLibXtract->mCallbacks.end(); ++itr )
     {
-        if ( itr->type != ciLibXtract::VECTOR_FEATURE )
+        if ( itr->type != ciXtract::VECTOR_FEATURE )
             continue;
         
         label = itr->name;
@@ -270,9 +270,9 @@ void GwenSampleApp::toggleAllFeatures( Gwen::Controls::Base* pControl )
     if ( button->GetText() == "All on" )
         enable = true;
 
-    std::vector<ciLibXtract::FeatureCallback>::iterator it;
+    std::vector<ciXtract::FeatureCallback>::iterator it;
     for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
-        if ( enable && it->type == ciLibXtract::SCALAR_FEATURE )
+        if ( enable && it->type == ciXtract::SCALAR_FEATURE )
             mLibXtract->enableFeature( it->feature );
         else
             mLibXtract->disableFeature( it->feature );
