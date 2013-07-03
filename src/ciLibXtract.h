@@ -87,7 +87,27 @@ public:
     }
     
     FeatureCallback* findFeatureCbRef( xtract_features_ feature );
+    
+    double getFeatureMin( xtract_features_ feature ) { return mAutoCalibration[feature].min; }
+    double getFeatureMax( xtract_features_ feature ) { return mAutoCalibration[feature].max; }
 
+    void autoCalibrate( bool run );
+    bool isCalibrating() { return mRunCalibration; }
+    void toggleCalibration() { autoCalibrate( !mRunCalibration ); }
+    
+private:
+    
+    void updateCalibration();
+    
+    struct CalibrationValues {
+        double min;
+        double max;
+    };
+    
+    CalibrationValues       mAutoCalibration[XTRACT_FEATURES];
+    bool                    mRunCalibration;
+
+    
 private:
     
     ciLibXtract( audio::Input source );
@@ -180,15 +200,17 @@ private:
 //    void updateLpcc();
 //    
 //    void updateWindowed();
-
     
-
+    
+    
     // TEMPORARY PUBLIC !!! <<<<<<<<<<<<<<
 public:
 //    std::map<xtract_features_,FeatureCallback>  mCallbacks;
     std::vector<FeatureCallback>  mCallbacks;
-    
+
+
 private:
+
     
     ci::audio::Input                            mInputSource;
 	audio::PcmBuffer32fRef                      mPcmBuffer;
@@ -213,6 +235,7 @@ private:
     double                                      _argd[4];
     
     ci::gl::TextureFontRef                      mFontSmall;
+    
     
 };
 

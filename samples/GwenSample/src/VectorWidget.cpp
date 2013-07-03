@@ -37,7 +37,7 @@ VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciL
     mBuffRect   = Rectf( mValRect.x2 + 3,       mWidgetRect.y1 + 25,    mWidgetRect.x2,             mWidgetRect.y2 );
     
     mCheckBox = new Gwen::Controls::CheckBox( this );
-    mCheckBox->SetPos( VECTOR_CONTROL_WIDTH - 15, 0 );
+    mCheckBox->SetPos( 0, 0 );
     mCheckBox->onCheckChanged.Add( this, &VectorWidget::toggleFeature  );
     
     mGainSlider = new Gwen::Controls::VerticalSlider( this );
@@ -54,6 +54,13 @@ VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciL
     mNumericMax = new Gwen::Controls::TextBoxNumeric( this );
     mNumericMax->SetBounds( mBuffRect.x2 - 38, mBuffRect.y1 + 3, 35, 20 );
     mNumericMax->SetText( to_string( mCb->max ) );
+
+    if( !mCb->enable )
+    {
+        mGainSlider->Hide();
+        mNumericMin->Hide();
+        mNumericMax->Hide();
+    }
 }
 
 
@@ -62,13 +69,24 @@ void VectorWidget::toggleFeature( Gwen::Controls::Base* pControl )
     Gwen::Controls::CheckBox* checkbox = ( Gwen::Controls::CheckBox* )pControl;
     
     if ( checkbox->IsChecked() )
+    {
         mXtract->enableFeature( mCb->feature );
+        
+        mGainSlider->Show();
+        mNumericMin->Show();
+        mNumericMax->Show();
+    }
     else
     {
         mXtract->disableFeature( mCb->feature );
 //        *mVal = 0.0f; reset buffer instead?
+        
+        mGainSlider->Hide();
+        mNumericMin->Hide();
+        mNumericMax->Hide();
     }
 }
+
 
 void VectorWidget::Render( Skin::Base* skin )
 {
@@ -84,34 +102,37 @@ void VectorWidget::Render( Skin::Base* skin )
     gl::translate( widgetPos );
     
     gl::color( mLabelCol );
-    mFontSmall->drawString( mLabel, Vec2f( 0, 10 ) );
-
-    gl::translate( mBuffRect.getUpperLeft() );
-  
-    gl::color( mBuffCol );
+    mFontSmall->drawString( mLabel, Vec2f( 20, 11 ) );
     
-    glBegin( GL_QUADS );
-    
-    float step  = mBuffRect.getWidth() / mCb->buffSize;
-    float h     = mBuffRect.getHeight();
-    
-    float min   = mNumericMin->GetFloatFromText();
-    float max   = mNumericMax->GetFloatFromText();
-    float val;
-
-    for( int i = 0; i < mCb->buffSize; i++ )
+    if( mCb->enable )
     {
-        val = (float)mGainSlider->GetFloatValue() * ( data.get()[i] - min ) / ( max - min );
-        val = math<float>::clamp( val, 0.0f, 1.0f ) * h;
+        gl::translate( mBuffRect.getUpperLeft() );
+      
+        gl::color( mBuffCol );
         
-        glVertex2f( i * step,           h );
-        glVertex2f( ( i + 1 ) * step,   h );
-        glVertex2f( ( i + 1 ) * step,   h - val );
-        glVertex2f( i * step,           h - val );
-	}
-    
-    glEnd();
-    
+        glBegin( GL_QUADS );
+        
+        float step  = mBuffRect.getWidth() / mCb->buffSize;
+        float h     = mBuffRect.getHeight();
+//        float min   = mXtract->getFeatureMin( mCb->feature );
+//        float max   = mXtract->getFeatureMax( mCb->feature );
+        float min   = mNumericMin->GetFloatFromText();
+        float max   = mNumericMax->GetFloatFromText();
+        float val;
+
+        for( int i = 0; i < mCb->buffSize; i++ )
+        {
+            val = (float)mGainSlider->GetFloatValue() * ( data.get()[i] - min ) / ( max - min );
+            val = math<float>::clamp( val, 0.0f, 1.0f ) * h;
+            
+            glVertex2f( i * step,           h );
+            glVertex2f( ( i + 1 ) * step,   h );
+            glVertex2f( ( i + 1 ) * step,   h - val );
+            glVertex2f( i * step,           h - val );
+        }
+        
+        glEnd();
+    }
     
     gl::popMatrices();
 

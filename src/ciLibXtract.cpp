@@ -19,7 +19,6 @@ using namespace std;
 ciLibXtract::ciLibXtract( audio::Input source )
 {
     mInputSource    = source;
-    
     mFontSmall      = gl::TextureFont::create( Font( "Helvetica", 12 ) );
     
     init();
@@ -34,6 +33,8 @@ ciLibXtract::~ciLibXtract()
 
 void ciLibXtract::init()
 {
+    mRunCalibration     = false;
+    
     mPcmData            = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     mSpectrum           = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     mPeakSpectrum       = std::shared_ptr<double>( new double[ PCM_SIZE ] );
@@ -284,6 +285,9 @@ void ciLibXtract::update()
 //        mPcmData.get()[k] = buff->mData[k*2];
     
     updateCallbacks();
+    
+    if ( mRunCalibration )
+        updateCalibration();
 }
 
 
@@ -656,4 +660,50 @@ void ciLibXtract::updateSubBands()
 {
     int argd[4] = { XTRACT_MEAN, SUBBANDS_N, XTRACT_LINEAR_SUBBANDS, 5 };       // { XTRACT_SUM, ...  XTRACT_OCTAVE_SUBBANDS,    XTRACT_LINEAR_SUBBANDS
     xtract_subbands( mSpectrum.get(), FFT_SIZE, argd, mSubBands.get() );
+}
+
+
+// Auto Calibration
+
+void ciLibXtract::autoCalibrate( bool run )
+{
+    mRunCalibration = run;
+    
+    if ( !run )
+        return;
+    
+    for( auto k=0; k < XTRACT_FEATURES; k++ )
+        mAutoCalibration[k] = { std::numeric_limits<double>::max(), std::numeric_limits<double>::min() };
+}
+
+
+void ciLibXtract::updateCalibration()
+{
+    double val;
+    
+    vector<FeatureCallback>::iterator it;
+    for( it = mCallbacks.begin(); it!=mCallbacks.end(); ++it )
+    {
+        if ( !it->enable )
+            continue;
+        
+        if ( it->type == SCALAR_FEATURE )
+        {
+            val = mScalarValues[it->feature];
+            
+            if ( isnan(val) )
+                continue;
+            
+            if ( val > mAutoCalibration[it->feature].max )
+                mAutoCalibration[it->feature].max = val;
+            
+            if ( val < mAutoCalibration[it->feature].min )
+                mAutoCalibration[it->feature].min = val;
+        }
+
+        else if ( it->type == VECTOR_FEATURE )
+        {
+            
+        }
+    }
 }

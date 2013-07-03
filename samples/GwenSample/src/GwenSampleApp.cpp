@@ -55,6 +55,7 @@ public:
     void initGui();
     
     void toggleAllFeatures( Gwen::Controls::Base* pControl );
+    void toggleCalibration( Gwen::Controls::Base* pControl );
 
     void toggleFeature( Gwen::Event::Info info );
     
@@ -147,9 +148,15 @@ void GwenSampleApp::draw()
     
     gl::color( Color::white() );
     gl::draw( mLogoTex, Vec2f( 15, 8 ) );
-
+    
     gl::color( Color::gray( 0.2f ) );
-//    mFontSmall->drawString( toString( (int)getAverageFps() ) + " FPS",  Vec2f( 110, 28 ) );
+    mFontSmall->drawString( toString( (int)getAverageFps() ) + " FPS",  Vec2f( 110, 28 ) );
+    
+    if ( mLibXtract->isCalibrating() )
+    {
+        gl::color( Color::gray( 0.2f ) );
+        mFontSmall->drawString( "CALIBRATION IN PROGRESS",  Vec2f( 925, 26 ) );
+    }
 }
 
 
@@ -181,6 +188,12 @@ void GwenSampleApp::initGui()
     pButtonOff->SetText( "All off" );
     pButtonOff->SetBounds( offset.x + 85, offset.y, 80, 20 );
     pButtonOff->onPress.Add( this, &GwenSampleApp::toggleAllFeatures );
+    
+    
+    Gwen::Controls::Button* pButtonCalibration = new Gwen::Controls::Button( mCanvas );
+    pButtonCalibration->SetText( "Calibration" );
+    pButtonCalibration->SetBounds( offset.x - 85, offset.y, 80, 20 );
+    pButtonCalibration->onPress.Add( this, &GwenSampleApp::toggleCalibration );
     
     string label;
     
@@ -264,6 +277,13 @@ void GwenSampleApp::toggleAllFeatures( Gwen::Controls::Base* pControl )
         else
             mLibXtract->disableFeature( it->feature );
 }
+
+
+void GwenSampleApp::toggleCalibration( Gwen::Controls::Base* pControl )
+{
+    mLibXtract->toggleCalibration();
+}
+
 
 CINDER_APP_NATIVE( GwenSampleApp, RendererGl )
 
