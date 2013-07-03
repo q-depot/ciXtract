@@ -265,7 +265,7 @@ void GwenSampleApp::toggleAllFeatures( Gwen::Controls::Base* pControl )
 
 void GwenSampleApp::toggleCalibration( Gwen::Controls::Base* pControl )
 {
-    mXtract->toggleCalibration();
+    mXtract->autoCalibration();
 }
 
 

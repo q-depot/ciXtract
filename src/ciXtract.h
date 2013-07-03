@@ -69,9 +69,9 @@ public:
     
     ciXtractFeatureRef getFeature( xtract_features_ feature );
     
-    void autoCalibrate( bool run );
-    bool isCalibrating() { return mRunCalibration; }
-    void toggleCalibration() { autoCalibrate( !mRunCalibration ); }
+    bool isCalibrating() { return mRunCalibration > 0; }
+
+    void autoCalibration();
     
     std::vector<ciXtractFeatureRef> getFeatures() { return mFeatures; };
     
@@ -80,7 +80,7 @@ private:
     
     void updateCalibration();
 
-    bool mRunCalibration;
+    double mRunCalibration;
 
     
 private:

@@ -707,24 +707,27 @@ void ciXtract::updateSubBands()
 
 // Auto Calibration
 
-void ciXtract::autoCalibrate( bool run )
+void ciXtract::autoCalibration()
 {
-    mRunCalibration = run;
-    
-    if ( !run )
-        return;
-    
     vector<ciXtractFeatureRef>::iterator it;
     for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
     {
         (*it)->mResultMin = std::numeric_limits<double>::max();
         (*it)->mResultMax = std::numeric_limits<double>::min();
     }
+    
+    mRunCalibration = getElapsedSeconds();    
 }
 
 
 void ciXtract::updateCalibration()
 {
+    if ( getElapsedSeconds() - mRunCalibration > 2.0f )
+    {
+        mRunCalibration = -1;
+        return;
+    }
+    
     double val;
     
     vector<ciXtractFeatureRef>::iterator it;
