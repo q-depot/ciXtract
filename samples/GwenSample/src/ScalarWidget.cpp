@@ -107,15 +107,15 @@ void ScalarWidget::Render( Skin::Base* skin )
     
     if ( mFeature->isEnable() )
     {
-        float min   = mFeature->getResultMin();//mXtract->getFeatureMin( mCb->feature ); //mNumericMin->GetFloatFromText();
-        float max   = mFeature->getResultMax();//mXtract->getFeatureMax( mCb->feature ); //mNumericMax->GetFloatFromText();
+        float min   = mFeature->getResultMin();
+        float max   = mFeature->getResultMax();
         float val   = (float)mGainSlider->GetFloatValue() * ( (*mVal) - min ) / ( max - min );
         val         = math<float>::clamp( val, 0.0f, 1.0f );
-        mBuff.push_front( val );
-        
+        mBuff.push_front( val );        
+    
         mNumericMin->SetText( to_string(min) );
         mNumericMax->SetText( to_string(max) );
-        
+
         //    if ( isnan(val) )
         //        console() << mCb->name << " " << (*mVal);    
         

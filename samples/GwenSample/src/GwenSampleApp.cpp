@@ -140,8 +140,10 @@ void GwenSampleApp::update()
 
 void GwenSampleApp::draw()
 {
-	gl::clear( Color( 0.91f, 0.94f, 0.96f ) );
-    
+    //	gl::clear( Color( 0.91f, 0.94f, 0.96f ) );
+    //    gl::clear( Color( 0.94f, 0.94f, 0.94f ) );
+    gl::clear( Color( 0.95f, 0.95f, 0.95f ) );
+
     gl::enableAlphaBlending();
     
 	mCanvas->RenderCanvas();
