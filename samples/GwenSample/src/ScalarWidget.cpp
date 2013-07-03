@@ -27,8 +27,8 @@ extern gl::TextureFontRef      mFontMedium;
 extern gl::TextureFontRef      mFontBig;
 
 
-ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciXtract::FeatureCallback *cb, ciXtractRef xtract )
-: WidgetBase::WidgetBase( parent, label, cb, xtract )
+ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract )
+: WidgetBase::WidgetBase( parent, label, feature, xtract )
 {
     SetBounds( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT );
     
@@ -52,13 +52,13 @@ ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciX
     mNumericMin = new Gwen::Controls::TextBoxNumeric( this );
 //    mNumericMin->SetBounds( mBuffRect.x2 - 76, mBuffRect.y1 + 3, 35, 20 );
     mNumericMin->SetBounds( mBuffRect.x2 - 93, mWidgetRect.y1 + 13, 45, 20 );
-    mNumericMin->SetText( to_string( mCb->min ) );
+    mNumericMin->SetText( to_string( feature->getResultMin() ) );
     
     mNumericMax = new Gwen::Controls::TextBoxNumeric( this );
     mNumericMax->SetBounds( mBuffRect.x2 - 45, mWidgetRect.y1 + 13, 45, 20 );
-    mNumericMax->SetText( to_string( mCb->max ) );
+    mNumericMax->SetText( to_string( feature->getResultMax() ) );
     
-    if ( !mCb->enable )
+    if ( !mFeature->isEnable() )
     {
         mGainSlider->Hide();
         mNumericMin->Hide();
@@ -73,7 +73,7 @@ void ScalarWidget::toggleFeature( Gwen::Controls::Base* pControl )
     
     if ( checkbox->IsChecked() )
     {
-        mXtract->enableFeature( mCb->feature );
+        mXtract->enableFeature( mFeature->getEnum() );
         
         mGainSlider->Show();
         mNumericMin->Show();
@@ -81,7 +81,7 @@ void ScalarWidget::toggleFeature( Gwen::Controls::Base* pControl )
     }
     else
     {
-        mXtract->disableFeature( mCb->feature );
+        mXtract->disableFeature( mFeature->getEnum() );
         *mVal = 0.0f;
         
         mGainSlider->Hide();
@@ -93,8 +93,8 @@ void ScalarWidget::toggleFeature( Gwen::Controls::Base* pControl )
 
 void ScalarWidget::Render( Skin::Base* skin )
 {
-    if ( mCheckBox->IsChecked() ^ mCb->enable )
-        mCheckBox->SetChecked( mCb->enable );
+    if ( mCheckBox->IsChecked() ^ mFeature->isEnable() )
+        mCheckBox->SetChecked( mFeature->isEnable() );
     
     Vec2f widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
     
@@ -105,10 +105,10 @@ void ScalarWidget::Render( Skin::Base* skin )
     mFontSmall->drawString( mLabel, Vec2f( 20, 11 ) );
     
     
-    if ( mCb->enable )
+    if ( mFeature->isEnable() )
     {
-        float min   = mXtract->getFeatureMin( mCb->feature ); //mNumericMin->GetFloatFromText();
-        float max   = mXtract->getFeatureMax( mCb->feature ); //mNumericMax->GetFloatFromText();
+        float min   = mFeature->getResultMin();//mXtract->getFeatureMin( mCb->feature ); //mNumericMin->GetFloatFromText();
+        float max   = mFeature->getResultMax();//mXtract->getFeatureMax( mCb->feature ); //mNumericMax->GetFloatFromText();
         float val   = (float)mGainSlider->GetFloatValue() * ( (*mVal) - min ) / ( max - min );
         val         = math<float>::clamp( val, 0.0f, 1.0f );
         mBuff.push_front( val );

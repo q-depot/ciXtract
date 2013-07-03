@@ -36,32 +36,11 @@ using namespace std;
 
 
 class ciXtract;
-
 typedef std::shared_ptr<ciXtract>       ciXtractRef;
 
 
 class ciXtract {
 
-public:
-    
-    enum FeatureType {
-        VECTOR_FEATURE,
-        SCALAR_FEATURE
-    };
-    
-    typedef struct {
-        xtract_features_                feature;
-        std::string                     name;
-        std::function<void()>           cb;
-        bool                            enable;
-        FeatureType                     type;
-        std::vector<xtract_features_>   dependencies;
-        double                          min;
-        double                          max;
-        uint32_t                        buffSize;
-    } FeatureCallback;
-    
-    
 public:
     
     static ciXtractRef create( audio::Input source ) { return ciXtractRef( new ciXtract( source ) ); }
@@ -88,26 +67,20 @@ public:
         return &mScalarValues[feature];
     }
     
-    ciXtractFeatureRef findFeature( xtract_features_ feature );
+    ciXtractFeatureRef getFeature( xtract_features_ feature );
     
-    double getFeatureMin( xtract_features_ feature ) { return mAutoCalibration[feature].min; }
-    double getFeatureMax( xtract_features_ feature ) { return mAutoCalibration[feature].max; }
-
     void autoCalibrate( bool run );
     bool isCalibrating() { return mRunCalibration; }
     void toggleCalibration() { autoCalibrate( !mRunCalibration ); }
     
+    std::vector<ciXtractFeatureRef> getFeatures() { return mFeatures; };
+    
+    
 private:
     
     void updateCalibration();
-    
-    struct CalibrationValues {
-        double min;
-        double max;
-    };
-    
-    CalibrationValues       mAutoCalibration[XTRACT_FEATURES];
-    bool                    mRunCalibration;
+
+    bool mRunCalibration;
 
     
 private:
@@ -121,10 +94,6 @@ private:
     void initBarks();
     void initParams();
     void initCallbacks();
-    
-    void updateCallbacks();
-    
-    void xtractFeature( xtract_features_ feature );
     
     bool featureDependsOn( xtract_features_ this_feature, xtract_features_ test_feature );
     
@@ -202,18 +171,11 @@ private:
 //    void updateLpcc();
 //    
 //    void updateWindowed();
-    
-    
-    
-    // TEMPORARY PUBLIC !!! <<<<<<<<<<<<<<
-public:
-//    std::map<xtract_features_,FeatureCallback>  mCallbacks;
-//    std::vector<FeatureCallback>  mCallbacks;
-    std::vector<ciXtractFeatureRef>    mCallbacks;
 
 
 private:
 
+    std::vector<ciXtractFeatureRef>             mFeatures;
     
     ci::audio::Input                            mInputSource;
 	audio::PcmBuffer32fRef                      mPcmBuffer;

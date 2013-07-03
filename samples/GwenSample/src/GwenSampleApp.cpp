@@ -57,10 +57,10 @@ public:
     void toggleAllFeatures( Gwen::Controls::Base* pControl );
     void toggleCalibration( Gwen::Controls::Base* pControl );
 
-    void toggleFeature( Gwen::Event::Info info );
+//    void toggleFeature( Gwen::Event::Info info );
     
     audio::Input            mInput;
-    ciXtractRef          mLibXtract;
+    ciXtractRef          mXtract;
     
     params::InterfaceGlRef  mParams;
     
@@ -97,8 +97,8 @@ void GwenSampleApp::setup()
     if ( !mInput )
         exit(-1);
     
-    mLibXtract = ciXtract::create( mInput );
-    mLibXtract->enableFeature( XTRACT_SPECTRUM );
+    mXtract = ciXtract::create( mInput );
+    mXtract->enableFeature( XTRACT_SPECTRUM );
     
     for( auto k=0; k < XTRACT_FEATURES; k++ )
         mGain[k] = 1.0f;
@@ -134,7 +134,7 @@ void GwenSampleApp::keyDown( KeyEvent event )
 
 void GwenSampleApp::update()
 {
-    mLibXtract->update();
+    mXtract->update();
 }
 
 
@@ -152,7 +152,7 @@ void GwenSampleApp::draw()
     gl::color( Color::gray( 0.2f ) );
     mFontSmall->drawString( toString( (int)getAverageFps() ) + " FPS",  Vec2f( 110, 28 ) );
     
-    if ( mLibXtract->isCalibrating() )
+    if ( mXtract->isCalibrating() )
     {
         gl::color( Color::gray( 0.2f ) );
         mFontSmall->drawString( "CALIBRATION IN PROGRESS",  Vec2f( 925, 26 ) );
@@ -195,23 +195,21 @@ void GwenSampleApp::initGui()
     pButtonCalibration->SetBounds( offset.x - 85, offset.y, 80, 20 );
     pButtonCalibration->onPress.Add( this, &GwenSampleApp::toggleCalibration );
     
-    string label;
+    
+    vector<ciXtractFeatureRef> features = mXtract->getFeatures();
+    vector<ciXtractFeatureRef>::iterator itr;
     
     // Scalar Features
     Vec2f initOffset( 15, 50 );
     offset = Vec2f( VECTOR_CONTROL_WIDTH + 30, initOffset.y );
-    std::vector<ciXtract::FeatureCallback>::iterator itr;
-    
-    for( itr = mLibXtract->mCallbacks.begin(); itr != mLibXtract->mCallbacks.end(); ++itr )
-    {
-        if ( itr->type != ciXtract::SCALAR_FEATURE )
-            continue;
 
-        label = itr->name;
-        label.erase( 0, 7 );
+    for( itr = features.begin(); itr != features.end(); ++itr )
+    {
+        if ( (*itr)->getType() != CI_XTRACT_SCALAR )
+            continue;
         
         // Custom Control
-        ScalarWidget *control = new ScalarWidget( mCanvas, label, &(*itr), mLibXtract );
+        ScalarWidget *control = new ScalarWidget( mCanvas, (*itr)->getName(), (*itr), mXtract );
         control->SetPos( offset.x, offset.y );
         
         offset.y += SCALAR_CONTROL_HEIGHT + 25;
@@ -225,16 +223,13 @@ void GwenSampleApp::initGui()
     
     // Vector Features
     offset = initOffset;
-    for( itr = mLibXtract->mCallbacks.begin(); itr != mLibXtract->mCallbacks.end(); ++itr )
+    for( itr = features.begin(); itr != features.end(); ++itr )
     {
-        if ( itr->type != ciXtract::VECTOR_FEATURE )
+        if ( (*itr)->getType() != CI_XTRACT_VECTOR )
             continue;
-        
-        label = itr->name;
-        label.erase( 0, 7 );
-        
+
         // Custom Control
-        VectorWidget *control = new VectorWidget( mCanvas, label, &(*itr), mLibXtract );
+        VectorWidget *control = new VectorWidget( mCanvas, (*itr)->getName(), (*itr), mXtract );
         control->SetPos( offset.x, offset.y );
         
         offset.y += VECTOR_CONTROL_HEIGHT + 25;
@@ -249,19 +244,6 @@ void GwenSampleApp::initGui()
 }
 
 
-void GwenSampleApp::toggleFeature( Gwen::Event::Info info )
-{
-//    if ( info.Packet->Integer == -1 )
-//        toggleAllFeatures(true);
-//    else if ( info.Packet->Integer == -2 )
-//        toggleAllFeatures(false);
-//    else
-//    {
-//        mLibXtract->toggleFeature( (xtract_features_)info.Packet->Integer );
-//    }
-}
-
-
 void GwenSampleApp::toggleAllFeatures( Gwen::Controls::Base* pControl )
 {
     Gwen::Controls::Button  *button = (Gwen::Controls::Button*)pControl;
@@ -269,19 +251,21 @@ void GwenSampleApp::toggleAllFeatures( Gwen::Controls::Base* pControl )
     
     if ( button->GetText() == "All on" )
         enable = true;
-
-    std::vector<ciXtract::FeatureCallback>::iterator it;
-    for( it = mLibXtract->mCallbacks.begin(); it != mLibXtract->mCallbacks.end(); ++it )
-        if ( enable && it->type == ciXtract::SCALAR_FEATURE )
-            mLibXtract->enableFeature( it->feature );
+    
+    vector<ciXtractFeatureRef> features = mXtract->getFeatures();
+    
+    std::vector<ciXtractFeatureRef>::iterator it;
+    for( it = features.begin(); it != features.end(); ++it )
+        if ( enable && (*it)->getType() == CI_XTRACT_SCALAR )
+            mXtract->enableFeature( (*it)->getEnum() );
         else
-            mLibXtract->disableFeature( it->feature );
+            mXtract->disableFeature( (*it)->getEnum() );
 }
 
 
 void GwenSampleApp::toggleCalibration( Gwen::Controls::Base* pControl )
 {
-    mLibXtract->toggleCalibration();
+    mXtract->toggleCalibration();
 }
 
 

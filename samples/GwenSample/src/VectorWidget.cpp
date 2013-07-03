@@ -27,8 +27,8 @@ extern gl::TextureFontRef      mFontMedium;
 extern gl::TextureFontRef      mFontBig;
 
 
-VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciXtract::FeatureCallback *cb, ciXtractRef xtract )
-: WidgetBase::WidgetBase( parent, label, cb, xtract )
+VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract )
+: WidgetBase::WidgetBase( parent, label, feature, xtract )
 {
     SetBounds( 0, 0, VECTOR_CONTROL_WIDTH, VECTOR_CONTROL_HEIGHT );
     
@@ -49,13 +49,13 @@ VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciX
     
     mNumericMin = new Gwen::Controls::TextBoxNumeric( this );
     mNumericMin->SetBounds( mBuffRect.x2 - 76, mBuffRect.y1 + 3, 35, 20 );
-    mNumericMin->SetText( to_string( mCb->min ) );
+    mNumericMin->SetText( to_string( mFeature->getResultMin() ) );
     
     mNumericMax = new Gwen::Controls::TextBoxNumeric( this );
     mNumericMax->SetBounds( mBuffRect.x2 - 38, mBuffRect.y1 + 3, 35, 20 );
-    mNumericMax->SetText( to_string( mCb->max ) );
+    mNumericMax->SetText( to_string( mFeature->getResultMax() ) );
 
-    if( !mCb->enable )
+    if( !mFeature->isEnable() )
     {
         mGainSlider->Hide();
         mNumericMin->Hide();
@@ -70,7 +70,7 @@ void VectorWidget::toggleFeature( Gwen::Controls::Base* pControl )
     
     if ( checkbox->IsChecked() )
     {
-        mXtract->enableFeature( mCb->feature );
+        mXtract->enableFeature( mFeature->getEnum() );
         
         mGainSlider->Show();
         mNumericMin->Show();
@@ -78,7 +78,7 @@ void VectorWidget::toggleFeature( Gwen::Controls::Base* pControl )
     }
     else
     {
-        mXtract->disableFeature( mCb->feature );
+        mXtract->disableFeature( mFeature->getEnum() );
 //        *mVal = 0.0f; reset buffer instead?
         
         mGainSlider->Hide();
@@ -90,12 +90,12 @@ void VectorWidget::toggleFeature( Gwen::Controls::Base* pControl )
 
 void VectorWidget::Render( Skin::Base* skin )
 {
-    if ( mCheckBox->IsChecked() ^ mCb->enable )
-        mCheckBox->SetChecked( mCb->enable );
+    if ( mCheckBox->IsChecked() ^ mFeature->isEnable() )
+        mCheckBox->SetChecked( mFeature->isEnable() );
     
     Vec2f widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
     
-    std::shared_ptr<double> data = mXtract->getVectorFeature( mCb->feature );
+    std::shared_ptr<double> data = mXtract->getVectorFeature( mFeature->getEnum() );
     
     glPushMatrix();
     
@@ -104,7 +104,7 @@ void VectorWidget::Render( Skin::Base* skin )
     gl::color( mLabelCol );
     mFontSmall->drawString( mLabel, Vec2f( 20, 11 ) );
     
-    if( mCb->enable )
+    if( mFeature->isEnable() )
     {
         gl::translate( mBuffRect.getUpperLeft() );
       
@@ -112,7 +112,7 @@ void VectorWidget::Render( Skin::Base* skin )
         
         glBegin( GL_QUADS );
         
-        float step  = mBuffRect.getWidth() / mCb->buffSize;
+        float step  = mBuffRect.getWidth() / mFeature->getResultN();
         float h     = mBuffRect.getHeight();
 //        float min   = mXtract->getFeatureMin( mCb->feature );
 //        float max   = mXtract->getFeatureMax( mCb->feature );
@@ -120,7 +120,7 @@ void VectorWidget::Render( Skin::Base* skin )
         float max   = mNumericMax->GetFloatFromText();
         float val;
 
-        for( int i = 0; i < mCb->buffSize; i++ )
+        for( int i = 0; i < mFeature->getResultN(); i++ )
         {
             val = (float)mGainSlider->GetFloatValue() * ( data.get()[i] - min ) / ( max - min );
             val = math<float>::clamp( val, 0.0f, 1.0f ) * h;

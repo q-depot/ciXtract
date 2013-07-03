@@ -30,7 +30,9 @@ class ciXtractFeature {
 
 public:
     
-    static ciXtractFeatureRef create( xtract_features_ feature, std::string name, ciXtractFeatureType type, std::function<void()> cb, std::vector<xtract_features_> dependencies, uint32_t n )
+    friend class ciXtract;
+    
+    static ciXtractFeatureRef create( xtract_features_ feature, std::string name, ciXtractFeatureType type, std::function<void()> cb, std::vector<xtract_features_> dependencies, uint32_t n = 1 )
     {
         return ciXtractFeatureRef( new ciXtractFeature( feature, name, type, cb, dependencies, n ) );
     }
@@ -45,10 +47,17 @@ public:
     
     bool isEnable() { return mIsEnable; }
     
-    void enable( bool enable = true ) { mIsEnable = enable; }
+    xtract_features_ getEnum() { return mFeature; }
     
-    void toggle() { mIsEnable = !mIsEnable; }
-
+    double getResultMin() { return mResultMin; }
+    double getResultMax() { return mResultMax; }
+    
+    uint32_t getResultN() { return mResultN; }
+    
+    ciXtractFeatureType getType() { return mType; }
+    
+    std::string getName() { return mName; }
+    
     
 private:
     
@@ -66,7 +75,7 @@ private:
     }
 
     
-private:
+protected:
     
     xtract_features_                mFeature;
     std::string                     mName;

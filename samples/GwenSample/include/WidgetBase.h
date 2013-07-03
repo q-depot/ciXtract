@@ -22,13 +22,13 @@ class WidgetBase : public Gwen::Controls::Base {
     
 public:
     
-	WidgetBase( Gwen::Controls::Base *parent, std::string label, ciXtract::FeatureCallback *cb, ciXtractRef xtract )
+	WidgetBase( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract )
     : WidgetBase::WidgetBase( parent )
     {
         mLabel      = label;
         mXtract     = xtract;
-        mCb         = cb;
-        mVal        = mXtract->getScalarFeaturePtr( cb->feature );
+        mFeature    = feature;
+        mVal        = mXtract->getScalarFeaturePtr( mFeature->getEnum() );
         mBuffCol    = Color( 0.27f, 0.47f, 0.98f );
         mBuffBgCol  = Color( 0.9f, 0.9f, 0.9f );
         mLabelCol   = Color( 0.27f, 0.27f, 0.27f );
@@ -56,7 +56,7 @@ protected:
     double                          *mVal;
     
     ciXtractRef                     mXtract;
-    ciXtract::FeatureCallback       *mCb;
+    ciXtractFeatureRef              mFeature;
     
     ci::Rectf                       mBuffRect;
     ci::Rectf                       mValRect;

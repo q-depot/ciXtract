@@ -23,7 +23,7 @@ class ScalarWidget : public WidgetBase {
     
 public:
     
-	ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciXtract::FeatureCallback *cb, ciXtractRef xtract );
+	ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract );
 
 	virtual ~ScalarWidget() {}
     
