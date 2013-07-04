@@ -79,8 +79,7 @@ void VectorWidget::toggleFeature( Gwen::Controls::Base* pControl )
     else
     {
         mXtract->disableFeature( mFeature->getEnum() );
-//        *mVal = 0.0f; reset buffer instead?
-        
+
         mGainSlider->Hide();
         mNumericMin->Hide();
         mNumericMax->Hide();
@@ -95,8 +94,6 @@ void VectorWidget::Render( Skin::Base* skin )
     
     Vec2f widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
     
-    std::shared_ptr<double> data = mXtract->getVectorFeature( mFeature->getEnum() );
-    
     glPushMatrix();
     
     gl::translate( widgetPos );
@@ -106,6 +103,8 @@ void VectorWidget::Render( Skin::Base* skin )
     
     if( mFeature->isEnable() )
     {
+        std::shared_ptr<double> data = mFeature->getResult();
+        
         gl::translate( mBuffRect.getUpperLeft() );
       
         gl::color( mBuffCol );
@@ -114,10 +113,14 @@ void VectorWidget::Render( Skin::Base* skin )
         
         float step  = mBuffRect.getWidth() / mFeature->getResultN();
         float h     = mBuffRect.getHeight();
-//        float min   = mXtract->getFeatureMin( mCb->feature );
-//        float max   = mXtract->getFeatureMax( mCb->feature );
-        float min   = mNumericMin->GetFloatFromText();
-        float max   = mNumericMax->GetFloatFromText();
+//        float min   = mNumericMin->GetFloatFromText();
+//        float max   = mNumericMax->GetFloatFromText();
+        
+        float min   = mFeature->getResultMin();
+        float max   = mFeature->getResultMax();
+        mNumericMin->SetText( to_string(min) );
+        mNumericMax->SetText( to_string(max) );
+        
         float val;
 
         for( int i = 0; i < mFeature->getResultN(); i++ )

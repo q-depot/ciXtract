@@ -82,7 +82,7 @@ void ScalarWidget::toggleFeature( Gwen::Controls::Base* pControl )
     else
     {
         mXtract->disableFeature( mFeature->getEnum() );
-        *mVal = 0.0f;
+//        *mVal = 0.0f;
         
         mGainSlider->Hide();
         mNumericMin->Hide();
@@ -109,7 +109,12 @@ void ScalarWidget::Render( Skin::Base* skin )
     {
         float min   = mFeature->getResultMin();
         float max   = mFeature->getResultMax();
-        float val   = (float)mGainSlider->GetFloatValue() * ( (*mVal) - min ) / ( max - min );
+        mNumericMin->SetText( to_string(min) );
+        mNumericMax->SetText( to_string(max) );
+//        float min   = mNumericMin->GetFloatFromText();
+//        float max   = mNumericMax->GetFloatFromText();
+        
+        float val   = (float)mGainSlider->GetFloatValue() * ( (*mFeature->getResult().get()) - min ) / ( max - min );
         val         = math<float>::clamp( val, 0.0f, 1.0f );
         mBuff.push_front( val );        
     

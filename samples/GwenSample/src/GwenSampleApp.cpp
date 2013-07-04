@@ -258,10 +258,7 @@ void GwenSampleApp::toggleAllFeatures( Gwen::Controls::Base* pControl )
     
     std::vector<ciXtractFeatureRef>::iterator it;
     for( it = features.begin(); it != features.end(); ++it )
-        if ( enable && (*it)->getType() == CI_XTRACT_SCALAR )
-            mXtract->enableFeature( (*it)->getEnum() );
-        else
-            mXtract->disableFeature( (*it)->getEnum() );
+              mXtract->enableFeature( (*it)->getEnum() );
 }
 
 

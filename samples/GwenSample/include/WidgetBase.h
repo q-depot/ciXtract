@@ -28,7 +28,7 @@ public:
         mLabel      = label;
         mXtract     = xtract;
         mFeature    = feature;
-        mVal        = mXtract->getScalarFeaturePtr( mFeature->getEnum() );
+//        mVal        = mXtract->getScalarFeaturePtr( mFeature->getEnum() );
         mBuffCol    = Color( 0.27f, 0.47f, 0.98f );
         mBuffBgCol  = Color( 0.9f, 0.9f, 0.9f );
         mLabelCol   = Color( 0.27f, 0.27f, 0.27f );
@@ -66,5 +66,5 @@ protected:
     ci::Color                       mBuffBgCol;
     ci::Color                       mLabelCol;
     ci::Color                       mValCol;
-    
+    std::shared_ptr<double>         mData;
 };
