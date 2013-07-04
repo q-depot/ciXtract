@@ -76,8 +76,6 @@ void ciXtract::initFeatures()
     mFeatures.push_back( ciXtractZcr::create( this, "Zcr" ) );
     mFeatures.push_back( ciXtractRolloff::create( this, "Rolloff" ) );
     mFeatures.push_back( ciXtractLoudness::create( this, "Loudness" ) );
-    
- 
     mFeatures.push_back( ciXtractFlatness::create( this, "Flatness" ) );
     mFeatures.push_back( ciXtractFlatnessDb::create( this, "Flatness Db" ) );
     mFeatures.push_back( ciXtractTonality::create( this, "Tonality" ) );

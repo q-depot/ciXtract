@@ -67,7 +67,7 @@ public:
     void resetCalibration()
     {    
         mResultMin = std::numeric_limits<double>::max();
-        mResultMax = std::numeric_limits<double>::min();
+        mResultMax = -std::numeric_limits<double>::max();
     }
     
     void calibrate()
@@ -82,12 +82,8 @@ public:
         {
             val = mResult.get()[k];
 
-            /// I should also check for infinite values, they should be ignored <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            if ( isnan(val) )
+            if ( isnan(val) || isinf(val) )
                 continue;
-            
-//            if ( mFeature == XTRACT_SPECTRUM )
-//                ci::app::console() << val << " " << mMaxResult << " " <<  std::endl;
             
             if ( val > mResultMax )
                 mResultMax = val;
