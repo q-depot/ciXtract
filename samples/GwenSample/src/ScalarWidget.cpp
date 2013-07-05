@@ -38,9 +38,9 @@ ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciX
     mValRect    = Rectf( mWidgetRect.x1 + 18,   mWidgetRect.y1 + 35,    mWidgetRect.x1 + 18 + 5,    mWidgetRect.y2 );
     mBuffRect   = Rectf( mValRect.x2 + 3,       mValRect.y1,            mWidgetRect.x2,             mValRect.y2 );
     
-    mCheckBox = new Gwen::Controls::CheckBox( this );
-    mCheckBox->SetPos( 0, 0 );
-    mCheckBox->onCheckChanged.Add( this, &ScalarWidget::toggleFeature  );
+    mEnableCheckBox = new Gwen::Controls::CheckBox( this );
+    mEnableCheckBox->SetPos( 0, 0 );
+    mEnableCheckBox->onCheckChanged.Add( this, &ScalarWidget::toggleFeature  );
     
     mGainSlider = new Gwen::Controls::VerticalSlider( this );
     mGainSlider->SetPos( 0, mValRect.y1 );
@@ -64,6 +64,25 @@ ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciX
         mNumericMin->Hide();
         mNumericMax->Hide();
     }
+    
+    
+    
+    mOptionsButton  = new Gwen::Controls::Button( this );
+    mOptionsButton->SetText( "options" );
+    mOptionsButton->SetBounds( SCALAR_CONTROL_WIDTH - 50, 0, 50, 10 );
+    mOptionsButton->onDown.Add( this, &ScalarWidget::toggleProperties );
+    
+    mPropertiesWindow  = new Gwen::Controls::WindowControl( parent );
+    mPropertiesWindow->SetTitle( mFeature->getName() );
+    mPropertiesWindow->SetBounds( 0, 0, 250, 200 );
+    mPropertiesWindow->Hide();
+    
+    mProperties = new Gwen::Controls::Properties( mPropertiesWindow );
+    mProperties->Dock( Gwen::Pos::Fill );
+    mProperties->Add( L"More Items" );
+    mProperties->Add( L"Checkbox", new Gwen::Controls::Property::Checkbox( mProperties ), L"1" );
+    mProperties->Add( L"To Fill" );
+    mProperties->Add( L"Out Here" );
 }
 
 
@@ -93,8 +112,8 @@ void ScalarWidget::toggleFeature( Gwen::Controls::Base* pControl )
 
 void ScalarWidget::Render( Skin::Base* skin )
 {
-    if ( mCheckBox->IsChecked() ^ mFeature->isEnable() )
-        mCheckBox->SetChecked( mFeature->isEnable() );
+    if ( mEnableCheckBox->IsChecked() ^ mFeature->isEnable() )
+        mEnableCheckBox->SetChecked( mFeature->isEnable() );
     
     Vec2f widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
     

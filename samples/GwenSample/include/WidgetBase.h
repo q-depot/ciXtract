@@ -14,6 +14,11 @@
 #include "Gwen/Controls/CheckBox.h"
 #include "Gwen/Controls/VerticalSlider.h"
 #include "Gwen/Controls/NumericUpDown.h"
+#include "Gwen/Controls/Button.h"
+#include "Gwen/Controls/WindowControl.h"
+#include "Gwen/Controls/Properties.h"
+#include "Gwen/Controls/Property/Checkbox.h"
+
 #include <boost/lexical_cast.hpp>
 
 #include "ciXtract.h"
@@ -48,8 +53,19 @@ protected:
 
     virtual void toggleFeature( Gwen::Controls::Base* pControl ) {}
     
+    void toggleProperties()
+    {
+        if ( mPropertiesWindow->Hidden() )
+            mPropertiesWindow->Show();
+        else
+            mPropertiesWindow->Hide();
+    }
+    
     Gwen::Controls::VerticalSlider  *mGainSlider;
-    Gwen::Controls::CheckBox        *mCheckBox;
+    Gwen::Controls::CheckBox        *mEnableCheckBox;
+    Gwen::Controls::Button          *mOptionsButton;
+    Gwen::Controls::Properties      *mProperties;
+    Gwen::Controls::WindowControl   *mPropertiesWindow;
     Gwen::Controls::TextBoxNumeric  *mNumericMin;
     Gwen::Controls::TextBoxNumeric  *mNumericMax;
 

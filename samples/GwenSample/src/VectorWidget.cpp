@@ -36,9 +36,9 @@ VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciX
     mValRect    = Rectf( mWidgetRect.x1 + 18,   mWidgetRect.y1 + 25,    mWidgetRect.x1 + 18 + 5,    mWidgetRect.y2 );
     mBuffRect   = Rectf( mValRect.x2 + 3,       mWidgetRect.y1 + 25,    mWidgetRect.x2,             mWidgetRect.y2 );
     
-    mCheckBox = new Gwen::Controls::CheckBox( this );
-    mCheckBox->SetPos( 0, 0 );
-    mCheckBox->onCheckChanged.Add( this, &VectorWidget::toggleFeature  );
+    mEnableCheckBox = new Gwen::Controls::CheckBox( this );
+    mEnableCheckBox->SetPos( 0, 0 );
+    mEnableCheckBox->onCheckChanged.Add( this, &VectorWidget::toggleFeature  );
     
     mGainSlider = new Gwen::Controls::VerticalSlider( this );
     mGainSlider->SetPos( 0, mValRect.y1 );
@@ -89,8 +89,8 @@ void VectorWidget::toggleFeature( Gwen::Controls::Base* pControl )
 
 void VectorWidget::Render( Skin::Base* skin )
 {
-    if ( mCheckBox->IsChecked() ^ mFeature->isEnable() )
-        mCheckBox->SetChecked( mFeature->isEnable() );
+    if ( mEnableCheckBox->IsChecked() ^ mFeature->isEnable() )
+        mEnableCheckBox->SetChecked( mFeature->isEnable() );
     
     Vec2f widgetPos( cigwen::fromGwen( LocalPosToCanvas() ) );
     
