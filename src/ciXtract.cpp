@@ -20,28 +20,19 @@ ciXtract::ciXtract( audio::Input source )
 {
     mInputSource    = source;
     mFontSmall      = gl::TextureFont::create( Font( "Helvetica", 12 ) );
+    mRunCalibration = getElapsedSeconds();
+
+    mPcmData        = std::shared_ptr<double>( new double[ PCM_SIZE ] );
+    for( size_t k=0; k < PCM_SIZE; k++ )
+        mPcmData.get()[k] = 0.0f;
     
-    init();
+    initFeatures();
 }
 
 
 ciXtract::~ciXtract()
 {
     // TODO clean up
-}
-
-
-void ciXtract::init()
-{
-    mRunCalibration     = false;
-    
-    mPcmData            = std::shared_ptr<double>( new double[ PCM_SIZE ] );
-   
-    for( size_t k=0; k < PCM_SIZE; k++ )
-        mPcmData.get()[k]               = 0.0f;
-    
-    
-    initFeatures();
 }
 
 
@@ -138,7 +129,7 @@ void ciXtract::update()
     for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
         (*it)->update();
     
-    if ( mRunCalibration )
+    if ( mRunCalibration != -1 )
         updateCalibration();
 }
 
@@ -226,8 +217,18 @@ void ciXtract::autoCalibration()
 
 void ciXtract::updateCalibration()
 {
-    if ( getElapsedSeconds() - mRunCalibration > 2.0f )
+    if ( getElapsedSeconds() - mRunCalibration > CI_XTRACT_CALIBRATION_DURATION )
     {
+        
+            console() << "MAX VAL::: " << std::numeric_limits<double>::max() << endl;
+
+        
+        vector<ciXtractFeatureRef>::iterator it;
+        for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
+        {
+            console() << (*it)->getName() << " " << (*it)->getResultMin() << " " << (*it)->getResultMax() << endl;
+        }
+        
         mRunCalibration = -1;
         return;
     }

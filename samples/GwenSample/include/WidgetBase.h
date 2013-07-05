@@ -14,6 +14,7 @@
 #include "Gwen/Controls/CheckBox.h"
 #include "Gwen/Controls/VerticalSlider.h"
 #include "Gwen/Controls/NumericUpDown.h"
+#include <boost/lexical_cast.hpp>
 
 #include "ciXtract.h"
 

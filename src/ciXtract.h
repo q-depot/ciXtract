@@ -24,7 +24,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-
+#define CI_XTRACT_CALIBRATION_DURATION 3.0f
 
 class ciXtract;
 typedef std::shared_ptr<ciXtract>       ciXtractRef;
@@ -67,8 +67,6 @@ private:
 private:
     
     ciXtract( audio::Input source );
-    
-    void init();
 
     void initFeatures();
     

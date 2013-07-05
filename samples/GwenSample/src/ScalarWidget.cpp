@@ -30,7 +30,7 @@ extern gl::TextureFontRef      mFontBig;
 ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract )
 : WidgetBase::WidgetBase( parent, label, feature, xtract )
 {
-    SetBounds( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT );
+    SetBounds( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT * 5);
     
     mBuff.resize( SCALAR_CONTROL_BUFF_SIZE );
     
@@ -49,13 +49,13 @@ ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciX
     mGainSlider->SetFloatValue( 1.0f );
     //    pSlider->onValueChanged.Add( this, &Slider::SliderMoved );
     
+    float w = 70;
     mNumericMin = new Gwen::Controls::TextBoxNumeric( this );
-//    mNumericMin->SetBounds( mBuffRect.x2 - 76, mBuffRect.y1 + 3, 35, 20 );
-    mNumericMin->SetBounds( mBuffRect.x2 - 93, mWidgetRect.y1 + 13, 45, 20 );
+    mNumericMin->SetBounds( mBuffRect.x2 - w * 2 - 3, mWidgetRect.y1 + 13, w, 20 );
     mNumericMin->SetText( to_string( feature->getResultMin() ) );
     
     mNumericMax = new Gwen::Controls::TextBoxNumeric( this );
-    mNumericMax->SetBounds( mBuffRect.x2 - 45, mWidgetRect.y1 + 13, 45, 20 );
+    mNumericMax->SetBounds( mBuffRect.x2 - w, mWidgetRect.y1 + 13, w, 20 );
     mNumericMax->SetText( to_string( feature->getResultMax() ) );
     
     if ( !mFeature->isEnable() )
@@ -107,16 +107,21 @@ void ScalarWidget::Render( Skin::Base* skin )
     
     if ( mFeature->isEnable() )
     {
-        float min   = mFeature->getResultMin();
-        float max   = mFeature->getResultMax();
-        mNumericMin->SetText( to_string(min) );
-        mNumericMax->SetText( to_string(max) );
-//        float min   = mNumericMin->GetFloatFromText();
-//        float max   = mNumericMax->GetFloatFromText();
+        if ( mXtract->isCalibrating() )
+        {
+            mNumericMin->SetText( to_string( mFeature->getResultMin() ) );
+            mNumericMax->SetText( to_string( mFeature->getResultMax() ) );
+        }
+        
+        float min   = mNumericMin->GetFloatFromText(); //boost::lexical_cast<double>( mNumericMin->GetText().c_str() );
+        float max   = mNumericMax->GetFloatFromText(); //boost::lexical_cast<double>( mNumericMax->GetText().c_str() );
+
+//        float min   = mFeature->getResultMin();
+//        float max   = mFeature->getResultMax();
         
         float val   = (float)mGainSlider->GetFloatValue() * ( (*mFeature->getResult().get()) - min ) / ( max - min );
-        val         = math<float>::clamp( val, 0.0f, 1.0f );
-        mBuff.push_front( val );        
+//        val         = math<float>::clamp( val, 0.0f, 1.0f );
+        mBuff.push_front( val );
     
         mNumericMin->SetText( to_string(min) );
         mNumericMax->SetText( to_string(max) );

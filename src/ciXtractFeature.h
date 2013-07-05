@@ -68,6 +68,9 @@ public:
     {    
         mResultMin = std::numeric_limits<double>::max();
         mResultMax = -std::numeric_limits<double>::max();
+        
+//        mResultMin = mResult.get()[0];
+//        mResultMax = mResult.get()[0];
     }
     
     void calibrate()
@@ -84,11 +87,11 @@ public:
 
             if ( isnan(val) || isinf(val) )
                 continue;
-            
+
             if ( val > mResultMax )
                 mResultMax = val;
             
-            if ( val < mResultMin )
+            else if ( val < mResultMin )
                 mResultMin = val;
         }
         

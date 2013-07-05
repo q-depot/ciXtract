@@ -103,6 +103,17 @@ void VectorWidget::Render( Skin::Base* skin )
     
     if( mFeature->isEnable() )
     {
+        if ( mXtract->isCalibrating() )
+        {
+            mNumericMin->SetText( to_string( mFeature->getResultMin() ) );
+            mNumericMax->SetText( to_string( mFeature->getResultMax() ) );
+        }
+        float min   = mNumericMin->GetFloatFromText();
+        float max   = mNumericMax->GetFloatFromText();
+        float step  = mBuffRect.getWidth() / mFeature->getResultN();
+        float h     = mBuffRect.getHeight();
+        float val;
+        
         std::shared_ptr<double> data = mFeature->getResult();
         
         gl::translate( mBuffRect.getUpperLeft() );
@@ -111,18 +122,6 @@ void VectorWidget::Render( Skin::Base* skin )
         
         glBegin( GL_QUADS );
         
-        float step  = mBuffRect.getWidth() / mFeature->getResultN();
-        float h     = mBuffRect.getHeight();
-//        float min   = mNumericMin->GetFloatFromText();
-//        float max   = mNumericMax->GetFloatFromText();
-        
-        float min   = mFeature->getResultMin();
-        float max   = mFeature->getResultMax();
-        mNumericMin->SetText( to_string(min) );
-        mNumericMax->SetText( to_string(max) );
-        
-        float val;
-
         for( int i = 0; i < mFeature->getResultN(); i++ )
         {
             val = (float)mGainSlider->GetFloatValue() * ( data.get()[i] - min ) / ( max - min );
