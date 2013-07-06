@@ -40,7 +40,7 @@ void ciXtract::initFeatures()
     mFeatures.push_back( ciXtractSpectrum::create( this, "Spectrum" ) );
     mFeatures.push_back( ciXtractAutocorrelation::create( this, "Auto Correlation" ) );
     mFeatures.push_back( ciXtractAutocorrelationFft::create( this, "Auto Correlation Fft" ) );
-    mFeatures.push_back( ciXtractHarmonicSpectrum::create( this, "Harmonic Spectrum" ) );
+    mFeatures.push_back( ciXtractHarmonicSpectrum::create( this, "Harmonic Spectrum" ) );    
     mFeatures.push_back( ciXtractF0::create( this, "F0" ) );
     mFeatures.push_back( ciXtractPeakSpectrum::create( this, "Peak Spectrum" ) );
     mFeatures.push_back( ciXtractSubBands::create( this, "Sub Bands" ) );
@@ -200,6 +200,8 @@ ciXtractFeatureRef ciXtract::getFeature( xtract_features_ feature )
         {
             return (*it);
         }
+    
+    console() << "ciXtract::getFeature FEATURE NOT FOUND! " << feature << endl;
     
     return ciXtractFeatureRef();
 }

@@ -48,6 +48,11 @@ public:
     
     ciXtractFeatureRef getFeature( xtract_features_ feature );
     
+    std::shared_ptr<double> getFeatureResult( xtract_features_ feature )
+    {
+        return getFeature(feature)->getResult();
+    }
+    
     bool isCalibrating() { return !mCalibrationFeatures.empty(); }
 
     void autoCalibration();

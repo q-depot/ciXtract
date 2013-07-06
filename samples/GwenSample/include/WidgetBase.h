@@ -45,6 +45,9 @@ public:
         mMin        = 0.0f;
         mMax        = 1.0f;
         
+        mOscEnable  = false;;
+        mOscAddress = "/" + mLabel;
+        
         // Properties window
         mOptionsButton  = new Gwen::Controls::Button( this );
         mOptionsButton->SetText( "o" );
@@ -60,9 +63,26 @@ public:
         mProperties->Dock( Gwen::Pos::Fill );
         
         Gwen::Controls::PropertyRow* pRow;
-        pRow = mProperties->Add( "Min" );                                                                   pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
-        pRow = mProperties->Add( "Max", new Gwen::Controls::Property::Text( mProperties ) );                pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
-        pRow = mProperties->Add( "Clamp", new Gwen::Controls::Property::Checkbox( mProperties ), "1" );     pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+        
+        pRow = mProperties->Add( "Min" );
+        pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+        pRow->GetProperty()->SetPropertyValue( to_string( mMin ) );
+        
+        pRow = mProperties->Add( "Max", new Gwen::Controls::Property::Text( mProperties ) );
+        pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+        pRow->GetProperty()->SetPropertyValue( to_string( mMax ) );
+        
+        pRow = mProperties->Add( "Clamp", new Gwen::Controls::Property::Checkbox( mProperties ), "1" );
+        pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+        pRow->GetProperty()->SetPropertyValue( to_string( mClamp ) );
+        
+        pRow = mProperties->Add( "OSC addr", new Gwen::Controls::Property::Text( mProperties ) );
+        pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+        pRow->GetProperty()->SetPropertyValue( mOscAddress );
+        
+        pRow = mProperties->Add( "OSC", new Gwen::Controls::Property::Checkbox( mProperties ), "1" );
+        pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+        pRow->GetProperty()->SetPropertyValue( to_string( mOscEnable ) );
         
         // Calibration button
         mCalibButton  = new Gwen::Controls::Button( this );
@@ -110,6 +130,12 @@ protected:
         
         else if ( label == "Max" )
             mMax = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
+        
+        else if ( label == "OSC" )
+            mOscEnable = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
+        
+        else if ( label == "OSC addr" )
+            mOscAddress = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
     }
     
     
@@ -155,4 +181,7 @@ protected:
     bool                            mClamp;
     double                          mMin;
     double                          mMax;
+    
+    bool                            mOscEnable;
+    std::string                     mOscAddress;
 };

@@ -89,7 +89,7 @@ void ScalarWidget::Render( Skin::Base* skin )
     
     if ( WidgetBase::update() )
     {
-        float val   = (float)mGainSlider->GetFloatValue() * ( (*mFeature->getResult().get()) - mMin ) / ( mMax - mMin );
+        float val = (float)mGainSlider->GetFloatValue() * ( (*mFeature->getResult().get()) - mMin ) / ( mMax - mMin );
 
         if ( mClamp )
             val = math<float>::clamp( val, 0.0f, 1.0f );
@@ -129,13 +129,13 @@ void ScalarWidget::Render( Skin::Base* skin )
             
         gl::color( mValCol );
         mFontBig->drawString( valStr, Vec2f( 0, 30 ) );
-        
-    
-//    else
-//    {
-//        gl::color( mLabelCol );
-//        mFontSmall->drawString( mLabel, widgetPos + Vec2f( 0, 10 ) );
     }
+    else
+    {    
+        gl::color( mBuffBgCol );
+        gl::drawSolidRect( Rectf( 0, mBuffRect.y1, CI_XTRACT_WIDGET_WIDTH, mBuffRect.y2  ) );
+    }
+    
     
     gl::popMatrices();
 }

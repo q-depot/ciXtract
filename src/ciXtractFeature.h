@@ -230,7 +230,7 @@ class ciXtractMfcc : public ciXtractFeature {
     
 public:
     static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractMfcc( xtract, name ) ); }
-    ~ciXtractMfcc() {}
+    ~ciXtractMfcc();
     void update();
     
 private:
