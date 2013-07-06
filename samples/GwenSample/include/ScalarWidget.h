@@ -14,10 +14,7 @@
 #include <boost/circular_buffer.hpp>
 #include "WidgetBase.h"
 
-#define SCALAR_CONTROL_WIDTH        210
-#define SCALAR_CONTROL_HEIGHT       80
 #define SCALAR_CONTROL_BUFF_SIZE    100
-
 
 class ScalarWidget : public WidgetBase {
     

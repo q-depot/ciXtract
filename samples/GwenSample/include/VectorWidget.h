@@ -13,10 +13,6 @@
 
 #include "WidgetBase.h"
 
-#define VECTOR_CONTROL_WIDTH        210
-#define VECTOR_CONTROL_HEIGHT       80
-
-
 class VectorWidget : public WidgetBase {
     
 public:

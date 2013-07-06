@@ -203,7 +203,7 @@ void GwenSampleApp::initGui()
     
     // Scalar Features
     Vec2f initOffset( 15, 50 );
-    offset = Vec2f( VECTOR_CONTROL_WIDTH + 30, initOffset.y );
+    offset = Vec2f( CI_XTRACT_WIDGET_WIDTH + 30, initOffset.y );
 
     for( itr = features.begin(); itr != features.end(); ++itr )
     {
@@ -214,11 +214,11 @@ void GwenSampleApp::initGui()
         ScalarWidget *control = new ScalarWidget( mCanvas, (*itr)->getName(), (*itr), mXtract );
         control->SetPos( offset.x, offset.y );
         
-        offset.y += SCALAR_CONTROL_HEIGHT + 25;
+        offset.y += CI_XTRACT_WIDGET_HEIGHT + 25;
 
-        if ( offset.y >= getWindowHeight() - SCALAR_CONTROL_HEIGHT )
+        if ( offset.y >= getWindowHeight() - CI_XTRACT_WIDGET_HEIGHT )
         {
-            offset.x += SCALAR_CONTROL_WIDTH + 15;
+            offset.x += CI_XTRACT_WIDGET_WIDTH + 15;
             offset.y = initOffset.y;
         }
     }
@@ -234,11 +234,11 @@ void GwenSampleApp::initGui()
         VectorWidget *control = new VectorWidget( mCanvas, (*itr)->getName(), (*itr), mXtract );
         control->SetPos( offset.x, offset.y );
         
-        offset.y += VECTOR_CONTROL_HEIGHT + 25;
+        offset.y += CI_XTRACT_WIDGET_HEIGHT + 25;
         
-        if ( offset.y >= getWindowHeight() - VECTOR_CONTROL_HEIGHT )
+        if ( offset.y >= getWindowHeight() - CI_XTRACT_WIDGET_HEIGHT )
         {
-            offset.x += VECTOR_CONTROL_WIDTH + 15;
+            offset.x += CI_XTRACT_WIDGET_WIDTH + 15;
             offset.y = 15;
         }
     }

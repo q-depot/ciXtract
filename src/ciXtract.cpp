@@ -20,7 +20,6 @@ ciXtract::ciXtract( audio::Input source )
 {
     mInputSource    = source;
     mFontSmall      = gl::TextureFont::create( Font( "Helvetica", 12 ) );
-    mRunCalibration = getElapsedSeconds();
 
     mPcmData        = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     for( size_t k=0; k < PCM_SIZE; k++ )
@@ -129,7 +128,7 @@ void ciXtract::update()
     for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
         (*it)->update();
     
-    if ( mRunCalibration != -1 )
+    if ( isCalibrating() )
         updateCalibration();
 }
 
@@ -205,36 +204,49 @@ ciXtractFeatureRef ciXtract::getFeature( xtract_features_ feature )
     return ciXtractFeatureRef();
 }
 
+
 void ciXtract::autoCalibration()
 {
     vector<ciXtractFeatureRef>::iterator it;
-    for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
+    for( it = mFeatures.begin(); it != mFeatures.end(); ++it )
+    {
         (*it)->resetCalibration();
-    
-    mRunCalibration = getElapsedSeconds();    
+        ciXtractFeatureCalibration fc = { (*it), getElapsedSeconds() };
+        mCalibrationFeatures.push_back( fc );
+    }
+}
+
+
+void ciXtract::calibrateFeature( ciXtractFeatureRef feature )
+{
+    feature->resetCalibration();
+    ciXtractFeatureCalibration fc = { feature, getElapsedSeconds() };
+    mCalibrationFeatures.push_back( fc );
+}
+
+
+void ciXtract::calibrateFeature( xtract_features_ featureEnum )
+{
+    ciXtractFeatureRef feature = getFeature( featureEnum );
+    if ( feature )
+        calibrateFeature( feature );
 }
 
 
 void ciXtract::updateCalibration()
 {
-    if ( getElapsedSeconds() - mRunCalibration > CI_XTRACT_CALIBRATION_DURATION )
+    vector<ciXtractFeatureCalibration>::iterator it;
+    for( it = mCalibrationFeatures.begin(); it!=mCalibrationFeatures.end(); )
     {
-        
-            console() << "MAX VAL::: " << std::numeric_limits<double>::max() << endl;
-
-        
-        vector<ciXtractFeatureRef>::iterator it;
-        for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
+        if ( getElapsedSeconds() - it->StartedAt > CI_XTRACT_CALIBRATION_DURATION )
         {
-            console() << (*it)->getName() << " " << (*it)->getResultMin() << " " << (*it)->getResultMax() << endl;
+            mCalibrationFeatures.erase( it );
+            continue;
         }
         
-        mRunCalibration = -1;
-        return;
+        it->feature->calibrate();
+        
+        ++it;
     }
-    
-    vector<ciXtractFeatureRef>::iterator it;
-    for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
-        (*it)->calibrate();
 }
 

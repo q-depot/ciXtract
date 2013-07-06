@@ -48,21 +48,18 @@ public:
     
     ciXtractFeatureRef getFeature( xtract_features_ feature );
     
-    bool isCalibrating() { return mRunCalibration > 0; }
+    bool isCalibrating() { return !mCalibrationFeatures.empty(); }
 
     void autoCalibration();
+    
+    void calibrateFeature( ciXtractFeatureRef feature );
+    
+    void calibrateFeature( xtract_features_ featureEnum );
     
     std::vector<ciXtractFeatureRef> getFeatures() { return mFeatures; };
     
     std::shared_ptr<double> getPcmData() { return mPcmData; }
     
-    
-private:
-    
-    void updateCalibration();
-
-    double mRunCalibration;
-
     
 private:
     
@@ -72,9 +69,19 @@ private:
     
     bool featureDependsOn( xtract_features_ this_feature, xtract_features_ test_feature );
     
+    void updateCalibration();
+    
+    
 private:
-
+    
+    struct ciXtractFeatureCalibration
+    {
+        ciXtractFeatureRef  feature;
+        double              StartedAt;
+    };
+    
     std::vector<ciXtractFeatureRef>             mFeatures;
+    std::vector<ciXtractFeatureCalibration>     mCalibrationFeatures;
     
     ci::audio::Input                            mInputSource;
 	audio::PcmBuffer32fRef                      mPcmBuffer;

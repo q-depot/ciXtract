@@ -30,11 +30,11 @@ extern gl::TextureFontRef      mFontBig;
 ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract )
 : WidgetBase::WidgetBase( parent, label, feature, xtract )
 {
-    SetBounds( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT * 5);
+    SetBounds( 0, 0, CI_XTRACT_WIDGET_WIDTH, CI_XTRACT_WIDGET_HEIGHT );
     
     mBuff.resize( SCALAR_CONTROL_BUFF_SIZE );
     
-    mWidgetRect = Rectf( 0, 0, SCALAR_CONTROL_WIDTH, SCALAR_CONTROL_HEIGHT );
+    mWidgetRect = Rectf( 0, 0, CI_XTRACT_WIDGET_WIDTH, CI_XTRACT_WIDGET_HEIGHT );
     mValRect    = Rectf( mWidgetRect.x1 + 18,   mWidgetRect.y1 + 35,    mWidgetRect.x1 + 18 + 5,    mWidgetRect.y2 );
     mBuffRect   = Rectf( mValRect.x2 + 3,       mValRect.y1,            mWidgetRect.x2,             mValRect.y2 );
     
@@ -48,41 +48,12 @@ ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciX
     mGainSlider->SetRange( 0.0f, 2.0f );
     mGainSlider->SetFloatValue( 1.0f );
     //    pSlider->onValueChanged.Add( this, &Slider::SliderMoved );
-    
-    float w = 70;
-    mNumericMin = new Gwen::Controls::TextBoxNumeric( this );
-    mNumericMin->SetBounds( mBuffRect.x2 - w * 2 - 3, mWidgetRect.y1 + 13, w, 20 );
-    mNumericMin->SetText( to_string( feature->getResultMin() ) );
-    
-    mNumericMax = new Gwen::Controls::TextBoxNumeric( this );
-    mNumericMax->SetBounds( mBuffRect.x2 - w, mWidgetRect.y1 + 13, w, 20 );
-    mNumericMax->SetText( to_string( feature->getResultMax() ) );
-    
+
     if ( !mFeature->isEnable() )
     {
         mGainSlider->Hide();
-        mNumericMin->Hide();
-        mNumericMax->Hide();
     }
-    
-    
-    
-    mOptionsButton  = new Gwen::Controls::Button( this );
-    mOptionsButton->SetText( "options" );
-    mOptionsButton->SetBounds( SCALAR_CONTROL_WIDTH - 50, 0, 50, 10 );
-    mOptionsButton->onDown.Add( this, &ScalarWidget::toggleProperties );
-    
-    mPropertiesWindow  = new Gwen::Controls::WindowControl( parent );
-    mPropertiesWindow->SetTitle( mFeature->getName() );
-    mPropertiesWindow->SetBounds( 0, 0, 250, 200 );
-    mPropertiesWindow->Hide();
-    
-    mProperties = new Gwen::Controls::Properties( mPropertiesWindow );
-    mProperties->Dock( Gwen::Pos::Fill );
-    mProperties->Add( L"More Items" );
-    mProperties->Add( L"Checkbox", new Gwen::Controls::Property::Checkbox( mProperties ), L"1" );
-    mProperties->Add( L"To Fill" );
-    mProperties->Add( L"Out Here" );
+        
 }
 
 
@@ -93,25 +64,18 @@ void ScalarWidget::toggleFeature( Gwen::Controls::Base* pControl )
     if ( checkbox->IsChecked() )
     {
         mXtract->enableFeature( mFeature->getEnum() );
-        
         mGainSlider->Show();
-        mNumericMin->Show();
-        mNumericMax->Show();
     }
     else
     {
         mXtract->disableFeature( mFeature->getEnum() );
-//        *mVal = 0.0f;
-        
         mGainSlider->Hide();
-        mNumericMin->Hide();
-        mNumericMax->Hide();
     }
 }
 
 
 void ScalarWidget::Render( Skin::Base* skin )
-{
+{        
     if ( mEnableCheckBox->IsChecked() ^ mFeature->isEnable() )
         mEnableCheckBox->SetChecked( mFeature->isEnable() );
     
@@ -123,31 +87,15 @@ void ScalarWidget::Render( Skin::Base* skin )
     gl::color( mLabelCol );
     mFontSmall->drawString( mLabel, Vec2f( 20, 11 ) );
     
-    
-    if ( mFeature->isEnable() )
+    if ( WidgetBase::update() )
     {
-        if ( mXtract->isCalibrating() )
-        {
-            mNumericMin->SetText( to_string( mFeature->getResultMin() ) );
-            mNumericMax->SetText( to_string( mFeature->getResultMax() ) );
-        }
-        
-        float min   = mNumericMin->GetFloatFromText(); //boost::lexical_cast<double>( mNumericMin->GetText().c_str() );
-        float max   = mNumericMax->GetFloatFromText(); //boost::lexical_cast<double>( mNumericMax->GetText().c_str() );
+        float val   = (float)mGainSlider->GetFloatValue() * ( (*mFeature->getResult().get()) - mMin ) / ( mMax - mMin );
 
-//        float min   = mFeature->getResultMin();
-//        float max   = mFeature->getResultMax();
+        if ( mClamp )
+            val = math<float>::clamp( val, 0.0f, 1.0f );
         
-        float val   = (float)mGainSlider->GetFloatValue() * ( (*mFeature->getResult().get()) - min ) / ( max - min );
-//        val         = math<float>::clamp( val, 0.0f, 1.0f );
         mBuff.push_front( val );
     
-        mNumericMin->SetText( to_string(min) );
-        mNumericMax->SetText( to_string(max) );
-
-        //    if ( isnan(val) )
-        //        console() << mCb->name << " " << (*mVal);    
-        
         PolyLine<Vec2f>	buffLine;
         float step  = mBuffRect.getWidth() / mBuff.size();
         
@@ -182,9 +130,9 @@ void ScalarWidget::Render( Skin::Base* skin )
         gl::color( mValCol );
         mFontBig->drawString( valStr, Vec2f( 0, 30 ) );
         
-    }
-    else
-    {
+    
+//    else
+//    {
 //        gl::color( mLabelCol );
 //        mFontSmall->drawString( mLabel, widgetPos + Vec2f( 0, 10 ) );
     }
