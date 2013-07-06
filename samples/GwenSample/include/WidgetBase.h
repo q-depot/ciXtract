@@ -19,6 +19,7 @@
 #include "Gwen/Controls/Property/Checkbox.h"
 #include "Gwen/Controls/Property/Text.h"
 
+#include <boost/algorithm/string.hpp>
 //#include <boost/lexical_cast.hpp>
 
 #include "ciXtract.h"
@@ -45,8 +46,13 @@ public:
         mMin        = 0.0f;
         mMax        = 1.0f;
         
-        mOscEnable  = false;;
-        mOscAddress = "/" + mLabel;
+        mOscEnable  = false;
+        
+        std::string addr = mLabel;
+        boost::replace_all( addr, " ", "_");
+        boost::algorithm::to_lower( addr );
+
+        mOscAddress = "/" + addr;
         
         // Properties window
         mOptionsButton  = new Gwen::Controls::Button( this );

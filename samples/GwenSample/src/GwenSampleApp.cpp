@@ -57,14 +57,12 @@ public:
     void toggleAllFeatures( Gwen::Controls::Base* pControl );
     void toggleCalibration( Gwen::Controls::Base* pControl );
 
-//    void toggleFeature( Gwen::Event::Info info );
+    void drawPcmData();
     
-    audio::Input            mInput;
-    ciXtractRef          mXtract;
+    audio::Input                    mInput;
+    ciXtractRef                     mXtract;
     
-    params::InterfaceGlRef  mParams;
-    
-    float                   mGain[XTRACT_FEATURES];
+    params::InterfaceGlRef          mParams;
     
     gl::TextureRef                  mLogoTex;
     
@@ -99,10 +97,7 @@ void GwenSampleApp::setup()
     
     mXtract = ciXtract::create( mInput );
     mXtract->enableFeature( XTRACT_SPECTRUM );
-    
-    for( auto k=0; k < XTRACT_FEATURES; k++ )
-        mGain[k] = 1.0f;
-    
+
     initGui();
     
     mFontSmall  = gl::TextureFont::create( Font( "Helvetica", 12 ) );
@@ -159,6 +154,8 @@ void GwenSampleApp::draw()
         gl::color( Color::gray( 0.2f ) );
         mFontSmall->drawString( "CALIBRATION IN PROGRESS",  Vec2f( 925, 26 ) );
     }
+    
+    drawPcmData();
 }
 
 
@@ -266,6 +263,39 @@ void GwenSampleApp::toggleCalibration( Gwen::Controls::Base* pControl )
 {
     mXtract->autoCalibration();
 }
+
+void GwenSampleApp::drawPcmData()
+{
+    audio::PcmBuffer32fRef pcmBuffer = mInput.getPcmBuffer();
+    
+	if( !pcmBuffer )
+		return;
+    
+	uint32_t bufferLength           = pcmBuffer->getSampleCount();
+	audio::Buffer32fRef leftBuffer  = pcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
+    
+	int displaySize = getWindowWidth();
+	float scale = displaySize / (float)bufferLength;
+	
+	PolyLine<Vec2f>	leftBufferLine;
+	
+	for( int i = 0; i < bufferLength; i++ ) {
+		float x = ( i * scale );
+        
+		//get the PCM value from the left channel buffer
+		float y = ( ( leftBuffer->mData[i] - 1 ) * - 100 );
+		leftBufferLine.push_back( Vec2f( x , y) );
+	}
+	gl::color( Color( 1.0f, 0.5f, 0.25f ) );
+	gl::draw( leftBufferLine );
+    
+    Vec2f offset = getWindowSize() - Vec2f( 200, 350 );
+
+    mFontBig->drawString( to_string( bufferLength ), offset ); offset.y += 25;
+    mFontBig->drawString( to_string( leftBuffer->mSampleCount ), offset ); offset.y += 25;
+    mFontBig->drawString( to_string( leftBuffer->mNumberChannels ), offset ); offset.y += 25;
+}
+
 
 
 CINDER_APP_NATIVE( GwenSampleApp, RendererGl )
