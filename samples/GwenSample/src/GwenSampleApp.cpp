@@ -141,6 +141,8 @@ void GwenSampleApp::draw()
 
     gl::enableAlphaBlending();
     
+    drawPcmData();
+    
 	mCanvas->RenderCanvas();
     
     gl::color( Color::white() );
@@ -154,8 +156,6 @@ void GwenSampleApp::draw()
         gl::color( Color::gray( 0.2f ) );
         mFontSmall->drawString( "CALIBRATION IN PROGRESS",  Vec2f( 925, 26 ) );
     }
-    
-    drawPcmData();
 }
 
 
@@ -246,16 +246,16 @@ void GwenSampleApp::initGui()
 void GwenSampleApp::toggleAllFeatures( Gwen::Controls::Base* pControl )
 {
     Gwen::Controls::Button  *button = (Gwen::Controls::Button*)pControl;
-    bool                    enable  = false;
-    
-    if ( button->GetText() == "All on" )
-        enable = true;
+    bool                    enable  = ( button->GetText() == "All on" );
     
     vector<ciXtractFeatureRef> features = mXtract->getFeatures();
     
     std::vector<ciXtractFeatureRef>::iterator it;
     for( it = features.begin(); it != features.end(); ++it )
-              mXtract->enableFeature( (*it)->getEnum() );
+        if ( enable )
+            mXtract->enableFeature( (*it)->getEnum() );
+        else
+            mXtract->disableFeature( (*it)->getEnum() );
 }
 
 
@@ -274,19 +274,19 @@ void GwenSampleApp::drawPcmData()
 	uint32_t bufferLength           = pcmBuffer->getSampleCount();
 	audio::Buffer32fRef leftBuffer  = pcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
     
-	int displaySize = getWindowWidth();
-	float scale = displaySize / (float)bufferLength;
+	int     displaySize = 905;//getWindowWidth();
+	float   scale       = displaySize / (float)bufferLength;
 	
 	PolyLine<Vec2f>	leftBufferLine;
 	
-	for( int i = 0; i < bufferLength; i++ ) {
-		float x = ( i * scale );
-        
-		//get the PCM value from the left channel buffer
-		float y = ( ( leftBuffer->mData[i] - 1 ) * - 100 );
+	for( int i = 0; i < bufferLength; i++ )
+    {
+		float x = 170 + ( i * scale );
+        float y = 25 + leftBuffer->mData[i] * 30;
 		leftBufferLine.push_back( Vec2f( x , y) );
 	}
-	gl::color( Color( 1.0f, 0.5f, 0.25f ) );
+
+	gl::color( Color::gray( 0.1f ) );
 	gl::draw( leftBufferLine );
     
     Vec2f offset = getWindowSize() - Vec2f( 200, 350 );

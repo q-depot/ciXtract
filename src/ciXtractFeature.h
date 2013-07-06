@@ -29,8 +29,21 @@ enum ciXtractFeatureType {
     CI_XTRACT_SCALAR
 };
 
+enum ciXtractParamType {
+    CI_XTRACT_PARAM_ENUM,
+    CI_XTRACT_PARAM_BOOL,
+    CI_XTRACT_PARAM_DOUBLE
+};
 
-#define PCM_SIZE            2048
+struct ciXtractFeatureParam {
+    double                          val;
+    ciXtractParamType               type;
+    std::map<std::string,double>    options;
+};
+
+
+
+#define PCM_SIZE            1024
 #define FFT_SIZE            512
 #define SAMPLERATE          44100
 
@@ -99,6 +112,7 @@ public:
             mResultMax += 0.001f;
     }
     
+    std::map<std::string,ciXtractFeatureParam>  getParams() { return mParams; }
     
 protected:
     
@@ -136,8 +150,10 @@ protected:
     double                          mResultMax;
     
     bool                            mIsEnable;
-    std::map<std::string,double>    mParams;
     double                          mArgd[4];
+    
+    std::map<std::string,ciXtractFeatureParam>    mParams;
+    
 };
 
 

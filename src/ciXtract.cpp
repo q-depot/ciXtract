@@ -110,16 +110,14 @@ void ciXtract::update()
 	if( !mPcmBuffer )
 		return;
     
-//    audio::Buffer32fRef buff        = mPcmBuffer->getInterleavedData();
-//	audio::Buffer32fRef leftBuffer  = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
+    /* fill the input array with a sawtooth wave */
+//    for( size_t k=0; k < PCM_SIZE; k++ )
+//        mPcmData.get()[k] = ((k % 100) / (double)100) - .5;
+    
+//  audio::Buffer32fRef buff        = mPcmBuffer->getInterleavedData();
   	audio::Buffer32fRef buff  = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
     for( size_t k=0; k < PCM_SIZE; k++ )
         mPcmData.get()[k] = buff->mData[k];
-    
-//    console() << mPcmBuffer->isInterleaved() << " " << mPcmBuffer->getMaxSampleCount() << " " << mPcmBuffer->getSampleCount() << " " << mPcmBuffer->getChannelCount();
-//    console() << " --- " << buff->mSampleCount << " " << buff->mNumberChannels << " " << PCM_SIZE << endl;
-//    console() << leftBuffer->mNumberChannels << " " << leftBuffer->mSampleCount << " --- ";
-//    console() << buff->mNumberChannels << " " << buff->mSampleCount << endl;
     
 //    for( size_t k=0; k < PCM_SIZE; k++ )
 //        mPcmData.get()[k] = buff->mData[k*2];

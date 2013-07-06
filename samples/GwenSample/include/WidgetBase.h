@@ -18,6 +18,8 @@
 #include "Gwen/Controls/Properties.h"
 #include "Gwen/Controls/Property/Checkbox.h"
 #include "Gwen/Controls/Property/Text.h"
+#include "Gwen/Controls/Property/ComboBox.h"
+#include "Gwen/Utility.h"
 
 #include <boost/algorithm/string.hpp>
 //#include <boost/lexical_cast.hpp>
@@ -95,6 +97,41 @@ public:
         mCalibButton->SetText( "-" );
         mCalibButton->SetBounds( CI_XTRACT_WIDGET_WIDTH - 10, 12, 10, 10 );
         mCalibButton->onDown.Add( this, &WidgetBase::triggerCalibration );
+        
+        
+        // Feature properties        
+        std::map<std::string,ciXtractFeatureParam>  params = mFeature->getParams();
+        ciXtractFeatureParam                        p;
+        std::string                                 pname;
+        for ( std::map<std::string,ciXtractFeatureParam>::iterator it = params.begin(); it != params.end(); ++it )
+        {
+            pname   = it->first;
+            p       = it->second;
+            
+            if ( p.type == CI_XTRACT_PARAM_BOOL )
+            {
+                pRow = mProperties->Add( pname, new Gwen::Controls::Property::Checkbox( mProperties ) );
+            }
+            else if ( p.type == CI_XTRACT_PARAM_DOUBLE )
+            {
+                pRow = mProperties->Add( pname );
+            }
+            else if ( p.type == CI_XTRACT_PARAM_ENUM )
+            {
+                Gwen::Controls::Property::ComboBox* pCombo = new Gwen::Controls::Property::ComboBox( mProperties );
+                
+                for ( std::map<std::string,double>::iterator opIt = p.options.begin(); opIt != p.options.end(); ++opIt )
+                    pCombo->GetComboBox()->AddItem( Gwen::Utility::StringToUnicode( opIt->first ), std::to_string( opIt->second ) );
+                
+                pRow = mProperties->Add( pname, pCombo, "1" );
+            }
+            
+            pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+            pRow->GetProperty()->SetPropertyValue( to_string( p.val ) );
+
+            std::cout << pname << " => " << p.val << '\n';
+        }
+
     }
     
     WidgetBase( Gwen::Controls::Base *parent ) : Gwen::Controls::Base( parent, "cigwen sample ScalarWidget" ) {}

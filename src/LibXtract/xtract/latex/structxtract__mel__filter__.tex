@@ -1,0 +1,69 @@
+\hypertarget{structxtract__mel__filter__}{\section{xtract\-\_\-mel\-\_\-filter\-\_\- Struct Reference}
+\label{structxtract__mel__filter__}\index{xtract\-\_\-mel\-\_\-filter\-\_\-@{xtract\-\_\-mel\-\_\-filter\-\_\-}}
+}
+
+
+An array of pointers to functions that perform the extraction.  
+
+
+
+
+{\ttfamily \#include $<$libxtract.\-h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structxtract__mel__filter___a917e39333e91aad0970c38b9ea3e6510}{int {\bfseries n\-\_\-filters}}\label{structxtract__mel__filter___a917e39333e91aad0970c38b9ea3e6510}
+
+\item 
+\hypertarget{structxtract__mel__filter___a3bc514955365e091933f7804d4defa78}{double $\ast$$\ast$ {\bfseries filters}}\label{structxtract__mel__filter___a3bc514955365e091933f7804d4defa78}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An array of pointers to functions that perform the extraction. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$data,\-:} & a pointer to the start of the input data (usually the first element in an array)\\
+\hline
+{\em N,\-:} & the number of elements to be processed\\
+\hline
+{\em $\ast$argv,\-:} & an abitrary number of additional arguments, used to pass additional parameters to the function being called. All arguments are compulsary!\\
+\hline
+{\em $\ast$result,\-:} & a pointer to the first element in the result\\
+\hline
+\end{DoxyParams}
+Each function will iterate over N array elements, the first of which is pointed to by $\ast$data. It is up to the calling function to ensure that the array is in the format expected by the function being called.
+
+For scalar and delta features, $\ast$result will point to a single value.
+
+For vector features it will point to the first element in an array.
+
+Memory for this array must be allocated and freed by the calling function.
+
+All functions return an integer error code as descibed in the enumeration return\-\_\-codes\-\_\-
+
+The preprocessor macro\-: X\-T\-R\-A\-C\-T must be defined before this can be used
+
+example\-:\par
+ \begin{DoxyVerb}#include <stdio.h>
+#define XTRACT
+#include "libxtract.h"
+
+main () {
+double values[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+int N = 5;
+double mean;
+
+xtract[MEAN]((void *)values, N, NULL, &mean);
+
+printf("Mean = %.2f\n", mean);
+}
+\end{DoxyVerb}
+ The calling function may additionally make some tests against the value returned by xtract\-A structure to store a set of n\-\_\-filters Mel filters 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{libxtract_8h}{libxtract.\-h}\end{DoxyCompactItemize}
