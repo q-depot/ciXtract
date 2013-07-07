@@ -28,13 +28,11 @@ extern gl::TextureFontRef      mFontBig;
 
 
 ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract )
-: WidgetBase::WidgetBase( parent, label, feature, xtract )
-{
-    SetBounds( 0, 0, CI_XTRACT_WIDGET_WIDTH, CI_XTRACT_WIDGET_HEIGHT );
-    
+: WidgetBase::WidgetBase( parent, label, feature, xtract, Vec2i( SCALAR_WIDGET_WIDTH, SCALAR_WIDGET_HEIGHT ) )
+{    
     mBuff.resize( SCALAR_CONTROL_BUFF_SIZE );
     
-    mWidgetRect = Rectf( 0, 0, CI_XTRACT_WIDGET_WIDTH, CI_XTRACT_WIDGET_HEIGHT );
+    mWidgetRect = Rectf( 0, 0, SCALAR_WIDGET_WIDTH, SCALAR_WIDGET_HEIGHT );
     mValRect    = Rectf( mWidgetRect.x1 + 18,   mWidgetRect.y1 + 35,    mWidgetRect.x1 + 18 + 5,    mWidgetRect.y2 );
     mBuffRect   = Rectf( mValRect.x2 + 3,       mValRect.y1,            mWidgetRect.x2,             mValRect.y2 );
     
@@ -93,7 +91,12 @@ void ScalarWidget::Render( Skin::Base* skin )
 
         if ( mClamp )
             val = math<float>::clamp( val, 0.0f, 1.0f );
-        
+
+// Damping
+//        if ( val > mBuff.front() )
+//          mBuff.push_front( val );
+//        else
+//            mBuff.push_front( mBuff.front() * mDamping );
         mBuff.push_front( val );
     
         PolyLine<Vec2f>	buffLine;
@@ -133,7 +136,7 @@ void ScalarWidget::Render( Skin::Base* skin )
     else
     {    
         gl::color( mBuffBgCol );
-        gl::drawSolidRect( Rectf( 0, mBuffRect.y1, CI_XTRACT_WIDGET_WIDTH, mBuffRect.y2  ) );
+        gl::drawSolidRect( Rectf( 0, mBuffRect.y1, GetSize().x, mBuffRect.y2  ) );
     }
     
     

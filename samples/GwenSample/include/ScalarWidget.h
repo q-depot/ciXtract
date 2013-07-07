@@ -15,6 +15,9 @@
 #include "WidgetBase.h"
 
 #define SCALAR_CONTROL_BUFF_SIZE    100
+#define SCALAR_WIDGET_WIDTH         210
+#define SCALAR_WIDGET_HEIGHT        80
+
 
 class ScalarWidget : public WidgetBase {
     

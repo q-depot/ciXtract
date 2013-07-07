@@ -28,13 +28,12 @@ extern gl::TextureFontRef      mFontBig;
 
 
 VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract )
-: WidgetBase::WidgetBase( parent, label, feature, xtract )
+: WidgetBase::WidgetBase( parent, label, feature, xtract, Vec2i( VECTOR_WIDGET_WIDTH, VECTOR_WIDGET_HEIGHT ) )
 {
-    SetBounds( 0, 0, CI_XTRACT_WIDGET_WIDTH, CI_XTRACT_WIDGET_HEIGHT );
-    
-    mWidgetRect = Rectf( 0, 0, CI_XTRACT_WIDGET_WIDTH, CI_XTRACT_WIDGET_HEIGHT );
+    mWidgetRect = Rectf( 0, 0, GetSize().x, GetSize().y );
     mValRect    = Rectf( mWidgetRect.x1 + 18,   mWidgetRect.y1 + 25,    mWidgetRect.x1 + 18 + 5,    mWidgetRect.y2 );
-    mBuffRect   = Rectf( mValRect.x2 + 3,       mWidgetRect.y1 + 25,    mWidgetRect.x2,             mWidgetRect.y2 );
+//    mBuffRect   = Rectf( mValRect.x2 + 3,       mWidgetRect.y1 + 25,    mWidgetRect.x2,             mWidgetRect.y2 );
+    mBuffRect   = Rectf( mValRect.x2 + 3,       mWidgetRect.y1 + 25,    mValRect.x2 + 63,             mWidgetRect.y2 );
     
     mEnableCheckBox = new Gwen::Controls::CheckBox( this );
     mEnableCheckBox->SetPos( 0, 0 );
@@ -51,6 +50,14 @@ VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciX
     {
         mGainSlider->Hide();
     }
+    
+    mSurfOffset     = Vec2i( mBuffRect.x2 + 3, 0 );
+    mSurf           = Surface32f( VECTOR_WIDGET_WIDTH - mSurfOffset.x, mBuffRect.getHeight(), true, SurfaceChannelOrder::RGBA );
+    mSurfPosX       = 0.0f;
+    
+    for( auto x=0; x < mSurf.getWidth(); x++ )
+        for( auto y=0; y < mSurf.getHeight(); y++ )
+            mSurf.setPixel( Vec2i( x, y ), ci::ColorA::white() );
 }
 
 
@@ -86,8 +93,8 @@ void VectorWidget::Render( Skin::Base* skin )
     
     if ( WidgetBase::update() )
     {
-        float step  = mBuffRect.getWidth() / mFeature->getResultN();
-        float h     = mBuffRect.getHeight();
+        float step  = mBuffRect.getHeight() / mFeature->getResultN();
+        float w     = mBuffRect.getWidth();
         float val;
         
         std::shared_ptr<double> data = mFeature->getResult();
@@ -98,22 +105,62 @@ void VectorWidget::Render( Skin::Base* skin )
         
         glBegin( GL_QUADS );
         
+        ci::Vec2f tl;
+        
         for( int i = 0; i < mFeature->getResultN(); i++ )
         {
             val = (float)mGainSlider->GetFloatValue() * ( data.get()[i] - mMin ) / ( mMax - mMin );
 
             if ( mClamp )
-                val = math<float>::clamp( val, 0.0f, 1.0f ) * h;
+                val = math<float>::clamp( val, 0.0f, 1.0f ) * w;
             
-            glVertex2f( i * step,           h );
-            glVertex2f( ( i + 1 ) * step,   h );
-            glVertex2f( ( i + 1 ) * step,   h - val );
-            glVertex2f( i * step,           h - val );
+//            glVertex2f( i * step,           h );
+//            glVertex2f( ( i + 1 ) * step,   h );
+//            glVertex2f( ( i + 1 ) * step,   h - val );
+//            glVertex2f( i * step,           h - val );
+            
+            tl.x = w - val;
+            tl.y = i * step;
+            
+            glVertex2f( tl.x,   tl.y );
+            glVertex2f( w,      tl.y );
+            glVertex2f( w,      tl.y + 1 );
+            glVertex2f( tl.x,   tl.y + 1 );
+            
+            val /= w;
+
+            mSurf.setPixel( Vec2i( mSurfPosX, i * step ), ci::ColorA( 1.0f, 1.0f - val, 1.0f - val, 1.0f ) );
+            
+            
+//            for( auto k=0; k<10;k++)
+//                mSurf.setPixel( Vec2i( k, i * step ), ci::ColorA( 1.0f, 1.0f - val, 1.0f - val, 1.0f ) );
         }
         
         glEnd();
     }
     
-    gl::popMatrices();
+    // texture bleed out the canvas !!!! <<<<<<<
+    
+    gl::translate( mSurfOffset );
+    gl::color( ci::Color::white() );
+    gl::Texture tex = gl::Texture( mSurf );
+    tex.enableAndBind();
+    
+    glBegin( GL_QUADS );
+    
+    float texOffset = 0;//mSurfPosX / mSurf.getWidth();
+    
+    glTexCoord2f( texOffset + 0.0f, 0.0f );     glVertex2f( 0,                  0 );
+    glTexCoord2f( texOffset + 1.0f, 0.0f );     glVertex2f( mSurf.getWidth(),   0 );
+    glTexCoord2f( texOffset + 1.0f, 1.0f );     glVertex2f( mSurf.getWidth(),   mSurf.getHeight() );
+    glTexCoord2f( texOffset + 0.0f, 1.0f );     glVertex2f( 0,                  mSurf.getHeight() );
+    
+    glEnd();
 
+    tex.disable();
+    
+    mSurfPosX = fmod( mSurfPosX + 1, mSurf.getWidth() );
+    
+    gl::popMatrices();
+    
 }

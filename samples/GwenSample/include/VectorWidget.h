@@ -13,6 +13,10 @@
 
 #include "WidgetBase.h"
 
+#define VECTOR_WIDGET_WIDTH     300
+#define VECTOR_WIDGET_HEIGHT    200
+
+
 class VectorWidget : public WidgetBase {
     
 public:
@@ -28,4 +32,9 @@ private:
     
     void toggleFeature( Gwen::Controls::Base* pControl );
 
+private:
+    
+    ci::Surface32f  mSurf;
+    ci::Vec2i       mSurfOffset;
+    float           mSurfPosX;
 };

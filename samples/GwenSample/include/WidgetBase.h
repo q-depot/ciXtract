@@ -26,15 +26,12 @@
 
 #include "ciXtract.h"
 
-#define CI_XTRACT_WIDGET_WIDTH        210
-#define CI_XTRACT_WIDGET_HEIGHT       80
-
 
 class WidgetBase : public Gwen::Controls::Base {
     
 public:
     
-	WidgetBase( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract )
+	WidgetBase( Gwen::Controls::Base *parent, std::string label, ciXtractFeatureRef feature, ciXtractRef xtract, Vec2i size )
     : WidgetBase::WidgetBase( parent )
     {
         mLabel      = label;
@@ -47,24 +44,26 @@ public:
         mClamp      = true;
         mMin        = 0.0f;
         mMax        = 1.0f;
-        
+        mDamping    = 0.98;
         mOscEnable  = false;
-        
+
         std::string addr = mLabel;
         boost::replace_all( addr, " ", "_");
         boost::algorithm::to_lower( addr );
 
         mOscAddress = "/" + addr;
         
+        SetBounds( 0, 0, size.x, size.y );
+        
         // Properties window
         mOptionsButton  = new Gwen::Controls::Button( this );
         mOptionsButton->SetText( "o" );
-        mOptionsButton->SetBounds( CI_XTRACT_WIDGET_WIDTH - 10, 0, 10, 10 );
+        mOptionsButton->SetBounds( GetSize().x - 10, 0, 10, 10 );
         mOptionsButton->onDown.Add( this, &WidgetBase::toggleProperties );
         
         mPropertiesWindow  = new Gwen::Controls::WindowControl( parent );
         mPropertiesWindow->SetTitle( mFeature->getName() );
-        mPropertiesWindow->SetSize( CI_XTRACT_WIDGET_WIDTH, 200 );
+        mPropertiesWindow->SetSize( GetSize().x, 200 );
         mPropertiesWindow->Hide();
         
         mProperties = new Gwen::Controls::Properties( mPropertiesWindow );
@@ -84,6 +83,10 @@ public:
         pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
         pRow->GetProperty()->SetPropertyValue( to_string( mClamp ) );
         
+        pRow = mProperties->Add( "Damping", new Gwen::Controls::Property::Text( mProperties ) );
+        pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+        pRow->GetProperty()->SetPropertyValue( to_string( mDamping ) );
+        
         pRow = mProperties->Add( "OSC addr", new Gwen::Controls::Property::Text( mProperties ) );
         pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
         pRow->GetProperty()->SetPropertyValue( mOscAddress );
@@ -95,7 +98,7 @@ public:
         // Calibration button
         mCalibButton  = new Gwen::Controls::Button( this );
         mCalibButton->SetText( "-" );
-        mCalibButton->SetBounds( CI_XTRACT_WIDGET_WIDTH - 10, 12, 10, 10 );
+        mCalibButton->SetBounds( GetSize().x - 10, 12, 10, 10 );
         mCalibButton->onDown.Add( this, &WidgetBase::triggerCalibration );
         
         
@@ -175,6 +178,9 @@ protected:
         else if ( label == "OSC" )
             mOscEnable = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
         
+        else if ( label == "Damping" )
+            mDamping = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
+        
         else if ( label == "OSC addr" )
             mOscAddress = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
     }
@@ -231,6 +237,8 @@ protected:
     bool                            mClamp;
     double                          mMin;
     double                          mMax;
+    
+    double                          mDamping;
     
     bool                            mOscEnable;
     std::string                     mOscAddress;

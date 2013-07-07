@@ -74,7 +74,7 @@ ciXtractAutocorrelationFft::ciXtractAutocorrelationFft( ciXtract *xtract, std::s
     mData   = mXtract->getPcmData();
     mResult = std::shared_ptr<double>( new double[PCM_SIZE] );
     
-    xtract_init_fft( PCM_SIZE << 1, XTRACT_AUTOCORRELATION_FFT );
+    xtract_init_fft( PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
 }
 
 void ciXtractAutocorrelationFft::update()
@@ -170,13 +170,17 @@ void ciXtractMfcc::update()
 ciXtractSubBands::ciXtractSubBands( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_SUBBANDS, name, CI_XTRACT_VECTOR, { XTRACT_SPECTRUM }, FFT_SIZE, SUBBANDS_N )
 {
-    mResult = std::shared_ptr<double>( new double[ SUBBANDS_N ] );
-    mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
+    mResult                     = std::shared_ptr<double>( new double[ SUBBANDS_N ] );
+    mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
+    mParams["bin_offset"]       = { 0.0f, CI_XTRACT_PARAM_DOUBLE };
+    mParams["function"]         = { XTRACT_SUM, CI_XTRACT_PARAM_ENUM, { { "Sum", XTRACT_SUM }, { "Mean", XTRACT_MEAN } } };
+    mParams["scale"]            = { XTRACT_OCTAVE_SUBBANDS, CI_XTRACT_PARAM_ENUM, { { "Octave", XTRACT_OCTAVE_SUBBANDS }, { "Linear", XTRACT_LINEAR_SUBBANDS } } };
 }
 
 void ciXtractSubBands::update()
 {
-    int argd[4] = { XTRACT_MEAN, SUBBANDS_N, XTRACT_LINEAR_SUBBANDS, 5 };       // { XTRACT_SUM, ...  XTRACT_OCTAVE_SUBBANDS,    XTRACT_LINEAR_SUBBANDS
+    int argd[4] = { (int)mParams["function"].val, SUBBANDS_N, (int)mParams["scale"].val, (int)mParams["bin_offset"].val };
+    
     xtract_subbands( mData.get(), mDataN, argd, mResult.get() );
 }
 

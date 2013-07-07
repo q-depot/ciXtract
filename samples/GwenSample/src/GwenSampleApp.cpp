@@ -200,6 +200,8 @@ void GwenSampleApp::initGui()
     
     // Scalar Features
     Vec2f initOffset( 15, 50 );
+    
+    /*
     offset = Vec2f( CI_XTRACT_WIDGET_WIDTH + 30, initOffset.y );
 
     for( itr = features.begin(); itr != features.end(); ++itr )
@@ -215,13 +217,16 @@ void GwenSampleApp::initGui()
 
         if ( offset.y >= getWindowHeight() - CI_XTRACT_WIDGET_HEIGHT )
         {
-            offset.x += CI_XTRACT_WIDGET_WIDTH + 15;
+            offset.x += CI_XTRACT_WIDGET_WIDTH + initOffset.x;
             offset.y = initOffset.y;
         }
     }
+    */
     
     // Vector Features
+    
     offset = initOffset;
+    
     for( itr = features.begin(); itr != features.end(); ++itr )
     {
         if ( (*itr)->getType() != CI_XTRACT_VECTOR )
@@ -231,12 +236,12 @@ void GwenSampleApp::initGui()
         VectorWidget *control = new VectorWidget( mCanvas, (*itr)->getName(), (*itr), mXtract );
         control->SetPos( offset.x, offset.y );
         
-        offset.y += CI_XTRACT_WIDGET_HEIGHT + 25;
+        offset.y += control->GetSize().y + 25;
         
-        if ( offset.y >= getWindowHeight() - CI_XTRACT_WIDGET_HEIGHT )
+        if ( offset.y >= getWindowHeight() - control->GetSize().y )
         {
-            offset.x += CI_XTRACT_WIDGET_WIDTH + 15;
-            offset.y = 15;
+            offset.x += control->GetSize().x + initOffset.x;
+            offset.y = initOffset.y;
         }
     }
 
@@ -289,11 +294,10 @@ void GwenSampleApp::drawPcmData()
 	gl::color( Color::gray( 0.1f ) );
 	gl::draw( leftBufferLine );
     
-    Vec2f offset = getWindowSize() - Vec2f( 200, 350 );
-
-    mFontBig->drawString( to_string( bufferLength ), offset ); offset.y += 25;
-    mFontBig->drawString( to_string( leftBuffer->mSampleCount ), offset ); offset.y += 25;
-    mFontBig->drawString( to_string( leftBuffer->mNumberChannels ), offset ); offset.y += 25;
+//    Vec2f offset = getWindowSize() - Vec2f( 200, 350 );
+//    mFontBig->drawString( to_string( bufferLength ), offset ); offset.y += 25;
+//    mFontBig->drawString( to_string( leftBuffer->mSampleCount ), offset ); offset.y += 25;
+//    mFontBig->drawString( to_string( leftBuffer->mNumberChannels ), offset ); offset.y += 25;
 }
 
 

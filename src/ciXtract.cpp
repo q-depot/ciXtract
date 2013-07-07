@@ -32,6 +32,7 @@ ciXtract::ciXtract( audio::Input source )
 ciXtract::~ciXtract()
 {
     // TODO clean up
+    xtract_free_fft();
 }
 
 
