@@ -1,5 +1,5 @@
 /*
- *  ciXtract.h
+ *  ciXtractFeature.h
  *
  *  Created by Andrea Cuius
  *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
@@ -113,6 +113,11 @@ public:
     }
     
     std::map<std::string,ciXtractFeatureParam>  getParams() { return mParams; }
+    
+    void setParam( std::string name, double val )
+    {
+        mParams[name].val = val;
+    }
     
 protected:
     

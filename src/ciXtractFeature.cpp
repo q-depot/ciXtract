@@ -1,5 +1,5 @@
 /*
- *  ciXtract.h
+ *  ciXtractFeature.cpp
  *
  *  Created by Andrea Cuius
  *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
@@ -89,7 +89,7 @@ ciXtractHarmonicSpectrum::ciXtractHarmonicSpectrum( ciXtract *xtract, std::strin
 {
     mData                       = mXtract->getPcmData();
     mResult                     = std::shared_ptr<double>( new double[PCM_SIZE] );
-    mParams["threshold"].val    = 0.3f;
+    mParams["threshold"]        = { 0.3f, CI_XTRACT_PARAM_DOUBLE };
 }
 
 void ciXtractHarmonicSpectrum::update()

@@ -16,6 +16,7 @@
 		101099B01782EC39001F19F9 /* ScalarWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 101099AF1782EC39001F19F9 /* ScalarWidget.cpp */; };
 		101099B51782F039001F19F9 /* VectorWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 101099B41782F039001F19F9 /* VectorWidget.cpp */; };
 		105B71AB837F4C5C8B6D6D69 /* WindowControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80EEE289F2D549848F57D502 /* WindowControl.cpp */; };
+		1067D60117895FA800C14647 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1067D60017895FA800C14647 /* README.md */; };
 		10A6E4EC178848E9002AFC79 /* ciXtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E38C178848E9002AFC79 /* ciXtract.cpp */; };
 		10A6E4ED178848E9002AFC79 /* ciXtractFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E38E178848E9002AFC79 /* ciXtractFeature.cpp */; };
 		10A6E4EE178848E9002AFC79 /* delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E392178848E9002AFC79 /* delta.c */; };
@@ -125,6 +126,7 @@
 		101099B21782EDF1001F19F9 /* VectorWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VectorWidget.h; path = ../include/VectorWidget.h; sourceTree = "<group>"; };
 		101099B41782F039001F19F9 /* VectorWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VectorWidget.cpp; path = ../src/VectorWidget.cpp; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1067D60017895FA800C14647 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../../../README.md; sourceTree = "<group>"; };
 		1096FAB31782E97F001B6BBD /* ScalarWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ScalarWidget.h; path = ../include/ScalarWidget.h; sourceTree = "<group>"; };
 		10A6E38C178848E9002AFC79 /* ciXtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ciXtract.cpp; sourceTree = "<group>"; };
 		10A6E38D178848E9002AFC79 /* ciXtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciXtract.h; sourceTree = "<group>"; };
@@ -570,6 +572,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				1067D60017895FA800C14647 /* README.md */,
 			);
 			name = GwenSample;
 			sourceTree = "<group>";
@@ -897,6 +900,7 @@
 			files = (
 				5C034FAEFAA84F82930B5927 /* CinderApp.icns in Resources */,
 				520136A09C594937A7937BB8 /* DefaultSkin.png in Resources */,
+				1067D60117895FA800C14647 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

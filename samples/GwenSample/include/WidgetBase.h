@@ -126,10 +126,8 @@ public:
                 pRow = mProperties->Add( pname, pCombo, "1" );
             }
             
-            pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+            pRow->onChange.Add( this, &WidgetBase::onPropertyParamChange );
             pRow->GetProperty()->SetPropertyValue( to_string( p.val ) );
-
-            std::cout << pname << " => " << p.val << '\n';
         }
 
     }
@@ -179,6 +177,15 @@ protected:
         
         else if ( label == "OSC addr" )
             mOscAddress = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
+    }
+    
+    virtual void onPropertyParamChange( Gwen::Controls::Base* pControl )
+    {
+        Gwen::Controls::PropertyRow* pRow   = ( Gwen::Controls::PropertyRow* ) pControl;
+        string label                        = pRow->GetLabel()->GetText().c_str();
+        double val                          = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
+        
+        mFeature->setParam( label, val );
     }
     
     
