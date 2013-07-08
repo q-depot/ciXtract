@@ -142,14 +142,15 @@ void BasicSampleApp::drawData( string label, std::shared_ptr<double> data, int N
     Color col = Color::white();
     
     glPushMatrix();
-
+    
+    gl::drawString( label, rect.getUpperLeft(), Color::black() );
+    
+    rect.y1 += 10;
+    
     gl::color( col * 0.2f );
     gl::drawSolidRect( rect );
-
-    gl::translate( rect.getUpperLeft() );
     
-    gl::color( col );
-    gl::drawString( label, Vec2f( 5, 10 ) );
+    gl::translate( rect.getUpperLeft() );
     
     glBegin( GL_QUADS );
 
@@ -158,9 +159,8 @@ void BasicSampleApp::drawData( string label, std::shared_ptr<double> data, int N
 
     for( int i = 0; i < N; i++ )
     {
-    float barY = data.get()[i] * gain;
-
-        barY = math<float>::clamp( barY, 0.0f, h );
+        float barY  = data.get()[i] * gain;
+        barY        = math<float>::clamp( barY, 0.0f, h );
 
         gl::color( col );
         glVertex2f( i * step,           h );
@@ -170,7 +170,6 @@ void BasicSampleApp::drawData( string label, std::shared_ptr<double> data, int N
     }
 
     glEnd();
-
 
     gl::popMatrices();
 }

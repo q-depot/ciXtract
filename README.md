@@ -2,6 +2,10 @@ This is a Cinder block for LibXtract developed by Jamie Bullock
 
 https://github.com/jamiebullock/LibXtract
 
+#Get the code
+git clone --recursive git@bitbucket.org:q_bit/cixtract.git ciXtract
+
+
 #Todo
 
 * add osc
