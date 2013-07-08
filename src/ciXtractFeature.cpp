@@ -26,7 +26,7 @@ using namespace std;
 // Spectrum                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRUM, name, CI_XTRACT_VECTOR, {}, PCM_SIZE, FFT_SIZE )
+: ciXtractFeature( xtract, XTRACT_SPECTRUM, name, CI_XTRACT_VECTOR, {}, FFT_SIZE )
 {
     mData   = mXtract->getPcmData();
     mResult = std::shared_ptr<double>( new double[PCM_SIZE] );
@@ -47,13 +47,13 @@ void ciXtractSpectrum::update()
     mArgd[2] = mParams["dc"].val;
     mArgd[3] = mParams["norm"].val;
     
-    xtract_spectrum( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_spectrum( mData.get(), PCM_SIZE, mArgd, mResult.get() );
 }
 
 // Autocorrelation                                                                                  //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractAutocorrelation::ciXtractAutocorrelation( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION, name, CI_XTRACT_VECTOR, {}, PCM_SIZE, FFT_SIZE )
+: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION, name, CI_XTRACT_VECTOR, {}, FFT_SIZE )
 {
     mData   = mXtract->getPcmData();
     mResult = std::shared_ptr<double>( new double[PCM_SIZE] );
@@ -61,13 +61,13 @@ ciXtractAutocorrelation::ciXtractAutocorrelation( ciXtract *xtract, std::string 
 
 void ciXtractAutocorrelation::update()
 {
-    xtract_autocorrelation( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_autocorrelation( mData.get(), PCM_SIZE, NULL, mResult.get() );
 }
 
 // AutoCorrelationFft                                                                               //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractAutocorrelationFft::ciXtractAutocorrelationFft( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION_FFT, name, CI_XTRACT_VECTOR, {}, PCM_SIZE, FFT_SIZE )
+: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION_FFT, name, CI_XTRACT_VECTOR, {}, FFT_SIZE )
 {
     mData   = mXtract->getPcmData();
     mResult = std::shared_ptr<double>( new double[PCM_SIZE] );
@@ -77,13 +77,13 @@ ciXtractAutocorrelationFft::ciXtractAutocorrelationFft( ciXtract *xtract, std::s
 
 void ciXtractAutocorrelationFft::update()
 {
-    xtract_autocorrelation_fft( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_autocorrelation_fft( mData.get(), PCM_SIZE, NULL, mResult.get() );
 }
 
 // Harmonic Spectrum                                                                                //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractHarmonicSpectrum::ciXtractHarmonicSpectrum( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_HARMONIC_SPECTRUM, name, CI_XTRACT_VECTOR, { XTRACT_F0 }, PCM_SIZE, FFT_SIZE )
+: ciXtractFeature( xtract, XTRACT_HARMONIC_SPECTRUM, name, CI_XTRACT_VECTOR, { XTRACT_F0 }, FFT_SIZE )
 {
     mData                       = mXtract->getPcmData();
     mResult                     = std::shared_ptr<double>( new double[PCM_SIZE] );
@@ -94,13 +94,13 @@ void ciXtractHarmonicSpectrum::update()
 {
     mArgd[0] = *mXtract->getFeatureResult(XTRACT_F0).get();
     mArgd[1] = mParams["threshold"].val;
-    xtract_harmonic_spectrum( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_harmonic_spectrum( mData.get(), PCM_SIZE, mArgd, mResult.get() );
 }
 
 // Peak Spectrum                                                                                    //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractPeakSpectrum::ciXtractPeakSpectrum( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_PEAK_SPECTRUM, name, CI_XTRACT_VECTOR, { XTRACT_SPECTRUM }, FFT_SIZE, FFT_SIZE )
+: ciXtractFeature( xtract, XTRACT_PEAK_SPECTRUM, name, CI_XTRACT_VECTOR, { XTRACT_SPECTRUM }, FFT_SIZE )
 {
     mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     mResult                     = std::shared_ptr<double>( new double[PCM_SIZE] );
@@ -111,18 +111,18 @@ void ciXtractPeakSpectrum::update()
 {
     mArgd[0] = SAMPLERATE_N;
     mArgd[1] = mParams["threshold"].val;
-    xtract_peak_spectrum( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_peak_spectrum( mData.get(), FFT_SIZE, mArgd, mResult.get() );
 }
 
 // Bark
 // ------------------------------------------------------------------------------------------------ //
 ciXtractBark::ciXtractBark( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_BARK_COEFFICIENTS, name, CI_XTRACT_VECTOR, { XTRACT_SPECTRUM }, FFT_SIZE, XTRACT_BARK_BANDS )
+: ciXtractFeature( xtract, XTRACT_BARK_COEFFICIENTS, name, CI_XTRACT_VECTOR, { XTRACT_SPECTRUM }, XTRACT_BARK_BANDS )
 {
+    mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     mResult                     = std::shared_ptr<double>( new double[ XTRACT_BARK_BANDS ] );
     mBandLimits                 = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
     mParams["threshold"]        = { 0.0f, CI_XTRACT_PARAM_DOUBLE };
-    mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     
     xtract_init_bark( FFT_SIZE, SAMPLERATE >> 1, mBandLimits.get() );
 }
@@ -131,13 +131,13 @@ void ciXtractBark::update()
 {
     mArgd[0]    = SAMPLERATE_N;
     mArgd[1]    = mParams["threshold"].val;
-    xtract_bark_coefficients( mData.get(), mDataN, mBandLimits.get(), mResult.get() );
+    xtract_bark_coefficients( mData.get(), FFT_SIZE, mBandLimits.get(), mResult.get() );
 }
 
 // Mfcc
 // ------------------------------------------------------------------------------------------------ //
 ciXtractMfcc::ciXtractMfcc( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_MFCC, name, CI_XTRACT_VECTOR, { XTRACT_SPECTRUM }, FFT_SIZE, MFCC_FREQ_BANDS )
+: ciXtractFeature( xtract, XTRACT_MFCC, name, CI_XTRACT_VECTOR, { XTRACT_SPECTRUM }, MFCC_FREQ_BANDS )
 {
     mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     mResult                     = std::shared_ptr<double>( new double[ MFCC_FREQ_BANDS ] );
@@ -158,13 +158,13 @@ ciXtractMfcc::~ciXtractMfcc()
 
 void ciXtractMfcc::update()
 {
-    xtract_mfcc( mData.get(), mDataN, &mMelFilters, mResult.get() );
+    xtract_mfcc( mData.get(), FFT_SIZE, &mMelFilters, mResult.get() );
 }
 
 // Sub Bands
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSubBands::ciXtractSubBands( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SUBBANDS, name, CI_XTRACT_VECTOR, { XTRACT_SPECTRUM }, FFT_SIZE, SUBBANDS_N )
+: ciXtractFeature( xtract, XTRACT_SUBBANDS, name, CI_XTRACT_VECTOR, { XTRACT_SPECTRUM }, SUBBANDS_N )
 {
     mResult                     = std::shared_ptr<double>( new double[ SUBBANDS_N ] );
     mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -177,7 +177,7 @@ void ciXtractSubBands::update()
 {
     int argd[4] = { (int)mParams["function"].val, SUBBANDS_N, (int)mParams["scale"].val, (int)mParams["bin_offset"].val };
     
-    xtract_subbands( mData.get(), mDataN, argd, mResult.get() );
+    xtract_subbands( mData.get(), FFT_SIZE, argd, mResult.get() );
 }
 
 
@@ -190,7 +190,7 @@ void ciXtractSubBands::update()
 // F0                                                                                               //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractF0::ciXtractF0( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_F0, name, CI_XTRACT_SCALAR, { } )
 {
     mData                   = mXtract->getPcmData();
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
@@ -199,14 +199,14 @@ ciXtractF0::ciXtractF0( ciXtract *xtract, std::string name )
 void ciXtractF0::update()
 {
     mArgd[0] = SAMPLERATE;
-    xtract_f0( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_f0( mData.get(), PCM_SIZE, mArgd, mResult.get() );
 }
 
 // Failsafe F0                                                                                      //
 // ------------------------------------------------------------------------------------------------ //
 
 ciXtractFailsafeF0::ciXtractFailsafeF0( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_FAILSAFE_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_FAILSAFE_F0, name, CI_XTRACT_SCALAR, { } )
 {
     mData                   = mXtract->getPcmData();
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
@@ -215,13 +215,13 @@ ciXtractFailsafeF0::ciXtractFailsafeF0( ciXtract *xtract, std::string name )
 void ciXtractFailsafeF0::update()
 {
     mArgd[0] = SAMPLERATE;
-    xtract_failsafe_f0( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_failsafe_f0( mData.get(), PCM_SIZE, mArgd, mResult.get() );
 }
 
 // Wavelet F0                                                                                       //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractWaveletF0::ciXtractWaveletF0( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_WAVELET_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_WAVELET_F0, name, CI_XTRACT_SCALAR, { } )
 {
     mData                   = mXtract->getPcmData();
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
@@ -230,13 +230,13 @@ ciXtractWaveletF0::ciXtractWaveletF0( ciXtract *xtract, std::string name )
 void ciXtractWaveletF0::update()
 {
     mArgd[0] = SAMPLERATE;
-    xtract_wavelet_f0( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_wavelet_f0( mData.get(), PCM_SIZE, mArgd, mResult.get() );
 }
 
 // Mean                                                                                             //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractMean::ciXtractMean( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_MEAN, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_MEAN, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -244,13 +244,13 @@ ciXtractMean::ciXtractMean( ciXtract *xtract, std::string name )
 
 void ciXtractMean::update()
 {
-    xtract_mean( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_mean( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Variance                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractVariance::ciXtractVariance( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_VARIANCE, name, CI_XTRACT_SCALAR, { XTRACT_MEAN }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_VARIANCE, name, CI_XTRACT_SCALAR, { XTRACT_MEAN } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -258,13 +258,13 @@ ciXtractVariance::ciXtractVariance( ciXtract *xtract, std::string name )
 
 void ciXtractVariance::update()
 {
-    xtract_variance( mData.get(), mDataN, mXtract->getFeatureResult(XTRACT_MEAN).get(), mResult.get() );
+    xtract_variance( mData.get(), FFT_SIZE, mXtract->getFeatureResult(XTRACT_MEAN).get(), mResult.get() );
 }
 
 // Standard Deviation                                                                               //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractStandardDeviation::ciXtractStandardDeviation( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_STANDARD_DEVIATION, name, CI_XTRACT_SCALAR, { XTRACT_VARIANCE }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_STANDARD_DEVIATION, name, CI_XTRACT_SCALAR, { XTRACT_VARIANCE } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -272,13 +272,13 @@ ciXtractStandardDeviation::ciXtractStandardDeviation( ciXtract *xtract, std::str
 
 void ciXtractStandardDeviation::update()
 {
-    xtract_standard_deviation( mData.get(), mDataN, mXtract->getFeatureResult(XTRACT_VARIANCE).get(), mResult.get() );
+    xtract_standard_deviation( mData.get(), FFT_SIZE, mXtract->getFeatureResult(XTRACT_VARIANCE).get(), mResult.get() );
 }
 
 // Average Deviation                                                                                //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractAverageDeviation::ciXtractAverageDeviation( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_AVERAGE_DEVIATION, name, CI_XTRACT_SCALAR, { XTRACT_MEAN }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_AVERAGE_DEVIATION, name, CI_XTRACT_SCALAR, { XTRACT_MEAN } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -286,13 +286,13 @@ ciXtractAverageDeviation::ciXtractAverageDeviation( ciXtract *xtract, std::strin
 
 void ciXtractAverageDeviation::update()
 {
-    xtract_average_deviation( mData.get(), mDataN, mXtract->getFeatureResult(XTRACT_MEAN).get(), mResult.get() );
+    xtract_average_deviation( mData.get(), FFT_SIZE, mXtract->getFeatureResult(XTRACT_MEAN).get(), mResult.get() );
 }
 
 // Skewness                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSkewness::ciXtractSkewness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SKEWNESS, name, CI_XTRACT_SCALAR, { XTRACT_STANDARD_DEVIATION }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SKEWNESS, name, CI_XTRACT_SCALAR, { XTRACT_STANDARD_DEVIATION } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -302,13 +302,13 @@ void ciXtractSkewness::update()
 {
     mArgd[0]    = *mXtract->getFeatureResult(XTRACT_MEAN).get();
     mArgd[1]    = *mXtract->getFeatureResult(XTRACT_STANDARD_DEVIATION).get();
-    xtract_skewness( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_skewness( mData.get(), FFT_SIZE, mArgd, mResult.get() );
 }
 
 // Kurtosis                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractKurtosis::ciXtractKurtosis( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_KURTOSIS, name, CI_XTRACT_SCALAR, { XTRACT_STANDARD_DEVIATION }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_KURTOSIS, name, CI_XTRACT_SCALAR, { XTRACT_STANDARD_DEVIATION } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -318,13 +318,13 @@ void ciXtractKurtosis::update()
 {
     mArgd[0]    = *mXtract->getFeatureResult(XTRACT_MEAN).get();
     mArgd[1]    = *mXtract->getFeatureResult(XTRACT_STANDARD_DEVIATION).get();
-    xtract_kurtosis( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_kurtosis( mData.get(), FFT_SIZE, mArgd, mResult.get() );
 }
 
 // Spectral Mean                                                                                    //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralMean::ciXtractSpectralMean( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_MEAN, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_MEAN, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -332,13 +332,13 @@ ciXtractSpectralMean::ciXtractSpectralMean( ciXtract *xtract, std::string name )
 
 void ciXtractSpectralMean::update()
 {
-    xtract_spectral_mean( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_spectral_mean( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Spectral Variance                                                                                //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralVariance::ciXtractSpectralVariance( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_VARIANCE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_MEAN }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_VARIANCE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_MEAN } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -346,13 +346,13 @@ ciXtractSpectralVariance::ciXtractSpectralVariance( ciXtract *xtract, std::strin
 
 void ciXtractSpectralVariance::update()
 {
-    xtract_spectral_variance( mData.get(), mDataN, mXtract->getFeatureResult(XTRACT_SPECTRAL_MEAN).get(), mResult.get() );
+    xtract_spectral_variance( mData.get(), FFT_SIZE, mXtract->getFeatureResult(XTRACT_SPECTRAL_MEAN).get(), mResult.get() );
 }
 
 // Spectral Standard Deviation                                                                      //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralStandardDeviation::ciXtractSpectralStandardDeviation( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_STANDARD_DEVIATION, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_VARIANCE }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_STANDARD_DEVIATION, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_VARIANCE } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -360,14 +360,13 @@ ciXtractSpectralStandardDeviation::ciXtractSpectralStandardDeviation( ciXtract *
 
 void ciXtractSpectralStandardDeviation::update()
 {
-    xtract_spectral_standard_deviation( mData.get(), mDataN, mXtract->getFeatureResult(XTRACT_SPECTRAL_VARIANCE).get(), mResult.get() );
+    xtract_spectral_standard_deviation( mData.get(), FFT_SIZE, mXtract->getFeatureResult(XTRACT_SPECTRAL_VARIANCE).get(), mResult.get() );
 }
-
 
 // Spectral Skewness                                                                                //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralSkewness::ciXtractSpectralSkewness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_SKEWNESS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_MEAN }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_SKEWNESS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_MEAN } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -375,13 +374,13 @@ ciXtractSpectralSkewness::ciXtractSpectralSkewness( ciXtract *xtract, std::strin
 
 void ciXtractSpectralSkewness::update()
 {
-    xtract_spectral_skewness( mData.get(), mDataN, mXtract->getFeatureResult(XTRACT_SPECTRAL_MEAN).get(), mResult.get() );
+    xtract_spectral_skewness( mData.get(), FFT_SIZE, mXtract->getFeatureResult(XTRACT_SPECTRAL_MEAN).get(), mResult.get() );
 }
 
 // Spectral Kurtosis                                                                                //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralKurtosis::ciXtractSpectralKurtosis( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_KURTOSIS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_MEAN, XTRACT_SPECTRAL_STANDARD_DEVIATION }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_KURTOSIS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_MEAN, XTRACT_SPECTRAL_STANDARD_DEVIATION } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -391,13 +390,13 @@ void ciXtractSpectralKurtosis::update()
 {
     mArgd[0]    = *mXtract->getFeatureResult(XTRACT_SPECTRAL_MEAN).get();
     mArgd[1]    = *mXtract->getFeatureResult(XTRACT_SPECTRAL_STANDARD_DEVIATION).get();
-    xtract_spectral_kurtosis( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_spectral_kurtosis( mData.get(), FFT_SIZE, mArgd, mResult.get() );
 }
 
 // Spectral Centroid                                                                                //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralCentroid::ciXtractSpectralCentroid( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_CENTROID, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_CENTROID, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -405,13 +404,13 @@ ciXtractSpectralCentroid::ciXtractSpectralCentroid( ciXtract *xtract, std::strin
 
 void ciXtractSpectralCentroid::update()
 {  
-    xtract_spectral_centroid( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_spectral_centroid( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Irregularity K                                                                                   //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractIrregularityK::ciXtractIrregularityK( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_IRREGULARITY_K, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_IRREGULARITY_K, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -419,13 +418,13 @@ ciXtractIrregularityK::ciXtractIrregularityK( ciXtract *xtract, std::string name
 
 void ciXtractIrregularityK::update()
 {
-    xtract_irregularity_k( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_irregularity_k( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Irregularity J                                                                                   //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractIrregularityJ::ciXtractIrregularityJ( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_IRREGULARITY_J, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_IRREGULARITY_J, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -433,13 +432,13 @@ ciXtractIrregularityJ::ciXtractIrregularityJ( ciXtract *xtract, std::string name
 
 void ciXtractIrregularityJ::update()
 {
-    xtract_irregularity_j( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_irregularity_j( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Tristimulus 1                                                                                    //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractTristimulus1::ciXtractTristimulus1( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_TRISTIMULUS_1, name, CI_XTRACT_SCALAR, { XTRACT_HARMONIC_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_TRISTIMULUS_1, name, CI_XTRACT_SCALAR, { XTRACT_HARMONIC_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_HARMONIC_SPECTRUM);
@@ -447,34 +446,27 @@ ciXtractTristimulus1::ciXtractTristimulus1( ciXtract *xtract, std::string name )
 
 void ciXtractTristimulus1::update()
 {
-    xtract_tristimulus_1( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_tristimulus_1( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Smoothness                                                                                       //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSmoothness::ciXtractSmoothness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SMOOTHNESS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SMOOTHNESS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
-    mResult                 = std::shared_ptr<double>( new double(0.0f) );
-    mData                   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
-    mParams["lower_bound"]  = { 0.0f, CI_XTRACT_PARAM_DOUBLE };
-    mParams["upper_bound"]  = { 10.0f, CI_XTRACT_PARAM_DOUBLE  };
-    mParams["pre_scaling"]  = { 1.0f, CI_XTRACT_PARAM_DOUBLE  };
+    mResult = std::shared_ptr<double>( new double(0.0f) );
+    mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
 }
 
 void ciXtractSmoothness::update()
 {
-    int argd[3];
-    argd[0] = mParams["lower_bound"].val;
-    argd[1] = mParams["upper_bound"].val;
-    argd[2] = mParams["pre_scaling"].val;
-    xtract_smoothness( mData.get(), mDataN, argd, mResult.get() );
+    xtract_smoothness( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Spread                                                                                           //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpread::ciXtractSpread( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPREAD, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_CENTROID }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SPREAD, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRAL_CENTROID } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -482,13 +474,13 @@ ciXtractSpread::ciXtractSpread( ciXtract *xtract, std::string name )
 
 void ciXtractSpread::update()
 {
-    xtract_spread( mData.get(), mDataN, mXtract->getFeatureResult(XTRACT_SPECTRAL_CENTROID).get(), mResult.get() );
+    xtract_spread( mData.get(), FFT_SIZE, mXtract->getFeatureResult(XTRACT_SPECTRAL_CENTROID).get(), mResult.get() );
 }
 
 // Zcr                                                                                              //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractZcr::ciXtractZcr( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_ZCR, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_ZCR, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -496,13 +488,13 @@ ciXtractZcr::ciXtractZcr( ciXtract *xtract, std::string name )
 
 void ciXtractZcr::update()
 {
-    xtract_zcr( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_zcr( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Rolloff                                                                                          //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractRolloff::ciXtractRolloff( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_ROLLOFF, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_ROLLOFF, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult                     = std::shared_ptr<double>( new double(0.0f) );
     mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -513,13 +505,13 @@ void ciXtractRolloff::update()
 {
     mArgd[0] = SAMPLERATE_N;
     mArgd[1] = mParams["threshold"].val;
-    xtract_rolloff( mData.get(), mDataN, mArgd, mResult.get() );
+    xtract_rolloff( mData.get(), FFT_SIZE, mArgd, mResult.get() );
 }
 
 // Loudness                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractLoudness::ciXtractLoudness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_LOUDNESS, name, CI_XTRACT_SCALAR, { XTRACT_BARK_COEFFICIENTS }, XTRACT_BARK_BANDS, 1 )
+: ciXtractFeature( xtract, XTRACT_LOUDNESS, name, CI_XTRACT_SCALAR, { XTRACT_BARK_COEFFICIENTS } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_BARK_COEFFICIENTS);
@@ -527,13 +519,13 @@ ciXtractLoudness::ciXtractLoudness( ciXtract *xtract, std::string name )
 
 void ciXtractLoudness::update()
 {
-    xtract_loudness( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_loudness( mData.get(), XTRACT_BARK_BANDS, NULL, mResult.get() );
 }
 
 // Flatness                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractFlatness::ciXtractFlatness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_FLATNESS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_FLATNESS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -541,14 +533,14 @@ ciXtractFlatness::ciXtractFlatness( ciXtract *xtract, std::string name )
 
 void ciXtractFlatness::update()
 {
-    xtract_flatness( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_flatness( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 
 // Flatness Db                                                                                      //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractFlatnessDb::ciXtractFlatnessDb( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_FLATNESS_DB, name, CI_XTRACT_SCALAR, { XTRACT_FLATNESS }, 0, 1 )
+: ciXtractFeature( xtract, XTRACT_FLATNESS_DB, name, CI_XTRACT_SCALAR, { XTRACT_FLATNESS } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
 }
@@ -561,7 +553,7 @@ void ciXtractFlatnessDb::update()
 // Tonality                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractTonality::ciXtractTonality( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_TONALITY, name, CI_XTRACT_SCALAR, { XTRACT_FLATNESS_DB }, 0, 1 )
+: ciXtractFeature( xtract, XTRACT_TONALITY, name, CI_XTRACT_SCALAR, { XTRACT_FLATNESS_DB } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
 }
@@ -574,7 +566,7 @@ void ciXtractTonality::update()
 // RMS Amplitude                                                                                    //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractRmsAmplitude::ciXtractRmsAmplitude( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_RMS_AMPLITUDE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_RMS_AMPLITUDE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -582,13 +574,13 @@ ciXtractRmsAmplitude::ciXtractRmsAmplitude( ciXtract *xtract, std::string name )
 
 void ciXtractRmsAmplitude::update()
 {
-    xtract_rms_amplitude( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_rms_amplitude( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Spectral Inhamornicity                                                                           //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralInharmonicity::ciXtractSpectralInharmonicity( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_INHARMONICITY, name, CI_XTRACT_SCALAR, { XTRACT_PEAK_SPECTRUM, XTRACT_F0 }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_INHARMONICITY, name, CI_XTRACT_SCALAR, { XTRACT_PEAK_SPECTRUM, XTRACT_F0 } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_PEAK_SPECTRUM);
@@ -596,16 +588,15 @@ ciXtractSpectralInharmonicity::ciXtractSpectralInharmonicity( ciXtract *xtract, 
 
 void ciXtractSpectralInharmonicity::update()
 {
-    xtract_spectral_inharmonicity( mData.get(), mDataN, mXtract->getFeatureResult(XTRACT_F0).get(), mResult.get() );
+    xtract_spectral_inharmonicity( mData.get(), FFT_SIZE, mXtract->getFeatureResult(XTRACT_F0).get(), mResult.get() );
 }
 
 // Crest                                                                                            //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractCrest::ciXtractCrest( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_INHARMONICITY, name, CI_XTRACT_SCALAR, { XTRACT_PEAK_SPECTRUM, XTRACT_F0 }, NULL, 1 )
+: ciXtractFeature( xtract, XTRACT_CREST, name, CI_XTRACT_SCALAR, { XTRACT_HIGHEST_VALUE, XTRACT_MEAN } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
-    mData   = mXtract->getFeatureResult(XTRACT_PEAK_SPECTRUM);
 }
 
 void ciXtractCrest::update()
@@ -619,7 +610,7 @@ void ciXtractCrest::update()
 // Power                                                                                            //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractPower::ciXtractPower( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_POWER, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_POWER, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -627,13 +618,13 @@ ciXtractPower::ciXtractPower( ciXtract *xtract, std::string name )
 
 void ciXtractPower::update()
 {
-    xtract_power( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_power( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Odd Even Ratio                                                                                   //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractOddEvenRatio::ciXtractOddEvenRatio( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_ODD_EVEN_RATIO, name, CI_XTRACT_SCALAR, { XTRACT_HARMONIC_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_ODD_EVEN_RATIO, name, CI_XTRACT_SCALAR, { XTRACT_HARMONIC_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_HARMONIC_SPECTRUM);
@@ -641,13 +632,13 @@ ciXtractOddEvenRatio::ciXtractOddEvenRatio( ciXtract *xtract, std::string name )
 
 void ciXtractOddEvenRatio::update()
 {
-    xtract_odd_even_ratio( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_odd_even_ratio( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Sharpness                                                                                        //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSharpness::ciXtractSharpness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SHARPNESS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SHARPNESS, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -655,13 +646,13 @@ ciXtractSharpness::ciXtractSharpness( ciXtract *xtract, std::string name )
 
 void ciXtractSharpness::update()
 {
-    xtract_sharpness( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_sharpness( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Spectral Slope                                                                                   //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralSlope::ciXtractSpectralSlope( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_SLOPE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_SLOPE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -669,13 +660,13 @@ ciXtractSpectralSlope::ciXtractSpectralSlope( ciXtract *xtract, std::string name
 
 void ciXtractSpectralSlope::update()
 {
-    xtract_spectral_slope( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_spectral_slope( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Lowest Value                                                                                     //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractLowestValue::ciXtractLowestValue( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_LOWEST_VALUE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_LOWEST_VALUE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
     mData                   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -684,13 +675,13 @@ ciXtractLowestValue::ciXtractLowestValue( ciXtract *xtract, std::string name )
 
 void ciXtractLowestValue::update()
 {
-    xtract_lowest_value( mData.get(), mDataN, &mParams["lower_limit"], mResult.get() );
+    xtract_lowest_value( mData.get(), FFT_SIZE, &mParams["lower_limit"], mResult.get() );
 }
 
 // Highest Value                                                                                    //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractHighestValue::ciXtractHighestValue( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_HIGHEST_VALUE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_HIGHEST_VALUE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -698,13 +689,13 @@ ciXtractHighestValue::ciXtractHighestValue( ciXtract *xtract, std::string name )
 
 void ciXtractHighestValue::update()
 {
-    xtract_highest_value( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_highest_value( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Sum                                                                                              //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSum::ciXtractSum( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SUM, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_SUM, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
@@ -712,13 +703,13 @@ ciXtractSum::ciXtractSum( ciXtract *xtract, std::string name )
 
 void ciXtractSum::update()
 {
-    xtract_sum( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_sum( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }
 
 // Non-Zero Count                                                                                   //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractNonZeroCount::ciXtractNonZeroCount( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_NONZERO_COUNT, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_NONZERO_COUNT, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM } )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
 }
@@ -726,5 +717,5 @@ ciXtractNonZeroCount::ciXtractNonZeroCount( ciXtract *xtract, std::string name )
 void ciXtractNonZeroCount::update()
 {
     mData = mXtract->getFeatureResult(XTRACT_SPECTRUM);
-    xtract_nonzero_count( mData.get(), mDataN, NULL, mResult.get() );
+    xtract_nonzero_count( mData.get(), FFT_SIZE, NULL, mResult.get() );
 }

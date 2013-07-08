@@ -4,11 +4,9 @@ https://github.com/jamiebullock/LibXtract
 
 #Todo
 
-* implement cinder block xml
 * add osc
 * fix auto calibration
 * damping
-* use git submodule for LibXtract
 * atof used for the gui should cast to double
 * how to treat nan results?
 * data capture and export(json/xml), this is also to compare features with sonic visualiser
@@ -72,6 +70,7 @@ https://github.com/jamiebullock/LibXtract
 	
 	
 ##Scalar Features
+
 
 ####xtract_mean
 

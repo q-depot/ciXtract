@@ -122,7 +122,7 @@ public:
     
 protected:
     
-    ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, std::vector<xtract_features_> dependencies, uint32_t dataN, uint32_t resultN )
+    ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, std::vector<xtract_features_> dependencies, uint32_t resultN = 1 )
     {
         mXtract         = xtract;
         mFeature        = feature;
@@ -130,7 +130,6 @@ protected:
         mType           = type;
         mDependencies   = dependencies;
         mResultN        = resultN;
-        mDataN          = dataN;
         // each feature implementation define its own mData mResult and mParams
         mResultMin      = 0.0f;
         mResultMax      = 1.0f;
@@ -147,7 +146,6 @@ protected:
     std::vector<xtract_features_>   mDependencies;
     
     std::shared_ptr<double>         mData;
-    uint32_t                        mDataN;
     
     std::shared_ptr<double>         mResult;
     uint32_t                        mResultN;

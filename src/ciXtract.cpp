@@ -84,10 +84,8 @@ void ciXtract::initFeatures()
     mFeatures.push_back( ciXtractNonZeroCount::create( this, "Non-Zero Count" ) );
     mFeatures.push_back( ciXtractCrest::create( this, "Crest" ) );
  
-    //    mFeatures[XTRACT_CREST]                        = { "CREST", std::bind( &ciXtract::updateCrest, this ), false };
     //    mFeatures[XTRACT_NOISINESS]                    = { "NOISINESS", std::bind( &ciXtract::updateNoisiness, this ), false };
     //    mFeatures[XTRACT_HPS]                          = { "HPS", std::bind( &ciXtract::updateHps, this ), false };
-    //    mFeatures[XTRACT_FAILSAFE_F0]                  = { "FAILSAFE_F0", std::bind( &ciXtract::updateFailsafeF0, this ), false };
     //    mFeatures[XTRACT_LNORM]                        = { "LNORM", std::bind( &ciXtract::updateLnorm, this ), false };
     //    mFeatures[XTRACT_FLUX]                         = { "FLUX", std::bind( &ciXtract::updateFlux, this ), false };
     //    mFeatures[XTRACT_ATTACK_TIME]                  = { "ATTACK_TIME", std::bind( &ciXtract::updateAttackTime, this ), false };
@@ -99,7 +97,6 @@ void ciXtract::initFeatures()
     //    mFeatures[XTRACT_LPC]                          = { "LPC", std::bind( &ciXtract::updateLpc, this ), false };
     //    mFeatures[XTRACT_LPCC]                         = { "LPCC", std::bind( &ciXtract::updateLpcc, this ), false };
     //    mFeatures[XTRACT_DCT]                          = { "DCT", std::bind( &ciXtract::updateDct, this ), false };
-    //    mFeatures[XTRACT_SUBBANDS]                     = { "SUBBANDS", std::bind( &ciXtract::updateSubbands, this ), false };
     //    mFeatures[XTRACT_WINDOWED]                     = { "WINDOWED", std::bind( &ciXtract::updateWindowed, this ), false };
 }
 
