@@ -21,7 +21,6 @@
 		10A6E4ED178848E9002AFC79 /* ciXtractFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E38E178848E9002AFC79 /* ciXtractFeature.cpp */; };
 		10A6E4EE178848E9002AFC79 /* delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E392178848E9002AFC79 /* delta.c */; };
 		10A6E4EF178848E9002AFC79 /* descriptors.c in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E393178848E9002AFC79 /* descriptors.c */; };
-		10A6E4F0178848E9002AFC79 /* dywapitchtrack.c in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E395178848E9002AFC79 /* dywapitchtrack.c */; };
 		10A6E4F1178848E9002AFC79 /* fini.c in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E398178848E9002AFC79 /* fini.c */; };
 		10A6E4F2178848E9002AFC79 /* helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E399178848E9002AFC79 /* helper.c */; };
 		10A6E4F3178848E9002AFC79 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 10A6E39A178848E9002AFC79 /* init.c */; };
@@ -134,8 +133,6 @@
 		10A6E38F178848E9002AFC79 /* ciXtractFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ciXtractFeature.h; sourceTree = "<group>"; };
 		10A6E392178848E9002AFC79 /* delta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = delta.c; sourceTree = "<group>"; };
 		10A6E393178848E9002AFC79 /* descriptors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = descriptors.c; sourceTree = "<group>"; };
-		10A6E395178848E9002AFC79 /* dywapitchtrack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dywapitchtrack.c; sourceTree = "<group>"; };
-		10A6E396178848E9002AFC79 /* dywapitchtrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dywapitchtrack.h; sourceTree = "<group>"; };
 		10A6E397178848E9002AFC79 /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
 		10A6E398178848E9002AFC79 /* fini.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fini.c; sourceTree = "<group>"; };
 		10A6E399178848E9002AFC79 /* helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = helper.c; sourceTree = "<group>"; };
@@ -483,7 +480,6 @@
 			children = (
 				10A6E392178848E9002AFC79 /* delta.c */,
 				10A6E393178848E9002AFC79 /* descriptors.c */,
-				10A6E394178848E9002AFC79 /* dywapitchtrack */,
 				10A6E397178848E9002AFC79 /* fft.h */,
 				10A6E398178848E9002AFC79 /* fini.c */,
 				10A6E399178848E9002AFC79 /* helper.c */,
@@ -498,15 +494,6 @@
 				10A6E3A5178848E9002AFC79 /* xtract_window_private.h */,
 			);
 			path = src;
-			sourceTree = "<group>";
-		};
-		10A6E394178848E9002AFC79 /* dywapitchtrack */ = {
-			isa = PBXGroup;
-			children = (
-				10A6E395178848E9002AFC79 /* dywapitchtrack.c */,
-				10A6E396178848E9002AFC79 /* dywapitchtrack.h */,
-			);
-			path = dywapitchtrack;
 			sourceTree = "<group>";
 		};
 		10A6E39D178848E9002AFC79 /* ooura */ = {
@@ -988,7 +975,6 @@
 				10A6E4ED178848E9002AFC79 /* ciXtractFeature.cpp in Sources */,
 				10A6E4EE178848E9002AFC79 /* delta.c in Sources */,
 				10A6E4EF178848E9002AFC79 /* descriptors.c in Sources */,
-				10A6E4F0178848E9002AFC79 /* dywapitchtrack.c in Sources */,
 				10A6E4F1178848E9002AFC79 /* fini.c in Sources */,
 				10A6E4F2178848E9002AFC79 /* helper.c in Sources */,
 				10A6E4F3178848E9002AFC79 /* init.c in Sources */,

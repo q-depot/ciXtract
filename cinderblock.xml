@@ -18,6 +18,7 @@
 		<headerPattern>src/LibXtract/src/dywapitchtrack/*.h</headerPattern>
 		<headerPattern>src/LibXtract/src/ooura/*</headerPattern>
 		<headerPattern>src/LibXtract/xtract/*.h</headerPattern>
+		<includePath>src/LibXtract</includePath>
 	</block>
 	<template>templates/ciXtractBasic/template.xml</template>
 </cinder>
