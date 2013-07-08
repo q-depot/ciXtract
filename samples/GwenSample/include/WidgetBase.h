@@ -57,7 +57,7 @@ public:
         
         mPropertiesWindow  = new Gwen::Controls::WindowControl( parent );
         mPropertiesWindow->SetTitle( mFeature->getName() );
-        mPropertiesWindow->SetSize( GetSize().x, 200 );
+        mPropertiesWindow->SetSize( GetSize().x, 230 );
         mPropertiesWindow->Hide();
         
         mProperties = new Gwen::Controls::Properties( mPropertiesWindow );
@@ -180,7 +180,7 @@ protected:
             mDamping = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
         
         else if ( label == "OSC" )
-            mFeature->enableOsc( pRow->GetProperty()->GetPropertyValue().c_str() );
+            mFeature->enableOsc( atof( pRow->GetProperty()->GetPropertyValue().c_str() ) );
         
         else if ( label == "OSC addr" )
             mFeature->setOscAddr( pRow->GetProperty()->GetPropertyValue().c_str() );
