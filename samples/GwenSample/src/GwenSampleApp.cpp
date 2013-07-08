@@ -149,7 +149,7 @@ void GwenSampleApp::keyDown( KeyEvent event )
 
 void GwenSampleApp::update()
 {
-    mXtract->update();
+    mXtract->update();xq
     
     osc::Bundle                             bundle;
     shared_ptr<double>                      data;
