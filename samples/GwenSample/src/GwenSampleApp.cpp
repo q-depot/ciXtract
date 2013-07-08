@@ -202,7 +202,7 @@ void GwenSampleApp::initGui()
     Vec2f initOffset( 15, 50 );
     
 
-    offset = Vec2f( CI_XTRACT_WIDGET_WIDTH + 30, initOffset.y );
+    offset = Vec2f( SCALAR_WIDGET_WIDTH + 30, initOffset.y );
 
     for( itr = features.begin(); itr != features.end(); ++itr )
     {
@@ -213,11 +213,11 @@ void GwenSampleApp::initGui()
         ScalarWidget *control = new ScalarWidget( mCanvas, (*itr)->getName(), (*itr), mXtract );
         control->SetPos( offset.x, offset.y );
         
-        offset.y += CI_XTRACT_WIDGET_HEIGHT + 25;
+        offset.y += SCALAR_WIDGET_HEIGHT + 25;
 
-        if ( offset.y >= getWindowHeight() - CI_XTRACT_WIDGET_HEIGHT )
+        if ( offset.y >= getWindowHeight() - SCALAR_WIDGET_HEIGHT )
         {
-            offset.x += CI_XTRACT_WIDGET_WIDTH + initOffset.x;
+            offset.x += SCALAR_WIDGET_WIDTH + initOffset.x;
             offset.y = initOffset.y;
         }
     }
