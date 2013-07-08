@@ -43,25 +43,13 @@ VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciX
     mGainSlider->SetSize( 15, mValRect.getHeight() );
     mGainSlider->SetRange( 0.0f, 2.0f );
     mGainSlider->SetFloatValue( 1.0f );
-    //    pSlider->onValueChanged.Add( this, &Slider::SliderMoved );
 
     if( !mFeature->isEnable() )
-    {
         mGainSlider->Hide();
-    }
-    
     
     mPrevData = std::shared_ptr<double>( new double[ mFeature->getResultN() ] );
     for( auto k=0; k < mFeature->getResultN(); k++ )
         mPrevData.get()[k] = 0.0f;
-    
-//    mSurfOffset     = Vec2i( mBuffRect.x2 + 3, 0 );
-//    mSurf           = Surface32f( VECTOR_WIDGET_WIDTH - mSurfOffset.x, mBuffRect.getHeight(), true, SurfaceChannelOrder::RGBA );
-//    mSurfPosX       = 0.0f;
-//    
-//    for( auto x=0; x < mSurf.getWidth(); x++ )
-//        for( auto y=0; y < mSurf.getHeight(); y++ )
-//            mSurf.setPixel( Vec2i( x, y ), ci::ColorA::white() );
 }
 
 
@@ -77,6 +65,8 @@ void VectorWidget::toggleFeature( Gwen::Controls::Base* pControl )
     else
     {
         mXtract->disableFeature( mFeature->getEnum() );
+        mGainSlider->Hide();
+        gl::color( mBuffBgCol );
     }
 }
 
@@ -130,7 +120,12 @@ void VectorWidget::Render( Skin::Base* skin )
         
         glEnd();
     }
-
+    else
+    {
+        gl::color( mBuffBgCol );
+        gl::drawSolidRect( Rectf( 0, mBuffRect.y1, GetSize().x, mBuffRect.y2  ) );
+    }
+    
     gl::popMatrices();
     
 }

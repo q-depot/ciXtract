@@ -17,6 +17,9 @@
 #include "libxtract.h"
 #include "cinder/audio/Input.h"
 
+#include "OscSender.h"
+#include "OscBundle.h"
+
 #include "cinder/gl/TextureFont.h"
 #include "ciXtractFeature.h"
 
@@ -94,6 +97,9 @@ private:
 
     ci::gl::TextureFontRef                      mFontSmall;
     
+    ci::osc::Sender                             mOscSender;
+	std::string                                 mOscHost;
+	int                                         mOscPort;
 };
 
 #endif

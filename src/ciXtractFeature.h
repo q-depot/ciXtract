@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <boost/algorithm/string.hpp>
+
 #include "libxtract.h"
 
 class ciXtractFeature;
@@ -40,7 +42,6 @@ struct ciXtractFeatureParam {
     ciXtractParamType               type;
     std::map<std::string,double>    options;
 };
-
 
 
 #define PCM_SIZE            1024
@@ -120,6 +121,12 @@ public:
         mParams[name].val = val;
     }
     
+    std::string getOscAddr() { return mOscAddress; }
+    void setOscAddr( std::string addr ) { mOscAddress = addr; }
+    
+    bool isOscEnable() { return mOscEnable; }
+    void enableOsc( bool enable = true ) { mOscEnable = enable; }
+    
 protected:
     
     ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, std::vector<xtract_features_> dependencies, uint32_t resultN = 1 )
@@ -134,6 +141,13 @@ protected:
         mResultMin      = 0.0f;
         mResultMax      = 1.0f;
         mIsEnable       = true;
+        
+        std::string addr = name;
+        boost::replace_all( addr, " ", "_");
+        boost::algorithm::to_lower( addr );
+        
+        mOscAddress     = "/" + addr;
+        mOscEnable      = false;
     }
 
     
@@ -155,6 +169,9 @@ protected:
     
     bool                            mIsEnable;
     double                          mArgd[4];
+    
+    std::string                     mOscAddress;
+    bool                            mOscEnable;
     
     std::map<std::string,ciXtractFeatureParam>    mParams;
     

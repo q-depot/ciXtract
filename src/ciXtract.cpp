@@ -26,6 +26,14 @@ ciXtract::ciXtract( audio::Input source )
         mPcmData.get()[k] = 0.0f;
     
     initFeatures();
+    
+    mOscPort = 9000;
+    mOscHost = "localhost";
+//	mOscHost = std::System::getIpAddress();
+//	if( mOscHost.rfind( '.' ) != string::npos )
+//		mOscHost.replace( mOscHost.rfind( '.' ) + 1, 3, "255" );
+    
+    mOscSender.setup( mOscHost, mOscPort, true );
 }
 
 
@@ -111,21 +119,35 @@ void ciXtract::update()
 	if( !mPcmBuffer )
 		return;
     
-    /* fill the input array with a sawtooth wave */
-//    for( size_t k=0; k < PCM_SIZE; k++ )
-//        mPcmData.get()[k] = ((k % 100) / (double)100) - .5;
-    
-//  audio::Buffer32fRef buff        = mPcmBuffer->getInterleavedData();
   	audio::Buffer32fRef buff  = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
     for( size_t k=0; k < PCM_SIZE; k++ )
         mPcmData.get()[k] = buff->mData[k];
     
-//    for( size_t k=0; k < PCM_SIZE; k++ )
-//        mPcmData.get()[k] = buff->mData[k*2];
+    osc::Bundle                             bundle;
+    shared_ptr<double>                      data;
+    vector<ciXtractFeatureRef>::iterator    it;
     
-    vector<ciXtractFeatureRef>::iterator it;
     for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
+    {
         (*it)->update();
+        
+        if ( (*it)->isOscEnable() )
+        {
+            osc::Message message;
+            message.setAddress( (*it)->getOscAddr() );
+//            message.setRemoteEndpoint( mOscHost, mOScPort );
+            
+            data = (*it)->getResult();
+
+            for( auto k=0; k < (*it)->getResultN(); k++ )
+                message.addFloatArg( data.get()[k] );
+
+            bundle.addMessage( message );
+        }
+    }
+    
+    // send OSC data
+    mOscSender.sendBundle( bundle );
     
     if ( isCalibrating() )
         updateCalibration();
