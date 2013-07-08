@@ -99,13 +99,9 @@ void ScalarWidget::Render( Skin::Base* skin )
                 val = math<float>::clamp( val, 0.0f, 1.0f );
         }
         
-
-        
-// Damping
-//        if ( val > mBuff.front() )
-//          mBuff.push_front( val );
-//        else
-//            mBuff.push_front( mBuff.front() * mDamping );
+        // Damping
+        if ( mDamping > 0.0f && val < mBuff.front() )
+            val = mBuff.front() * mDamping;
         
         mBuff.push_front( val );
     

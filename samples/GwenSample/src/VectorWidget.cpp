@@ -50,6 +50,11 @@ VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciX
         mGainSlider->Hide();
     }
     
+    
+    mPrevData = std::shared_ptr<double>( new double[ mFeature->getResultN() ] );
+    for( auto k=0; k < mFeature->getResultN(); k++ )
+        mPrevData.get()[k] = 0.0f;
+    
 //    mSurfOffset     = Vec2i( mBuffRect.x2 + 3, 0 );
 //    mSurf           = Surface32f( VECTOR_WIDGET_WIDTH - mSurfOffset.x, mBuffRect.getHeight(), true, SurfaceChannelOrder::RGBA );
 //    mSurfPosX       = 0.0f;
@@ -104,8 +109,6 @@ void VectorWidget::Render( Skin::Base* skin )
         
         glBegin( GL_QUADS );
         
-//        ci::Vec2f tl;
-        
         for( int i = 0; i < mFeature->getResultN(); i++ )
         {
             val = (float)mGainSlider->GetFloatValue() * ( data.get()[i] - mMin ) / ( mMax - mMin );
@@ -113,45 +116,21 @@ void VectorWidget::Render( Skin::Base* skin )
             if ( mClamp )
                 val = math<float>::clamp( val, 0.0f, 1.0f ) * h;
             
+            // Damping
+            if ( mDamping > 0.0f && val < mPrevData.get()[i] )
+                val = mPrevData.get()[i] * mDamping;
+            
+            mPrevData.get()[i] = val;
+            
             glVertex2f( i * step,           h );
             glVertex2f( ( i + 1 ) * step,   h );
             glVertex2f( ( i + 1 ) * step,   h - val );
             glVertex2f( i * step,           h - val );
-            
-//            tl.x = w - val;
-//            tl.y = i * step;
-//            glVertex2f( tl.x,   tl.y );
-//            glVertex2f( w,      tl.y );
-//            glVertex2f( w,      tl.y + 1 );
-//            glVertex2f( tl.x,   tl.y + 1 );
-            
-//            val /= w;
-//            mSurf.setPixel( Vec2i( mSurfPosX, i * step ), ci::ColorA( 1.0f, 1.0f - val, 1.0f - val, 1.0f ) );
         }
         
         glEnd();
     }
-        
-//    gl::translate( mSurfOffset );
-//    gl::color( ci::Color::white() );
-//    gl::Texture tex = gl::Texture( mSurf );
-//    tex.enableAndBind();
-//    
-//    glBegin( GL_QUADS );
-//    
-//    float texOffset = 0;//mSurfPosX / mSurf.getWidth();
-//    
-//    glTexCoord2f( texOffset + 0.0f, 0.0f );     glVertex2f( 0,                  0 );
-//    glTexCoord2f( texOffset + 1.0f, 0.0f );     glVertex2f( mSurf.getWidth(),   0 );
-//    glTexCoord2f( texOffset + 1.0f, 1.0f );     glVertex2f( mSurf.getWidth(),   mSurf.getHeight() );
-//    glTexCoord2f( texOffset + 0.0f, 1.0f );     glVertex2f( 0,                  mSurf.getHeight() );
-//    
-//    glEnd();
-//
-//    tex.disable();
-//    
-//    mSurfPosX = fmod( mSurfPosX + 1, mSurf.getWidth() );
-    
+
     gl::popMatrices();
     
 }

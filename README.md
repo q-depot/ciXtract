@@ -10,7 +10,6 @@ https://github.com/jamiebullock/LibXtract
 * atof used for the gui should cast to double
 * how to treat nan results?
 * data capture and export(json/xml), this is also to compare features with sonic visualiser
-* remove mDataN from features, it's pointless
 
 
 #Issues

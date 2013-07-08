@@ -44,7 +44,7 @@ public:
         mClamp      = true;
         mMin        = 0.0f;
         mMax        = 1.0f;
-        mDamping    = 0.98;
+        mDamping    = 0.85f;
         mOscEnable  = false;
         mRawData    = false;
         

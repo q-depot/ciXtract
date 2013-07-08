@@ -34,8 +34,6 @@ private:
 
 private:
     
-//    ci::Surface32f  mSurf;
-//    ci::Vec2i       mSurfOffset;
-//    float           mSurfPosX;
+    std::shared_ptr<double>         mPrevData;
     
 };
