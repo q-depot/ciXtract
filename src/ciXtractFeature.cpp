@@ -206,7 +206,7 @@ void ciXtractF0::update()
 // ------------------------------------------------------------------------------------------------ //
 
 ciXtractFailsafeF0::ciXtractFailsafeF0( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_FAILSAFE_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
 {
     mData                   = mXtract->getPcmData();
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
@@ -221,7 +221,7 @@ void ciXtractFailsafeF0::update()
 // Wavelet F0                                                                                       //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractWaveletF0::ciXtractWaveletF0( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_WAVELET_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
 {
     mData                   = mXtract->getPcmData();
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
@@ -599,6 +599,23 @@ void ciXtractSpectralInharmonicity::update()
     xtract_spectral_inharmonicity( mData.get(), mDataN, mXtract->getFeatureResult(XTRACT_F0).get(), mResult.get() );
 }
 
+// Crest                                                                                            //
+// ------------------------------------------------------------------------------------------------ //
+ciXtractCrest::ciXtractCrest( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_INHARMONICITY, name, CI_XTRACT_SCALAR, { XTRACT_PEAK_SPECTRUM, XTRACT_F0 }, NULL, 1 )
+{
+    mResult = std::shared_ptr<double>( new double(0.0f) );
+    mData   = mXtract->getFeatureResult(XTRACT_PEAK_SPECTRUM);
+}
+
+void ciXtractCrest::update()
+{
+    mArgd[0] = *mXtract->getFeatureResult(XTRACT_HIGHEST_VALUE).get();
+    mArgd[1] = *mXtract->getFeatureResult(XTRACT_MEAN).get();
+    
+    xtract_crest( NULL, NULL, mArgd, mResult.get() );
+}
+
 // Power                                                                                            //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractPower::ciXtractPower( ciXtract *xtract, std::string name )
@@ -673,7 +690,7 @@ void ciXtractLowestValue::update()
 // Highest Value                                                                                    //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractHighestValue::ciXtractHighestValue( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_LOWEST_VALUE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_HIGHEST_VALUE, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
 {
     mResult = std::shared_ptr<double>( new double(0.0f) );
     mData   = mXtract->getFeatureResult(XTRACT_SPECTRUM);

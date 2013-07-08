@@ -82,6 +82,7 @@ void ciXtract::initFeatures()
     mFeatures.push_back( ciXtractHighestValue::create( this, "Highest Value" ) );
     mFeatures.push_back( ciXtractSum::create( this, "Sum" ) );
     mFeatures.push_back( ciXtractNonZeroCount::create( this, "Non-Zero Count" ) );
+    mFeatures.push_back( ciXtractCrest::create( this, "Crest" ) );
  
     //    mFeatures[XTRACT_CREST]                        = { "CREST", std::bind( &ciXtract::updateCrest, this ), false };
     //    mFeatures[XTRACT_NOISINESS]                    = { "NOISINESS", std::bind( &ciXtract::updateNoisiness, this ), false };

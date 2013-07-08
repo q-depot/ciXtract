@@ -648,6 +648,19 @@ private:
     
 };
 
+// Crest
+class ciXtractCrest : public ciXtractFeature {
+    
+public:
+    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractCrest( xtract, name ) ); }
+    ~ciXtractCrest() {}
+    void update();
+    
+private:
+    ciXtractCrest( ciXtract *xtract, std::string name );
+    
+};
+
 // Power
 class ciXtractPower : public ciXtractFeature {
     
