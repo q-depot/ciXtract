@@ -1,195 +1,52 @@
-This is a Cinder block for LibXtract developed by Jamie Bullock
+#ciXtract
+ciXtract is a CinderBlock for LibXtract, a real-time audio feature extraction library developed by Jamie Bullock.
+
+Status: Alpha
+
+Requires Cinder >= 0.8.5
+
+The source code includes an Xcode example and CinderBlock templates.
+The code has been tested on OSX but it should work fine on Windows, the main difference is that LibXtract uses ooura on windows to generate the Fft.
+
+
+##Get the code
+LibXtract is included as a git submodule, to clone the respository add the "--recursive" option:
+
+cd CINDER_PATH/blocks
+
+git clone --recursive git://github.com/q-depot/ciXtract.git
+
+
+##Notes
+Some of the features are not fully working
+##About LibXtract
+LibXtract is a simple, portable, lightweight library of audio feature extraction functions. The purpose of the library is to provide a relatively exhaustive set of feature extraction primatives that are designed to be 'cascaded' to create a extraction hierarchies.
 
 https://github.com/jamiebullock/LibXtract
 
-#Get the code
-git clone --recursive git@bitbucket.org:q_bit/cixtract.git ciXtract
-
-
 #Todo
 
+* implement cinder block xml
 * add osc
 * fix auto calibration
 * damping
+* use git submodule for LibXtract
 * atof used for the gui should cast to double
 * how to treat nan results?
 * data capture and export(json/xml), this is also to compare features with sonic visualiser
+* remove mDataN from features, it's pointless
 
 
 #Issues
 
 * Auto correlation Fft either crash or doesn't work
+* Auto calibration doesn't always get the bouddaries right
+* none of the F0 functions work below 100Hz
+
+##Supported features
 
 
-#Features documentation
+###Vector Features
 
+###Scalar Features
 
-##Xtract Initialisers
-
-
-
-
-##Vector
-
-####xtract_spectrum
-
- 
-####xtract_autocorrelation_fft
-
- 
-####xtract_mfcc
-
- 
-####xtract_dct
-
- 
-####xtract_autocorrelation
-
- 
-####xtract_amdf
-
- 
-####xtract_asdf
-
- 
-####xtract_bark_coefficients
-
- 
-####xtract_peak_spectrum
-
- 
-####xtract_harmonic_spectrum
-
- 
-####xtract_lpc
-
- 
-####xtract_lpcc
-
- 
-####xtract_subbands
-	
-	
-	
-	
-##Scalar Features
-
-
-####xtract_mean
-
- 
-####xtract_variance
-
- 
-####xtract_standard_deviation
-
- 
-####xtract_average_deviation
-
- 
-####xtract_skewness
-
- 
-####xtract_kurtosis
-
- 
-####xtract_spectral_mean
-
- 
-####xtract_spectral_variance
-
- 
-####xtract_spectral_standard_deviation
-
- 
-####xtract_spectral_skewness
-
- 
-####xtract_spectral_kurtosis
-
- 
-####xtract_spectral_centroid
-
- 
-####xtract_irregularity_k
-
- 
-####xtract_irregularity_j
-
- 
-####xtract_tristimulus_1
-
- 
-####xtract_tristimulus_2
- 
-
-####xtract_tristimulus_3
-
- 
-####xtract_smoothness
-
- 
-####xtract_spread
-
- 
-####xtract_zcr
-
- 
-####xtract_rolloff
-
- 
-####xtract_loudness
-
- 
-####xtract_flatness
-
- 
-####xtract_flatness_db
-
- 
-####xtract_tonality
-
- 
-####xtract_noisiness
-
- 
-####xtract_rms_amplitude
-
- 
-####xtract_spectral_inharmonicity
-
- 
-####xtract_crest
-
- 
-####xtract_power
-
- 
-####xtract_odd_even_ratio
-
- 
-####xtract_sharpness
-
- 
-####xtract_spectral_slope
-
- 
-####xtract_lowest_value
-
- 
-####xtract_highest_value
-
- 
-####xtract_sum
-
- 
-####xtract_hps
-
- 
-####xtract_f0
-
- 
-####xtract_failsafe_f0
-
- 
-####xtract_nonzero_count
