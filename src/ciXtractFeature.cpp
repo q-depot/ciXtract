@@ -122,6 +122,7 @@ ciXtractBark::ciXtractBark( ciXtract *xtract, std::string name )
     mResult                     = std::shared_ptr<double>( new double[ XTRACT_BARK_BANDS ] );
     mBandLimits                 = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
     mParams["threshold"]        = { 0.0f, CI_XTRACT_PARAM_DOUBLE };
+    mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     
     xtract_init_bark( FFT_SIZE, SAMPLERATE >> 1, mBandLimits.get() );
 }
@@ -130,7 +131,6 @@ void ciXtractBark::update()
 {
     mArgd[0]    = SAMPLERATE_N;
     mArgd[1]    = mParams["threshold"].val;
-    mData       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     xtract_bark_coefficients( mData.get(), mDataN, mBandLimits.get(), mResult.get() );
 }
 
@@ -190,9 +190,9 @@ void ciXtractSubBands::update()
 // F0                                                                                               //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractF0::ciXtractF0( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, FFT_SIZE, 1 )
+: ciXtractFeature( xtract, XTRACT_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
 {
-    mData                   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
+    mData                   = mXtract->getPcmData();
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
 }
 

@@ -46,7 +46,8 @@ public:
         mMax        = 1.0f;
         mDamping    = 0.98;
         mOscEnable  = false;
-
+        mRawData    = false;
+        
         std::string addr = mLabel;
         boost::replace_all( addr, " ", "_");
         boost::algorithm::to_lower( addr );
@@ -79,9 +80,13 @@ public:
         pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
         pRow->GetProperty()->SetPropertyValue( to_string( mMax ) );
         
-        pRow = mProperties->Add( "Clamp", new Gwen::Controls::Property::Checkbox( mProperties ), "1" );
+        pRow = mProperties->Add( "Clamp", new Gwen::Controls::Property::Checkbox( mProperties ), std::to_string( mClamp ) );
         pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
         pRow->GetProperty()->SetPropertyValue( to_string( mClamp ) );
+        
+        pRow = mProperties->Add( "Raw data", new Gwen::Controls::Property::Checkbox( mProperties ), std::to_string( mRawData ) );
+        pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
+        pRow->GetProperty()->SetPropertyValue( to_string( mRawData ) );
         
         pRow = mProperties->Add( "Damping", new Gwen::Controls::Property::Text( mProperties ) );
         pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
@@ -178,6 +183,9 @@ protected:
         else if ( label == "OSC" )
             mOscEnable = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
         
+        else if ( label == "Raw data" )
+            mRawData = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
+        
         else if ( label == "Damping" )
             mDamping = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
         
@@ -242,4 +250,6 @@ protected:
     
     bool                            mOscEnable;
     std::string                     mOscAddress;
+    
+    bool                            mRawData;
 };

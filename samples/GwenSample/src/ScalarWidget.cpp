@@ -87,16 +87,26 @@ void ScalarWidget::Render( Skin::Base* skin )
     
     if ( WidgetBase::update() )
     {
-        float val = (float)mGainSlider->GetFloatValue() * ( (*mFeature->getResult().get()) - mMin ) / ( mMax - mMin );
+        float val;
+        
+        if ( mRawData )
+            val = (*mFeature->getResult().get());
+        else
+        {
+            val = (float)mGainSlider->GetFloatValue() * ( (*mFeature->getResult().get()) - mMin ) / ( mMax - mMin );
 
-        if ( mClamp )
-            val = math<float>::clamp( val, 0.0f, 1.0f );
+            if ( mClamp )
+                val = math<float>::clamp( val, 0.0f, 1.0f );
+        }
+        
 
+        
 // Damping
 //        if ( val > mBuff.front() )
 //          mBuff.push_front( val );
 //        else
 //            mBuff.push_front( mBuff.front() * mDamping );
+        
         mBuff.push_front( val );
     
         PolyLine<Vec2f>	buffLine;
