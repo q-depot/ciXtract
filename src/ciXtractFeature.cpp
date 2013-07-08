@@ -31,9 +31,7 @@ ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract, std::string name )
     mData   = mXtract->getPcmData();
     mResult = std::shared_ptr<double>( new double[PCM_SIZE] );
     
-
     // params
-    mParams["sample_rate_N"]   = { SAMPLERATE / (double)PCM_SIZE, CI_XTRACT_PARAM_DOUBLE };
     mParams["dc"]              = { false, CI_XTRACT_PARAM_BOOL  };
     mParams["norm"]            = { false, CI_XTRACT_PARAM_BOOL };
     mParams["type"]            = { XTRACT_MAGNITUDE_SPECTRUM, CI_XTRACT_PARAM_ENUM,
@@ -44,7 +42,7 @@ ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract, std::string name )
 
 void ciXtractSpectrum::update()
 {
-    mArgd[0] = mParams["sample_rate_N"].val;
+    mArgd[0] = SAMPLERATE_N;
     mArgd[1] = mParams["type"].val;
     mArgd[2] = mParams["dc"].val;
     mArgd[3] = mParams["norm"].val;
@@ -106,13 +104,12 @@ ciXtractPeakSpectrum::ciXtractPeakSpectrum( ciXtract *xtract, std::string name )
 {
     mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     mResult                     = std::shared_ptr<double>( new double[PCM_SIZE] );
-    mParams["sample_rate_N"]    = { SAMPLERATE / (double)PCM_SIZE, CI_XTRACT_PARAM_DOUBLE };
     mParams["threshold"]        = { 0.0f, CI_XTRACT_PARAM_DOUBLE };
 }
 
 void ciXtractPeakSpectrum::update()
 {
-    mArgd[0] = mParams["sample_rate_N"].val;
+    mArgd[0] = SAMPLERATE_N;
     mArgd[1] = mParams["threshold"].val;
     xtract_peak_spectrum( mData.get(), mDataN, mArgd, mResult.get() );
 }
@@ -124,7 +121,6 @@ ciXtractBark::ciXtractBark( ciXtract *xtract, std::string name )
 {
     mResult                     = std::shared_ptr<double>( new double[ XTRACT_BARK_BANDS ] );
     mBandLimits                 = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
-    mParams["sample_rate_N"]    = { SAMPLERATE / (double)PCM_SIZE, CI_XTRACT_PARAM_DOUBLE };
     mParams["threshold"]        = { 0.0f, CI_XTRACT_PARAM_DOUBLE };
     
     xtract_init_bark( FFT_SIZE, SAMPLERATE >> 1, mBandLimits.get() );
@@ -132,7 +128,7 @@ ciXtractBark::ciXtractBark( ciXtract *xtract, std::string name )
 
 void ciXtractBark::update()
 {
-    mArgd[0]    = mParams["sample_rate_N"].val;
+    mArgd[0]    = SAMPLERATE_N;
     mArgd[1]    = mParams["threshold"].val;
     mData       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     xtract_bark_coefficients( mData.get(), mDataN, mBandLimits.get(), mResult.get() );
@@ -198,12 +194,11 @@ ciXtractF0::ciXtractF0( ciXtract *xtract, std::string name )
 {
     mData                   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
-    mParams["sample_rate"]  = { SAMPLERATE, CI_XTRACT_PARAM_DOUBLE };
 }
 
 void ciXtractF0::update()
 {
-    mArgd[0] = mParams["sample_rate"].val;
+    mArgd[0] = SAMPLERATE;
     xtract_f0( mData.get(), mDataN, mArgd, mResult.get() );
 }
 
@@ -480,13 +475,12 @@ ciXtractRolloff::ciXtractRolloff( ciXtract *xtract, std::string name )
 {
     mResult                     = std::shared_ptr<double>( new double(0.0f) );
     mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
-    mParams["sample_rate_N"]    = { (double)SAMPLERATE / (double)( mDataN ), CI_XTRACT_PARAM_DOUBLE };
     mParams["threshold"]        = { 15.0f, CI_XTRACT_PARAM_DOUBLE };
 }
 
 void ciXtractRolloff::update()
 {
-    mArgd[0] = mParams["sample_rate_N"].val;
+    mArgd[0] = SAMPLERATE_N;
     mArgd[1] = mParams["threshold"].val;
     xtract_rolloff( mData.get(), mDataN, mArgd, mResult.get() );
 }

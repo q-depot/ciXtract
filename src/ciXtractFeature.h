@@ -46,6 +46,7 @@ struct ciXtractFeatureParam {
 #define PCM_SIZE            1024
 #define FFT_SIZE            512
 #define SAMPLERATE          44100
+#define SAMPLERATE_N        SAMPLERATE / (double)PCM_SIZE
 
 #define PERIOD              100
 #define MFCC_FREQ_BANDS     13

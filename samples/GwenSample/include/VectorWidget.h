@@ -13,8 +13,8 @@
 
 #include "WidgetBase.h"
 
-#define VECTOR_WIDGET_WIDTH     300
-#define VECTOR_WIDGET_HEIGHT    200
+#define VECTOR_WIDGET_WIDTH     210
+#define VECTOR_WIDGET_HEIGHT    80
 
 
 class VectorWidget : public WidgetBase {
@@ -34,7 +34,8 @@ private:
 
 private:
     
-    ci::Surface32f  mSurf;
-    ci::Vec2i       mSurfOffset;
-    float           mSurfPosX;
+//    ci::Surface32f  mSurf;
+//    ci::Vec2i       mSurfOffset;
+//    float           mSurfPosX;
+    
 };

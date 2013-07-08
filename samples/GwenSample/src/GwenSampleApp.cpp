@@ -201,7 +201,7 @@ void GwenSampleApp::initGui()
     // Scalar Features
     Vec2f initOffset( 15, 50 );
     
-    /*
+
     offset = Vec2f( CI_XTRACT_WIDGET_WIDTH + 30, initOffset.y );
 
     for( itr = features.begin(); itr != features.end(); ++itr )
@@ -221,7 +221,7 @@ void GwenSampleApp::initGui()
             offset.y = initOffset.y;
         }
     }
-    */
+    
     
     // Vector Features
     

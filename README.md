@@ -12,10 +12,12 @@ https://github.com/jamiebullock/LibXtract
 * atof used for the gui should cast to double
 * how to treat nan results?
 * data capture and export(json/xml), this is also to compare features with sonic visualiser
-* remove sample rate and sample rate N params, use constant instead
+
+
 
 #Issues
 
+* Auto correlation Fft either crash or doesn't work
 
 
 #Features documentation
