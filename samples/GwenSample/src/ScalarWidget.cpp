@@ -48,10 +48,9 @@ ScalarWidget::ScalarWidget( Gwen::Controls::Base *parent, std::string label, ciX
     //    pSlider->onValueChanged.Add( this, &Slider::SliderMoved );
 
     if ( !mFeature->isEnable() )
-    {
         mGainSlider->Hide();
-    }
-        
+    
+    mData = shared_ptr<double>( new double(0.0f) );
 }
 
 
@@ -100,11 +99,13 @@ void ScalarWidget::Render( Skin::Base* skin )
         }
         
         // Damping
-        if ( mDamping > 0.0f && val < mBuff.front() )
-            val = mBuff.front() * mDamping;
+        if ( mDamping > 0.0f && val < mData.get()[0] )
+            val = mData.get()[0] * mDamping;
+        
+        mData.get()[0] = val;
         
         mBuff.push_front( val );
-    
+        
         PolyLine<Vec2f>	buffLine;
         float step  = mBuffRect.getWidth() / mBuff.size();
         

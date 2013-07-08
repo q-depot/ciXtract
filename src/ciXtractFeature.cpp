@@ -170,7 +170,7 @@ ciXtractSubBands::ciXtractSubBands( ciXtract *xtract, std::string name )
     mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     mParams["bin_offset"]       = { 0.0f, CI_XTRACT_PARAM_DOUBLE };
     mParams["function"]         = { XTRACT_SUM, CI_XTRACT_PARAM_ENUM, { { "Sum", XTRACT_SUM }, { "Mean", XTRACT_MEAN } } };
-    mParams["scale"]            = { XTRACT_OCTAVE_SUBBANDS, CI_XTRACT_PARAM_ENUM, { { "Octave", XTRACT_OCTAVE_SUBBANDS }, { "Linear", XTRACT_LINEAR_SUBBANDS } } };
+    mParams["scale"]            = { XTRACT_LINEAR_SUBBANDS, CI_XTRACT_PARAM_ENUM, { { "Octave", XTRACT_OCTAVE_SUBBANDS }, { "Linear", XTRACT_LINEAR_SUBBANDS } } };
 }
 
 void ciXtractSubBands::update()

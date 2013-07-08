@@ -17,9 +17,6 @@
 #include "libxtract.h"
 #include "cinder/audio/Input.h"
 
-#include "OscSender.h"
-#include "OscBundle.h"
-
 #include "cinder/gl/TextureFont.h"
 #include "ciXtractFeature.h"
 
@@ -49,6 +46,8 @@ public:
     
     void toggleFeature( xtract_features_ feature );
     
+    std::vector<ciXtractFeatureRef> getFeatures() { return mFeatures; };
+    
     ciXtractFeatureRef getFeature( xtract_features_ feature );
     
     std::shared_ptr<double> getFeatureResult( xtract_features_ feature )
@@ -64,11 +63,9 @@ public:
     
     void calibrateFeature( xtract_features_ featureEnum );
     
-    std::vector<ciXtractFeatureRef> getFeatures() { return mFeatures; };
-    
     std::shared_ptr<double> getPcmData() { return mPcmData; }
     
-    
+
 private:
     
     ciXtract( audio::Input source );
@@ -97,9 +94,6 @@ private:
 
     ci::gl::TextureFontRef                      mFontSmall;
     
-    ci::osc::Sender                             mOscSender;
-	std::string                                 mOscHost;
-	int                                         mOscPort;
 };
 
 #endif

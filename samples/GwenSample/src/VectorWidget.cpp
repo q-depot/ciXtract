@@ -1,3 +1,4 @@
+
 /*
  *  ScalarWidget.cpp
  *
@@ -47,9 +48,9 @@ VectorWidget::VectorWidget( Gwen::Controls::Base *parent, std::string label, ciX
     if( !mFeature->isEnable() )
         mGainSlider->Hide();
     
-    mPrevData = std::shared_ptr<double>( new double[ mFeature->getResultN() ] );
+    mData = std::shared_ptr<double>( new double[ mFeature->getResultN() ] );
     for( auto k=0; k < mFeature->getResultN(); k++ )
-        mPrevData.get()[k] = 0.0f;
+        mData.get()[k] = 0.0f;
 }
 
 
@@ -104,13 +105,15 @@ void VectorWidget::Render( Skin::Base* skin )
             val = (float)mGainSlider->GetFloatValue() * ( data.get()[i] - mMin ) / ( mMax - mMin );
 
             if ( mClamp )
-                val = math<float>::clamp( val, 0.0f, 1.0f ) * h;
+                val = math<float>::clamp( val, 0.0f, 1.0f );
             
             // Damping
-            if ( mDamping > 0.0f && val < mPrevData.get()[i] )
-                val = mPrevData.get()[i] * mDamping;
+            if ( mDamping > 0.0f && val < mData.get()[i] )
+                val = mData.get()[i] * mDamping;
             
-            mPrevData.get()[i] = val;
+            mData.get()[i] = val;
+            
+            val *= h;
             
             glVertex2f( i * step,           h );
             glVertex2f( ( i + 1 ) * step,   h );

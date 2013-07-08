@@ -57,7 +57,7 @@ void _TBOX_PREFIX_App::setup()
 
 void _TBOX_PREFIX_App::update()
 {
-	
+	mXtract->update();	
 }
 
 

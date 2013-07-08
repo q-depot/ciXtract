@@ -28,9 +28,11 @@
 #include "Gwen/Controls/CheckBox.h"
 #include "Gwen/Events.h"
 
-
 #include "ScalarWidget.h"
 #include "VectorWidget.h"
+
+#include "OscSender.h"
+#include "OscBundle.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -45,6 +47,7 @@ gl::TextureFontRef      mFontBig;
 
 class GwenSampleApp : public AppNative, public Gwen::Event::Handler {
 public:
+    
 	void prepareSettings( Settings *settings );
 	void setup();
 	void mouseDown( MouseEvent event );
@@ -70,6 +73,13 @@ public:
 	cigwen::GwenInputRef            mGwenInput;
 	Gwen::Controls::Canvas          *mCanvas;
     Gwen::Controls::WindowControl   *mWindow;
+    
+    ci::osc::Sender                 mOscSender;
+    std::string                     mOscHost;
+    int                             mOscPort;
+    
+    vector<WidgetBase*>             mWidgets;
+    
 };
 
 
@@ -107,6 +117,16 @@ void GwenSampleApp::setup()
     //    setFullScreen(true, FullScreenOptions().kioskMode() );
     
     mLogoTex    = gl::Texture::create( loadImage( loadAsset( "nocte.png" ) ) );
+    
+    
+    
+    mOscPort    = 9000;
+    mOscHost    = "localhost";
+    //	mOscHost = std::System::getIpAddress();
+    //	if( mOscHost.rfind( '.' ) != string::npos )
+    //		mOscHost.replace( mOscHost.rfind( '.' ) + 1, 3, "255" );
+    
+    mOscSender.setup( mOscHost, mOscPort, true );
 }
 
 
@@ -130,6 +150,27 @@ void GwenSampleApp::keyDown( KeyEvent event )
 void GwenSampleApp::update()
 {
     mXtract->update();
+    
+    osc::Bundle                             bundle;
+    shared_ptr<double>                      data;
+    
+    for( auto k=0; k < mWidgets.size(); k++ )
+    {
+        if ( !mWidgets[k]->isOscEnable() )
+            continue;
+        
+        osc::Message message;
+        message.setAddress( mWidgets[k]->getOscAddr() );
+        
+        data = mWidgets[k]->getData();
+        
+        for( auto i=0; i < mWidgets[k]->getDataN(); i++ )
+            message.addFloatArg( data.get()[i] );
+        
+        bundle.addMessage( message );
+    }
+    
+    mOscSender.sendBundle( bundle );
 }
 
 
@@ -220,6 +261,8 @@ void GwenSampleApp::initGui()
             offset.x += SCALAR_WIDGET_WIDTH + initOffset.x;
             offset.y = initOffset.y;
         }
+        
+        mWidgets.push_back( control );
     }
     
     
@@ -243,6 +286,8 @@ void GwenSampleApp::initGui()
             offset.x += control->GetSize().x + initOffset.x;
             offset.y = initOffset.y;
         }
+        
+        mWidgets.push_back( control );
     }
 
 }

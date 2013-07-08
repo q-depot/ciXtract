@@ -47,6 +47,14 @@ public:
         mDamping    = 0.85f;
         mRawData    = false;
         
+        mOscAddress = mLabel
+        ;
+        boost::replace_all( mOscAddress, " ", "_");
+        boost::algorithm::to_lower( mOscAddress );
+        
+        mOscAddress = "/" + mOscAddress;
+        mOscEnable  = false;
+        
         SetBounds( 0, 0, size.x, size.y );
         
         // Properties window
@@ -87,11 +95,11 @@ public:
         
         pRow = mProperties->Add( "OSC addr", new Gwen::Controls::Property::Text( mProperties ) );
         pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
-        pRow->GetProperty()->SetPropertyValue( mFeature->getOscAddr() );
+        pRow->GetProperty()->SetPropertyValue( mOscAddress );
         
         pRow = mProperties->Add( "OSC", new Gwen::Controls::Property::Checkbox( mProperties ) );
         pRow->onChange.Add( this, &WidgetBase::onPropertyChange );
-        pRow->GetProperty()->SetPropertyValue( to_string( mFeature->isOscEnable() ) );
+        pRow->GetProperty()->SetPropertyValue( to_string( mOscEnable ) );
         
         // Calibration button
         mCalibButton  = new Gwen::Controls::Button( this );
@@ -140,6 +148,17 @@ public:
 	virtual void Render( Gwen::Skin::Base* skin ) {}
 	virtual void RenderUnder( Gwen::Skin::Base* skin ) {}
     
+    bool isOscEnable() { return mOscEnable; }
+    void enableOsc( bool enable = true ) { mOscEnable = enable; }
+
+    std::string getOscAddr() { return mOscAddress; }
+    void setOscAddr( std::string addr ) { mOscAddress = addr; }
+    
+    std::shared_ptr<double> getData() { return mData; }
+    uint32_t getDataN() { return mFeature->getResultN(); }
+    
+    std::string getLabel() { return mLabel; }
+    
     
 protected:
 
@@ -180,10 +199,10 @@ protected:
             mDamping = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
         
         else if ( label == "OSC" )
-            mFeature->enableOsc( atof( pRow->GetProperty()->GetPropertyValue().c_str() ) );
+            mOscEnable = atof( pRow->GetProperty()->GetPropertyValue().c_str() );
         
         else if ( label == "OSC addr" )
-            mFeature->setOscAddr( pRow->GetProperty()->GetPropertyValue().c_str() );
+            mOscAddress = pRow->GetProperty()->GetPropertyValue().c_str();
     }
     
     virtual void onPropertyParamChange( Gwen::Controls::Base* pControl )
@@ -242,4 +261,8 @@ protected:
     double                          mDamping;
     
     bool                            mRawData;
+    
+    std::string                     mOscAddress;
+    bool                            mOscEnable;
+    
 };

@@ -32,8 +32,5 @@ private:
     
     void toggleFeature( Gwen::Controls::Base* pControl );
 
-private:
-    
-    std::shared_ptr<double>         mPrevData;
     
 };
