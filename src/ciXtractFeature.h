@@ -296,6 +296,33 @@ private:
     
 };
 
+// Failsafe F0
+class ciXtractFailsafeF0 : public ciXtractFeature {
+    
+public:
+    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractFailsafeF0( xtract, name ) ); }
+    ~ciXtractFailsafeF0() {}
+    void update();
+    
+private:
+    ciXtractFailsafeF0( ciXtract *xtract, std::string name );
+    
+};
+
+
+// Wavelet F0
+class ciXtractWaveletF0 : public ciXtractFeature {
+    
+public:
+    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractWaveletF0( xtract, name ) ); }
+    ~ciXtractWaveletF0() {}
+    void update();
+    
+private:
+    ciXtractWaveletF0( ciXtract *xtract, std::string name );
+    
+};
+
 // Mean
 class ciXtractMean : public ciXtractFeature {
     

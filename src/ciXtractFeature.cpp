@@ -202,6 +202,37 @@ void ciXtractF0::update()
     xtract_f0( mData.get(), mDataN, mArgd, mResult.get() );
 }
 
+// Failsafe F0                                                                                      //
+// ------------------------------------------------------------------------------------------------ //
+
+ciXtractFailsafeF0::ciXtractFailsafeF0( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
+{
+    mData                   = mXtract->getPcmData();
+    mResult                 = std::shared_ptr<double>( new double(0.0f) );
+}
+
+void ciXtractFailsafeF0::update()
+{
+    mArgd[0] = SAMPLERATE;
+    xtract_failsafe_f0( mData.get(), mDataN, mArgd, mResult.get() );
+}
+
+// Wavelet F0                                                                                       //
+// ------------------------------------------------------------------------------------------------ //
+ciXtractWaveletF0::ciXtractWaveletF0( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_F0, name, CI_XTRACT_SCALAR, { XTRACT_SPECTRUM }, PCM_SIZE, 1 )
+{
+    mData                   = mXtract->getPcmData();
+    mResult                 = std::shared_ptr<double>( new double(0.0f) );
+}
+
+void ciXtractWaveletF0::update()
+{
+    mArgd[0] = SAMPLERATE;
+    xtract_wavelet_f0( mData.get(), mDataN, mArgd, mResult.get() );
+}
+
 // Mean                                                                                             //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractMean::ciXtractMean( ciXtract *xtract, std::string name )

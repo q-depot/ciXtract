@@ -43,6 +43,8 @@ void ciXtract::initFeatures()
     mFeatures.push_back( ciXtractAutocorrelationFft::create( this, "Auto Correlation Fft" ) );
     mFeatures.push_back( ciXtractHarmonicSpectrum::create( this, "Harmonic Spectrum" ) );    
     mFeatures.push_back( ciXtractF0::create( this, "F0" ) );
+    mFeatures.push_back( ciXtractFailsafeF0::create( this, "Failsafe F0" ) );
+    mFeatures.push_back( ciXtractWaveletF0::create( this, "Wavelet F0" ) );
     mFeatures.push_back( ciXtractPeakSpectrum::create( this, "Peak Spectrum" ) );
     mFeatures.push_back( ciXtractSubBands::create( this, "Sub Bands" ) );
     mFeatures.push_back( ciXtractMfcc::create( this, "Mfcc" ) );
