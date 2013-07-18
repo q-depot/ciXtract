@@ -6,19 +6,19 @@ cProcessInfoPlistFile /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/x
 cCpResource ../resources/CinderApp.icns ./build/Debug/BasicSample.app/Contents/Resources/CinderApp.icns
 cProcessPCH /var/folders/16/7txk9n1j5h96z28y9q8wcmhm0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/BasicSample_Prefix-aioqvdnghkgytdcehsiljarojisv/BasicSample_Prefix.pch.pth BasicSample_Prefix.pch normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
 cProcessPCH++ /var/folders/16/7txk9n1j5h96z28y9q8wcmhm0000gn/C/com.apple.Xcode.501/SharedPrecompiledHeaders/BasicSample_Prefix-gvedgrsjhotrnndnlecylvvoakfo/BasicSample_Prefix.pch.pth BasicSample_Prefix.pch normal i386 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/BasicSampleApp.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../src/BasicSampleApp.cpp normal i386 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/ciXtract.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/ciXtract.cpp normal i386 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/ciXtractFeature.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/ciXtractFeature.cpp normal i386 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/delta.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/delta.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
 cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/descriptors.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/descriptors.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
 cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/fini.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/fini.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
 cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/helper.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/helper.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/delta.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/delta.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
 cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/init.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/init.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/BasicSampleApp.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../src/BasicSampleApp.cpp normal i386 c++ com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/dywapitchtrack.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/dywapitchtrack/dywapitchtrack.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/window.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/window.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/ciXtractFeature.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/ciXtractFeature.cpp normal i386 c++ com.apple.compilers.llvm.clang.1_0.compiler
 cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/libxtract.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/libxtract.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/window.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/window.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
 cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/scalar.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/scalar.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
 cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/vector.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/vector.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/ciXtract.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/ciXtract.cpp normal i386 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/dywapitchtrack.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../../../src/LibXtract/src/dywapitchtrack/dywapitchtrack.c normal i386 c com.apple.compilers.llvm.clang.1_0.compiler
 cLd /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/./build/Debug/BasicSample.app/Contents/MacOS/BasicSample normal i386
 cTouch /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/./build/Debug/BasicSample.app
 
@@ -4533,7 +4533,7 @@ t1373300366
 s1876
 
 N/Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/BasicSampleApp.o
-t1373303427
+t1373303441
 s2265664
 
 N/Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/ciXtract.o
@@ -4585,7 +4585,7 @@ t1373300366
 s9136
 
 N/Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/./build/Debug/BasicSample.app
-t1373303428
+t1373303442
 s102
 
 N/Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/./build/Debug/BasicSample.app/Contents/Info.plist
@@ -4593,7 +4593,7 @@ t1373300366
 s1459
 
 N/Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/./build/Debug/BasicSample.app/Contents/MacOS/BasicSample
-t1373303427
+t1373303442
 s3777852
 
 N/Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/./build/Debug/BasicSample.app/Contents/PkgInfo
@@ -4706,7 +4706,7 @@ r0
 
 CCheck dependencies
 r0
-lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependenciesc45e20102a8bb741^ccd420102a8bb741^---0#1#0#--18"Check dependencies36"B0A4A901-3C44-4C6B-BD50-A34621C8784D-
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies36aced325298b741^8f391b335298b741^---0#1#0#--18"Check dependencies36"8D9F12AD-A7A0-4BAC-A96B-B90A545AA0BC-
 
 CCompileC ./build/BasicSample.build/Debug/BasicSample.build/Objects-normal/i386/BasicSampleApp.o /Users/Q/Code/Cinder/blocks/ciXtract/samples/BasicSample/xcode/../src/BasicSampleApp.cpp normal i386 c++ com.apple.compilers.llvm.clang.1_0.compiler
 s394996240.166708
