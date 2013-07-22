@@ -134,7 +134,7 @@ protected:
         // each feature implementation define its own mData mResult and mParams
         mResultMin      = 0.0f;
         mResultMax      = 1.0f;
-        mIsEnable       = true;
+        mIsEnable       = false;
     }
 
     
