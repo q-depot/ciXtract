@@ -83,9 +83,6 @@ public:
     {    
         mResultMin = std::numeric_limits<double>::max();
         mResultMax = -std::numeric_limits<double>::max();
-        
-//        mResultMin = mResult.get()[0];
-//        mResultMax = mResult.get()[0];
     }
     
     void calibrate()
@@ -121,6 +118,9 @@ public:
         mParams[name].val = val;
     }
     
+    std::string getEnumStr() { return mEnumStr; }
+    
+    
 protected:
     
     ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, std::vector<xtract_features_> dependencies, uint32_t resultN = 1 )
@@ -131,7 +131,6 @@ protected:
         mType           = type;
         mDependencies   = dependencies;
         mResultN        = resultN;
-        // each feature implementation define its own mData mResult and mParams
         mResultMin      = 0.0f;
         mResultMax      = 1.0f;
         mIsEnable       = false;
@@ -143,6 +142,7 @@ protected:
     ciXtract                        *mXtract;
     xtract_features_                mFeature;
     std::string                     mName;
+    std::string                     mEnumStr;
     ciXtractFeatureType             mType;
     std::vector<xtract_features_>   mDependencies;
     
