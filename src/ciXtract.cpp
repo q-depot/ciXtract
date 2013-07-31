@@ -118,8 +118,9 @@ void ciXtract::update()
     vector<ciXtractFeatureRef>::iterator    it;
     
     for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
-        (*it)->update();
-        
+        if ( (*it)->isEnable() )
+            (*it)->update();
+            
     if ( isCalibrating() )
         updateCalibration();
 }
