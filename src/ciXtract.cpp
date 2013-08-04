@@ -40,7 +40,7 @@ void ciXtract::initFeatures()
 {
     mFeatures.push_back( ciXtractSpectrum::create( this, "Spectrum" ) );
     mFeatures.push_back( ciXtractAutocorrelation::create( this, "Auto Correlation" ) );
-    mFeatures.push_back( ciXtractAutocorrelationFft::create( this, "Auto Correlation Fft" ) );
+    // mFeatures.push_back( ciXtractAutocorrelationFft::create( this, "Auto Correlation Fft" ) );
     mFeatures.push_back( ciXtractHarmonicSpectrum::create( this, "Harmonic Spectrum" ) );    
     mFeatures.push_back( ciXtractF0::create( this, "F0" ) );
     mFeatures.push_back( ciXtractFailsafeF0::create( this, "Failsafe F0" ) );
@@ -83,21 +83,6 @@ void ciXtract::initFeatures()
     mFeatures.push_back( ciXtractSum::create( this, "Sum" ) );
     mFeatures.push_back( ciXtractNonZeroCount::create( this, "Non-Zero Count" ) );
     mFeatures.push_back( ciXtractCrest::create( this, "Crest" ) );
- 
-    //    mFeatures[XTRACT_NOISINESS]                    = { "NOISINESS", std::bind( &ciXtract::updateNoisiness, this ), false };
-    //    mFeatures[XTRACT_HPS]                          = { "HPS", std::bind( &ciXtract::updateHps, this ), false };
-    //    mFeatures[XTRACT_LNORM]                        = { "LNORM", std::bind( &ciXtract::updateLnorm, this ), false };
-    //    mFeatures[XTRACT_FLUX]                         = { "FLUX", std::bind( &ciXtract::updateFlux, this ), false };
-    //    mFeatures[XTRACT_ATTACK_TIME]                  = { "ATTACK_TIME", std::bind( &ciXtract::updateAttackTime, this ), false };
-    //    mFeatures[XTRACT_DECAY_TIME]                   = { "DECAY_TIME", std::bind( &ciXtract::updateDecayTime, this ), false };
-    //    mFeatures[XTRACT_DIFFERENCE_VECTOR]            = { "DIFFERENCE_VECTOR", std::bind( &ciXtract::updateDifferenceVector, this ), false };
-    
-    //    mFeatures[XTRACT_AMDF]                         = { "AMDF", std::bind( &ciXtract::updateAmdf, this ), false };
-    //    mFeatures[XTRACT_ASDF]                         = { "ASDF", std::bind( &ciXtract::updateAsdf, this ), false };
-    //    mFeatures[XTRACT_LPC]                          = { "LPC", std::bind( &ciXtract::updateLpc, this ), false };
-    //    mFeatures[XTRACT_LPCC]                         = { "LPCC", std::bind( &ciXtract::updateLpcc, this ), false };
-    //    mFeatures[XTRACT_DCT]                          = { "DCT", std::bind( &ciXtract::updateDct, this ), false };
-    //    mFeatures[XTRACT_WINDOWED]                     = { "WINDOWED", std::bind( &ciXtract::updateWindowed, this ), false };
 }
 
 
@@ -200,15 +185,11 @@ ciXtractFeatureRef ciXtract::getFeature( xtract_features_ feature )
 }
 
 
-void ciXtract::autoCalibration()
+void ciXtract::calibrateFeatures()
 {
     vector<ciXtractFeatureRef>::iterator it;
     for( it = mFeatures.begin(); it != mFeatures.end(); ++it )
-    {
-        (*it)->resetCalibration();
-        ciXtractFeatureCalibration fc = { (*it), getElapsedSeconds() };
-        mCalibrationFeatures.push_back( fc );
-    }
+        calibrateFeature( (*it) );
 }
 
 

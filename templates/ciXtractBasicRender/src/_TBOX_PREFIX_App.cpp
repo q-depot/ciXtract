@@ -1,13 +1,7 @@
 /*
  *  _TBOX_PREFIX_App.cpp
  *
- *  Created by Andrea Cuius
- *  Nocte Studio Ltd.
- *
- *  www.nocte.co.uk
- *
  */
-
 
 #include "cinder/app/AppNative.h"
 
@@ -17,7 +11,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define WIDGET_SIZE Vec2i( 120, 40 )
+#define WIDGET_SIZE Vec2i( 150, 40 )
+
 
 class _TBOX_PREFIX_App : public AppBasic {
 
@@ -27,9 +22,10 @@ public:
 	void setup();
 	void update();
     void draw();
+	void keyDown( KeyEvent event );
 	
 	void drawPcmData();
-	void drawData( string label, std::shared_ptr<double> data, int N, float gain, Rectf rect);
+	void drawData( ciXtractFeatureRef feature, Rectf rect );
     
     audio::Input                mInput;
     ciXtractRef                 mXtract;
@@ -47,6 +43,7 @@ void _TBOX_PREFIX_App::prepareSettings(Settings *settings)
 
 void _TBOX_PREFIX_App::setup()
 {
+	// Initialise audio input
     const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
 	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter )
     {
@@ -61,9 +58,11 @@ void _TBOX_PREFIX_App::setup()
     if ( !mInput )
         exit(-1);
  
+	// Initialise xtract and get feature refs.
     mXtract     = ciXtract::create( mInput );
     mFeatures   = mXtract->getFeatures();
     
+	// Features are disabled by default, enableFeature() also enable each feature dependencies
     for( auto k=0; k < XTRACT_FEATURES; k++ )
         mXtract->enableFeature( (xtract_features_)k );
 }
@@ -83,21 +82,17 @@ void _TBOX_PREFIX_App::draw()
 	gl::color( Color::gray( 0.1f ) );
 	drawPcmData();
     
-    Rectf               rect;
-    Vec2f               initPos( 15, 100 );
-    Vec2f               pos = initPos;
-    ciXtractFeatureRef  feature;
+    if ( mXtract->isCalibrating() )
+        gl::drawString( "CALIBRATION IN PROGRESS", Vec2f( 15, getWindowHeight() - 20 ), Color::black() );
+    else
+        gl::drawString( "Press 'c' to run the calibration", Vec2f( 15, getWindowHeight() - 20 ), Color::black() );
+
+    Vec2f initPos( 15, 100 );
+    Vec2f pos = initPos;
     
     for( auto k=0; k < mFeatures.size(); k++ )
     {
-        feature = mFeatures[k];
-        rect    = Rectf( pos, pos + WIDGET_SIZE );
-        
-        if ( feature->getType() == CI_XTRACT_SCALAR )
-            drawData( feature->getName(), feature->getResult(), 1, 1.0f, rect );
-     
-        else if ( mFeatures[k]->getType() == CI_XTRACT_VECTOR )
-            drawData( feature->getName(), feature->getResult(), feature->getResultN(), 100.0f, rect );
+        drawData( mFeatures[k], Rectf( pos, pos + WIDGET_SIZE ) );
         
         pos.y += WIDGET_SIZE.y + 25;
         
@@ -125,6 +120,8 @@ void _TBOX_PREFIX_App::drawPcmData()
 
 	PolyLine<Vec2f>	leftBufferLine;
 
+    gl::color( Color::gray( 0.4f ) );
+	
 	for( int i = 0; i < bufferLength; i++ )
     {
 		float x = i * scale;
@@ -136,32 +133,41 @@ void _TBOX_PREFIX_App::drawPcmData()
 }
 
 
-void _TBOX_PREFIX_App::drawData( string label, std::shared_ptr<double> data, int N, float gain, Rectf rect )
+void _TBOX_PREFIX_App::drawData( ciXtractFeatureRef feature, Rectf rect )
 {
-    Color col = Color::white();
+    ColorA bgCol    = ColorA( 0.0f, 0.0f, 0.0f, 0.1f );
+    
+    ColorA dataCol  = ColorA( 1.0f, rect.y1 / getWindowHeight(), rect.x1 / getWindowWidth(), 1.0f );
     
     glPushMatrix();
     
-    gl::drawString( label, rect.getUpperLeft(), Color::black() );
+    gl::drawString( feature->getName(), rect.getUpperLeft(), Color::black() );
     
     rect.y1 += 10;
     
-    gl::color( col * 0.2f );
+    gl::color( bgCol );
     gl::drawSolidRect( rect );
     
     gl::translate( rect.getUpperLeft() );
     
     glBegin( GL_QUADS );
-
-    float step = rect.getWidth() / N;
-    float h = rect.getHeight();
-
-    for( int i = 0; i < N; i++ )
+    
+    std::shared_ptr<double> data  = feature->getResult();
+    int                     dataN = feature->getResultN();
+    float                   min   = feature->getResultMin();
+    float                   max   = feature->getResultMax();
+    float                   step  = rect.getWidth() / dataN;
+    float                   h     = rect.getHeight();
+    float                   val, barY;
+    
+    gl::color( dataCol );
+    
+    for( int i = 0; i < dataN; i++ )
     {
-        float barY  = data.get()[i] * gain;
-        barY        = math<float>::clamp( barY, 0.0f, h );
-
-        gl::color( col );
+        val     = ( data.get()[i] - min ) / ( max - min );
+        val     = math<float>::clamp( val, 0.0f, 1.0f );
+        barY    = h * val;
+        
         glVertex2f( i * step,           h );
         glVertex2f( ( i + 1 ) * step,   h );
         glVertex2f( ( i + 1 ) * step,   h-barY );
@@ -174,5 +180,15 @@ void _TBOX_PREFIX_App::drawData( string label, std::shared_ptr<double> data, int
 }
 
 
+void _TBOX_PREFIX_App::keyDown( KeyEvent event )
+{
+    char c = event.getChar();
+    
+    if ( c == 'c' )
+        mXtract->calibrateFeatures();
+}
+
+
 CINDER_APP_BASIC( _TBOX_PREFIX_App, RendererGl )
+
 
