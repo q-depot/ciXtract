@@ -1,5 +1,5 @@
 #ciXtract
-ciXtract is a CinderBlock for LibXtract, a real-time audio feature extraction library developed by Jamie Bullock.
+ciXtract is a CinderBlock for [LibXtract](https://github.com/jamiebullock/LibXtract), a real-time audio feature extraction library developed by [Jamie Bullock](http://jamiebullock.com/).
 
 
 ##Notes
