@@ -29,7 +29,6 @@ public:
     void draw();
 	
 	void drawPcmData();
-    void drawFeature( ciXtractFeatureRef feature );
 	void drawData( string label, std::shared_ptr<double> data, int N, float gain, Rectf rect);
     
     audio::Input                mInput;
