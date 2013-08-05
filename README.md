@@ -129,7 +129,7 @@ The app comes with a xml settings file(assets/default.xml) which can be used to 
 
 [LIBXTRACT: A LIGHTWEIGHT LIBRARY FOR AUDIO FEATURE EXTRACTION](https://s3-eu-west-1.amazonaws.com/papers/LibXtract-_a_lightweight_feature_extraction_library.pdf)
 
-##Supported features
+##Supported Features
 
 ###Vector Features
 * XTRACT_SPECTRUM
