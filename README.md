@@ -112,6 +112,15 @@ float min = feature->getResultMin();
 float max = feature->getResultMax();
 ```
 
+##Samples
+####BasicSample
+This sample is generated using the ciXtractBasicRender template and it shows all the available features in ciXtract.
+
+####XtractSenderOSCApp
+This is simple app that implements ciXtract and send the results via OSC using the feature name as OSC address. This app doesn't visualise the results, it's meant to be a lightweight components running in the background crunching numbers, it's up to the OSC recipient to adjust(gain, offset, damping etc..) and visualise the data.
+The app comes with a xml settings file(assets/default.xml) which can be used to configure OSC(host, port), input device and enable or disable features.
+
+
 ##About LibXtract
 > LibXtract is a simple, portable, lightweight library of audio feature extraction functions. The purpose of the library is to provide a relatively exhaustive set of feature extraction primatives that are designed to be 'cascaded' to create a extraction hierarchies.
 
