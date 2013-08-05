@@ -1,13 +1,14 @@
 #ciXtract
 ciXtract is a CinderBlock for [LibXtract](https://github.com/jamiebullock/LibXtract), a real-time audio feature extraction library developed by [Jamie Bullock](http://jamiebullock.com/).
 
+![ciXtract Sample](http://nocte.co.uk/depot/github_ciXtract_basic.png)
 
 ##Notes
-Status: Alpha
+**Status: Alpha**
 
-Requires Cinder >= 0.8.5
+**Requires Cinder >= 0.8.5**
 
-The source code includes an Xcode example and CinderBlock templates.
+The source code includes Xcode examples and CinderBlock templates.
 The code has been tested on OSX only, but it should work on Windows too, the main difference is that LibXtract uses ooura on windows to get the Fft.
 
 
@@ -117,6 +118,7 @@ float max = feature->getResultMax();
 This sample is generated using the ciXtractBasicRender template and it shows all the available features in ciXtract.
 
 ####XtractSenderOSCApp
+![XtractSenderOSC App](http://nocte.co.uk/depot/github_ciXtract_senderOSC.png)
 This is simple app that implements ciXtract and send the results via OSC using the feature name as OSC address. This app doesn't visualise the results, it's meant to be a lightweight components running in the background crunching numbers, it's up to the OSC recipient to adjust(gain, offset, damping etc..) and visualise the data.
 The app comes with a xml settings file(assets/default.xml) which can be used to configure OSC(host, port), input device and enable or disable features.
 
@@ -183,6 +185,24 @@ The app comes with a xml settings file(assets/default.xml) which can be used to 
 
 #Known Issues
 
-* Auto correlation Fft doesn't work properly and crash often
-* F0 functions don't work below 100Hz, this seems to be a limit in LibXtract depending on the resolution
-* Auto-calibration sucks
+* Auto correlation Fft doesn't work properly and crash often.
+* F0 functions don't work below 100Hz, this seems to be a limit in LibXtract depending on the resolution.
+* Auto-calibration sucks!
+
+
+#Support
+Support and discussions are on the [ciXtract Github issues page](https://github.com/q-depot/ciXtract/issues), please feel free to report an issue or ask any questions.
+If you have a question related to LibXtract please consider to use the [LibXtract issues page](https://github.com/jamiebullock/LibXtract/issues) instead
+
+
+#Disclaimer
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
