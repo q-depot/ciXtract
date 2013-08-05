@@ -176,3 +176,4 @@ float max = feature->getResultMax();
 
 * Auto correlation Fft doesn't work properly and crash often
 * F0 functions don't work below 100Hz, this seems to be a limit in LibXtract depending on the resolution
+* Auto-calibration sucks
