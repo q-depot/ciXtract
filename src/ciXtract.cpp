@@ -40,7 +40,7 @@ void ciXtract::initFeatures()
 {
     mFeatures.push_back( ciXtractSpectrum::create( this, "Spectrum" ) );
     mFeatures.push_back( ciXtractAutocorrelation::create( this, "Auto Correlation" ) );
-    mFeatures.push_back( ciXtractAutocorrelationFft::create( this, "Auto Correlation Fft" ) );
+    // mFeatures.push_back( ciXtractAutocorrelationFft::create( this, "Auto Correlation Fft" ) );
     mFeatures.push_back( ciXtractHarmonicSpectrum::create( this, "Harmonic Spectrum" ) );    
     mFeatures.push_back( ciXtractF0::create( this, "F0" ) );
     mFeatures.push_back( ciXtractFailsafeF0::create( this, "Failsafe F0" ) );
@@ -185,15 +185,11 @@ ciXtractFeatureRef ciXtract::getFeature( xtract_features_ feature )
 }
 
 
-void ciXtract::autoCalibration()
+void ciXtract::calibrateFeatures()
 {
     vector<ciXtractFeatureRef>::iterator it;
     for( it = mFeatures.begin(); it != mFeatures.end(); ++it )
-    {
-        (*it)->resetCalibration();
-        ciXtractFeatureCalibration fc = { (*it), getElapsedSeconds() };
-        mCalibrationFeatures.push_back( fc );
-    }
+        calibrateFeature( (*it) );
 }
 
 

@@ -57,7 +57,7 @@ public:
     
     bool isCalibrating() { return !mCalibrationFeatures.empty(); }
 
-    void autoCalibration();
+    void calibrateFeatures();
     
     void calibrateFeature( ciXtractFeatureRef feature );
     
