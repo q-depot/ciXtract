@@ -13,12 +13,11 @@
 #define CI_XTRACT
 
 #pragma once
-
-#include "libxtract.h"
+#include "cinder/app/App.h"
 #include "cinder/audio/Input.h"
-
 #include "cinder/gl/TextureFont.h"
 #include "ciXtractFeature.h"
+#include "libxtract.h"
 
 using namespace ci;
 using namespace ci::app;

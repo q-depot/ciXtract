@@ -13,9 +13,10 @@
 #define CI_XTRACT_FEATURE
 
 #pragma once
-
 #include <boost/algorithm/string.hpp>
-
+#include <boost/algorithm/string.hpp>
+#include <map>
+#include <vector>
 #include "libxtract.h"
 
 class ciXtractFeature;
@@ -55,7 +56,14 @@ struct ciXtractFeatureParam {
 #define MFCC_FREQ_MAX       20000
 #define SUBBANDS_N          32
 
-
+#ifdef _MSC_VER
+	#ifndef isnan
+		#define isnan(x) ((x)!=(x)) 
+	#endif
+	#ifndef isinf
+		#define isinf(x) ((x)!=(x)) 
+	#endif
+#endif
 
 class ciXtractFeature {
 
@@ -93,7 +101,7 @@ public:
         double val;
         
             
-        for( auto k=0; k < mResultN; k++ )
+        for( uint32_t k=0; k < mResultN; k++ )
         {
             val = mResult.get()[k];
 
@@ -120,16 +128,24 @@ public:
     
     std::string getEnumStr() { return mEnumStr; }
     
-    
+protected:
+	// in VS you can create a struct with {..} but not assign {..} to an existing one, so we use this method until VS will become a decent platform
+	static ciXtractFeatureParam createFeatureParam( double val, ciXtractParamType type, std::map<std::string,double> options = std::map<std::string,double>() )
+	{
+		ciXtractFeatureParam param = { val, type, options };
+		return param;
+	}
+
 protected:
     
-    ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, std::vector<xtract_features_> dependencies, uint32_t resultN = 1 )
+//    ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, std::vector<xtract_features_> dependencies, uint32_t resultN = 1 )
+    ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, uint32_t resultN = 1 )
     {
         mXtract         = xtract;
         mFeature        = feature;
         mName           = name;
         mType           = type;
-        mDependencies   = dependencies;
+//        mDependencies   = dependencies; // windows doesn't support initialiser list!
         mResultN        = resultN;
         mResultMin      = 0.0f;
         mResultMax      = 1.0f;

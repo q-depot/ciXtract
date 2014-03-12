@@ -19,10 +19,10 @@
 		<headerPattern>src/*.h</headerPattern>	
 		<headerPattern>src/LibXtract/src/*.h</headerPattern>
 		<headerPattern>src/LibXtract/src/dywapitchtrack/*.h</headerPattern>
-		<headerPattern>src/LibXtract/src/ooura/*</headerPattern>
 		<headerPattern>src/LibXtract/xtract/*.h</headerPattern>
 	
-		<includePath>src/LibXtract</includePath>
+		<includePath>src</includePath>
+		<includePath>src/LibXtract/xtract</includePath>
 		
 		<platform os="msw">
 			<sourcePattern>src/LibXtract/src/ooura/*.c</sourcePattern>
