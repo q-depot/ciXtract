@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{328C37A5-857B-428E-85D3-0E26A69BD362}</ProjectGuid>
+    <RootNamespace>XtractSenderOSCAudio2</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\OSC\src;..\..\..\..\ciXtract\src;..\..\..\..\Cinder-Audio2\src;..\include;..\..\..\..\..\\include;..\..\..\..\..\\boost</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>"..\..\..\..\..\\include";..\include</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;LibXtract_d.lib;audio2_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;..\..\..\..\Cinder-Audio2\lib\msw;..\..\..\..\ciXtract\lib;..\..\..\..\..\\lib\msw\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;LIBCPMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\..\OSC\src;..\..\..\..\ciXtract\src;..\..\..\..\Cinder-Audio2\src;..\include;..\..\..\..\..\\include;..\..\..\..\..\\boost</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>"..\..\..\..\..\\include";..\include</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;LibXtract.lib;audio2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;..\..\..\..\Cinder-Audio2\lib\msw;..\..\..\..\ciXtract\lib;..\..\..\..\..\\lib\msw\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding />
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\OSC\src\ip\IpEndpointName.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\ip\win32\NetworkingUtils.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\ip\win32\UdpSocket.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\OscBundle.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\OscListener.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\OscMessage.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\OscSender.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\osc\OscOutboundPacketStream.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\osc\OscPrintReceivedElements.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\osc\OscReceivedElements.cpp" />
+    <ClCompile Include="..\..\..\..\OSC\src\osc\OscTypes.cpp" />
+    <ClCompile Include="..\..\..\src\ciXtract.cpp" />
+    <ClCompile Include="..\..\..\src\ciXtractFeature.cpp" />
+    <ClCompile Include="..\src\XtractSenderOSCAudio2App.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\OSC\src\ip\IpEndpointName.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\ip\NetworkingUtils.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\ip\PacketListener.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\ip\TimerListener.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\ip\UdpSocket.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\OscArg.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\OscBundle.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\OscListener.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\OscMessage.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\OscSender.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\osc\MessageMappingOscPacketListener.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\osc\OscException.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\osc\OscHostEndianness.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\osc\OscOutboundPacketStream.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\osc\OscPacketListener.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\osc\OscPrintReceivedElements.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\osc\OscReceivedElements.h" />
+    <ClInclude Include="..\..\..\..\OSC\src\osc\OscTypes.h" />
+    <ClInclude Include="..\..\..\src\ciXtract.h" />
+    <ClInclude Include="..\..\..\src\ciXtractFeature.h" />
+    <ClInclude Include="..\..\..\src\xtract\libxtract.h" />
+    <ClInclude Include="..\..\..\src\xtract\xtract_delta.h" />
+    <ClInclude Include="..\..\..\src\xtract\xtract_helper.h" />
+    <ClInclude Include="..\..\..\src\xtract\xtract_macros.h" />
+    <ClInclude Include="..\..\..\src\xtract\xtract_scalar.h" />
+    <ClInclude Include="..\..\..\src\xtract\xtract_types.h" />
+    <ClInclude Include="..\..\..\src\xtract\xtract_vector.h" />
+    <ClInclude Include="..\include\Resources.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
