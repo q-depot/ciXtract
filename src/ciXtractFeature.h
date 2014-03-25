@@ -14,10 +14,9 @@
 
 #pragma once
 #include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string.hpp>
 #include <map>
 #include <vector>
-#include "libxtract.h"
+#include "xtract/libxtract.h"
 
 class ciXtractFeature;
 typedef std::shared_ptr<ciXtractFeature>       ciXtractFeatureRef;

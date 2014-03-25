@@ -8,7 +8,6 @@
  *
  */
 
-
 #include "ciXtract.h"
 
 using namespace ci;
@@ -16,12 +15,9 @@ using namespace ci::app;
 using namespace std;
 
 
-ciXtract::ciXtract( audio::Input source )
-{
-    mInputSource    = source;
-    mFontSmall      = gl::TextureFont::create( Font( "Helvetica", 12 ) );
-
-    mPcmData        = std::shared_ptr<double>( new double[ PCM_SIZE ] );
+ciXtract::ciXtract()
+{	
+	mPcmData    = std::shared_ptr<double>( new double[ PCM_SIZE ] );
     for( size_t k=0; k < PCM_SIZE; k++ )
         mPcmData.get()[k] = 0.0f;
     
@@ -86,20 +82,11 @@ void ciXtract::initFeatures()
 }
 
 
-void ciXtract::update()
+void ciXtract::update( const float *data )
 {
-    if ( !mInputSource )
-        return;
-    
-    mPcmBuffer = mInputSource.getPcmBuffer();
+	for( size_t k=0; k < PCM_SIZE; k++ )
+		mPcmData.get()[k] = data[k];
 
-	if( !mPcmBuffer )
-		return;
-    
-  	audio::Buffer32fRef buff  = mPcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
-    for( size_t k=0; k < PCM_SIZE; k++ )
-        mPcmData.get()[k] = buff->mData[k];
-    
     vector<ciXtractFeatureRef>::iterator    it;
     
     for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
@@ -121,7 +108,7 @@ void ciXtract::enableFeature( xtract_features_ feature )
     f->mIsEnable = true;
 
     vector<xtract_features_> dependencies = f->mDependencies;
-    for( auto k=0; k < dependencies.size(); k++ )
+    for( size_t k=0; k < dependencies.size(); k++ )
         enableFeature( dependencies[k] );
 }
 
@@ -162,7 +149,7 @@ bool ciXtract::featureDependsOn( xtract_features_ this_feature, xtract_features_
         return false;
     
     vector<xtract_features_> dependencies = f->mDependencies;
-    for( auto i=0; i < dependencies.size(); i++ )
+    for( size_t i=0; i < dependencies.size(); i++ )
         if ( test_feature == dependencies[i] )
             return true;
     
@@ -211,18 +198,17 @@ void ciXtract::calibrateFeature( xtract_features_ featureEnum )
 
 void ciXtract::updateCalibration()
 {
-    vector<ciXtractFeatureCalibration>::iterator it;
-    for( it = mCalibrationFeatures.begin(); it!=mCalibrationFeatures.end(); )
-    {
-        if ( getElapsedSeconds() - it->StartedAt > CI_XTRACT_CALIBRATION_DURATION )
+	for( size_t k=0; k < mCalibrationFeatures.size(); k++ )
+	{
+		if ( getElapsedSeconds() - mCalibrationFeatures[k].StartedAt > CI_XTRACT_CALIBRATION_DURATION )
         {
-            mCalibrationFeatures.erase( it );
+            mCalibrationFeatures.erase( mCalibrationFeatures.begin() + k );
             continue;
         }
         
-        it->feature->calibrate();
+        mCalibrationFeatures[k].feature->calibrate();
         
-        ++it;
-    }
+        k++;
+	}
 }
 

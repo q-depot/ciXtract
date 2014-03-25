@@ -15,9 +15,8 @@
 #pragma once
 #include "cinder/app/App.h"
 #include "cinder/audio/Input.h"
-#include "cinder/gl/TextureFont.h"
 #include "ciXtractFeature.h"
-#include "libxtract.h"
+#include "cinder/audio2/Buffer.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -33,11 +32,11 @@ class ciXtract {
 
 public:
     
-    static ciXtractRef create( audio::Input source ) { return ciXtractRef( new ciXtract( source ) ); }
+	static ciXtractRef create() { return ciXtractRef( new ciXtract() ); }
     
     ~ciXtract();
     
-    void update();
+    void update( const float *data );
     
     void enableFeature( xtract_features_ feature );
     
@@ -67,7 +66,7 @@ public:
 
 private:
     
-    ciXtract( audio::Input source );
+    ciXtract();
 
     void initFeatures();
     
@@ -87,11 +86,8 @@ private:
     std::vector<ciXtractFeatureRef>             mFeatures;
     std::vector<ciXtractFeatureCalibration>     mCalibrationFeatures;
     
-    ci::audio::Input                            mInputSource;
-	audio::PcmBuffer32fRef                      mPcmBuffer;
+	const ci::audio2::Buffer					*mBuffer;
     std::shared_ptr<double>                     mPcmData;
-
-    ci::gl::TextureFontRef                      mFontSmall;
     
 };
 
