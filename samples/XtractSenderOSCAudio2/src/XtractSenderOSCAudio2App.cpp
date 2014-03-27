@@ -20,6 +20,7 @@ public:
 	
 	void prepareSettings( Settings *settings );
 	void setup();
+	void shutdown();
 	void keyDown( KeyEvent event );
 	void update();
 	void draw();
@@ -32,6 +33,7 @@ public:
     
 	audio2::VoiceRef				mVoice;
 	audio2::ScopeSpectralRef		mScopeSpectral;
+	bool							mIsPlaying;
 
     ciXtractRef                     mXtract;
     vector<ciXtractFeatureRef>      mFeatures;
@@ -59,13 +61,12 @@ void XtractSenderOSCAudio2App::setup()
     
     mActiveIcon = gl::Texture::create( loadImage( getAssetPath( "active_icon.png" ) ) );
 	
-    initFromSettings( getAssetPath( "default.xml" ) );
-	
-	loadAudio( getAssetPath("Blank__Kytt_-_08_-_RSPN.mp3") );
+	initFromSettings( getAssetPath( "default.xml" ) );
+}
 
-	// Features are disabled by default, enableFeature() also enable each feature dependencies
-    for( auto k=0; k < XTRACT_FEATURES; k++ )
-        mXtract->enableFeature( (xtract_features_)k );
+
+void XtractSenderOSCAudio2App::shutdown()
+{
 }
 
 
@@ -74,7 +75,7 @@ void XtractSenderOSCAudio2App::update()
 	if ( !mScopeSpectral )
 		return;
 
-	if ( mVoice && !mVoice->isPlaying() )			// loop the sound
+	if ( mVoice && !mVoice->isPlaying() && mIsPlaying )			// loop the sound
 		mVoice->play();
 
 	mXtract->update( mScopeSpectral->getBuffer().getData() );
@@ -132,34 +133,47 @@ void XtractSenderOSCAudio2App::draw()
         mFontMedium->drawString( mFeatures[k]->getName(), pos + Vec2f( 20, 11 ) );
         pos.y += 20;
     }
+
+	drawPcmData();
 }
 
 
 void XtractSenderOSCAudio2App::drawPcmData()
 {
-	/*
-    audio::PcmBuffer32fRef pcmBuffer = mInput.getPcmBuffer();
- 
-	if( !pcmBuffer )
-		return;
- 
-	uint32_t bufferLength           = pcmBuffer->getSampleCount();
-	audio::Buffer32fRef leftBuffer  = pcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
+	audio2::Buffer buff = mScopeSpectral->getBuffer();
+	uint32_t bufferLength           = buff.getSize() / 2;	// take the left channel
  
 	int     displaySize = getWindowWidth();
 	float   scale       = displaySize / (float)bufferLength;
-
+	
 	PolyLine<Vec2f>	leftBufferLine;
+	PolyLine<Vec2f>	rightBufferLine;
 
+	int height = 25;
+	int offset = getWindowHeight() - 160;
+
+
+	// left channel
+	mFontMedium->drawString( "Left channel", Vec2i( 5, offset - 25 ) );
 	for( int i = 0; i < bufferLength; i++ )
     {
 		float x = i * scale;
-        float y = 50 + leftBuffer->mData[i] * 60;
+		float y = offset + buff.getData()[i] * height;
 		leftBufferLine.push_back( Vec2f( x , y) );
 	}
-
 	gl::draw( leftBufferLine );
-	*/
+
+	offset += 80;
+
+	// right channel
+	mFontMedium->drawString( "Right channel", Vec2i( 5, offset - 25 ) );
+	for( int i = 0; i < bufferLength; i++ )
+    {
+		float x = i * scale;
+		float y = offset + buff.getData()[bufferLength+i] * height;
+		rightBufferLine.push_back( Vec2f( x , y) );
+	}
+	gl::draw( rightBufferLine );
 }
 
 
@@ -174,7 +188,10 @@ void XtractSenderOSCAudio2App::initFromSettings(  fs::path path )
         mOscHost    = doc.getChild("settings/oscHost").getAttributeValue<string>("value");
         mOscPort    = atof( doc.getChild("settings/oscPort").getAttributeValue<string>("value").c_str() );
         mInputName  = doc.getChild("settings/inputSource").getAttributeValue<string>("value");
-        
+		
+		// load track
+		loadAudio( getAssetPath( mInputName ) );
+
         // OSC
         mOscSender.setup( mOscHost, mOscPort );
         
@@ -186,7 +203,7 @@ void XtractSenderOSCAudio2App::initFromSettings(  fs::path path )
         // Features
         for(XmlTree::Iter node = doc.begin("features/feature"); node != doc.end(); ++node)
         {
-            enumStr         = node->getAttributeValue<string>("name");
+            enumStr = node->getAttributeValue<string>("name");
             
             for( size_t k=0; k < features.size(); k++ )
                 if ( features[k]->getEnumStr() == enumStr )
@@ -221,13 +238,14 @@ void XtractSenderOSCAudio2App::loadAudio( fs::path filePath )
 	auto scopeFmt = audio2::ScopeSpectral::Format().fftSize( FFT_SIZE ).windowSize( PCM_SIZE );
 	mScopeSpectral = ctx->makeNode( new audio2::ScopeSpectral( scopeFmt ) );
 	
-	//	mVoice = audio2::Voice::create( audio2::load( loadAsset( "Blank__Kytt_-_08_-_RSPN.mp3" ) ) );
 	mVoice = audio2::Voice::create( audio2::load( DataSourcePath::create( filePath.string() ) ) );
 
 	mVoice->setVolume( 1.0f );
 	mVoice->setPan( 0.5f );
 
 	mVoice->play();
+	
+	mIsPlaying = true;
 
 	mVoice->getNode() >> mScopeSpectral >> ctx->getOutput();
 
@@ -246,9 +264,16 @@ void XtractSenderOSCAudio2App::keyDown( KeyEvent event )
 	{
 		// By stopping the Voice first if it is already playing, we always begin playing from the beginning
 		if( mVoice->isPlaying() )
-			mVoice->stop();
-
-		mVoice->play();
+		{
+			mVoice->pause();
+			mIsPlaying = false;
+			console() << mVoice->isPlaying() << endl;
+		}
+		else
+		{
+			mVoice->play();
+			mIsPlaying = true;
+		}
 	}
 
 //	else if ( c = 'l' )

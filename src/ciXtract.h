@@ -16,7 +16,6 @@
 #include "cinder/app/App.h"
 #include "cinder/audio/Input.h"
 #include "ciXtractFeature.h"
-#include "cinder/audio2/Buffer.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -86,7 +85,6 @@ private:
     std::vector<ciXtractFeatureRef>             mFeatures;
     std::vector<ciXtractFeatureCalibration>     mCalibrationFeatures;
     
-	const ci::audio2::Buffer					*mBuffer;
     std::shared_ptr<double>                     mPcmData;
     
 };
