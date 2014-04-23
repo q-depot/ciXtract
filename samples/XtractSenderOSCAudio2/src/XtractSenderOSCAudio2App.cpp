@@ -76,7 +76,7 @@ void XtractSenderOSCAudio2App::update()
 		return;
 
 	if ( mVoice && !mVoice->isPlaying() && mIsPlaying )			// loop the sound
-		mVoice->play();
+		mVoice->start();
 
 	mXtract->update( mScopeSpectral->getBuffer().getData() );
     
@@ -140,6 +140,8 @@ void XtractSenderOSCAudio2App::draw()
 
 void XtractSenderOSCAudio2App::drawPcmData()
 {
+    return;
+    
 	audio2::Buffer buff = mScopeSpectral->getBuffer();
 	uint32_t bufferLength           = buff.getSize() / 2;	// take the left channel
  
@@ -227,29 +229,29 @@ void XtractSenderOSCAudio2App::loadAudio( fs::path filePath )
 	if ( mVoice && mVoice->isPlaying() )
 	{		
 		mVoice->stop();
-		mVoice->getNode()->disconnectAll();
-		mVoice->getNode()->disconnect();
+//		mVoice->getNode()->disconnectAll();
+//		mVoice->getNode()->disconnect();
 	}
 
 	console() << "Load track: " << filePath << endl;
 
-	auto ctx = audio2::Context::master();
+//	auto ctx = audio2::Context::master();
 
-	auto scopeFmt = audio2::ScopeSpectral::Format().fftSize( FFT_SIZE ).windowSize( PCM_SIZE );
-	mScopeSpectral = ctx->makeNode( new audio2::ScopeSpectral( scopeFmt ) );
+//	auto scopeFmt = audio2::ScopeSpectral::Format().fftSize( FFT_SIZE ).windowSize( PCM_SIZE );
+//	mScopeSpectral = ctx->makeNode( new audio2::ScopeSpectral( scopeFmt ) );
 	
 	mVoice = audio2::Voice::create( audio2::load( DataSourcePath::create( filePath.string() ) ) );
 
 	mVoice->setVolume( 1.0f );
 	mVoice->setPan( 0.5f );
 
-	mVoice->play();
+	mVoice->start();
 	
 	mIsPlaying = true;
 
-	mVoice->getNode() >> mScopeSpectral >> ctx->getOutput();
+//	mVoice->getNode() >> mScopeSpectral >> ctx->getOutput();
 
-	ctx->start();
+//	ctx->start();
 }
 
 
@@ -271,7 +273,7 @@ void XtractSenderOSCAudio2App::keyDown( KeyEvent event )
 		}
 		else
 		{
-			mVoice->play();
+			mVoice->start();
 			mIsPlaying = true;
 		}
 	}

@@ -40,8 +40,8 @@ ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract, std::string name )
 	opts["Log Power"]		= XTRACT_LOG_POWER_SPECTRUM;
 
     // params
-    mParams["dc"]			= ciXtractFeature::createFeatureParam( false, CI_XTRACT_PARAM_BOOL );
-    mParams["norm"]			= ciXtractFeature::createFeatureParam( false, CI_XTRACT_PARAM_BOOL );
+    mParams["dc"]			= ciXtractFeature::createFeatureParam( false, CI_XTRACT_PARAM_BOOL, std::map<std::string,double>() );
+    mParams["norm"]			= ciXtractFeature::createFeatureParam( false, CI_XTRACT_PARAM_BOOL, std::map<std::string,double>() );
 	mParams["type"]			= ciXtractFeature::createFeatureParam( XTRACT_MAGNITUDE_SPECTRUM, CI_XTRACT_PARAM_ENUM, opts ); 
     
 	xtract_init_fft( PCM_SIZE, XTRACT_SPECTRUM );
@@ -100,7 +100,7 @@ ciXtractHarmonicSpectrum::ciXtractHarmonicSpectrum( ciXtract *xtract, std::strin
     mEnumStr                    = "XTRACT_HARMONIC_SPECTRUM";
     mData                       = mXtract->getPcmData();
     mResult                     = std::shared_ptr<double>( new double[PCM_SIZE] );
-    mParams["threshold"]        = ciXtractFeature::createFeatureParam( 0.3f, CI_XTRACT_PARAM_DOUBLE );
+    mParams["threshold"]        = ciXtractFeature::createFeatureParam( 0.3f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
 }
 
 void ciXtractHarmonicSpectrum::update()
@@ -120,7 +120,7 @@ ciXtractPeakSpectrum::ciXtractPeakSpectrum( ciXtract *xtract, std::string name )
     mEnumStr                    = "XTRACT_PEAK_SPECTRUM";
     mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     mResult                     = std::shared_ptr<double>( new double[PCM_SIZE] );
-    mParams["threshold"]        = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE );
+    mParams["threshold"]        = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
 }
 
 void ciXtractPeakSpectrum::update()
@@ -141,7 +141,7 @@ ciXtractBark::ciXtractBark( ciXtract *xtract, std::string name )
     mData                       = mXtract->getFeatureResult(XTRACT_SPECTRUM);
     mResult                     = std::shared_ptr<double>( new double[ XTRACT_BARK_BANDS ] );
     mBandLimits                 = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
-    mParams["threshold"]        = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE );
+    mParams["threshold"]        = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
     
     xtract_init_bark( FFT_SIZE, SAMPLERATE >> 1, mBandLimits.get() );
 }
@@ -203,9 +203,9 @@ ciXtractSubBands::ciXtractSubBands( ciXtract *xtract, std::string name )
 	scaleOps["Octave"]		= XTRACT_OCTAVE_SUBBANDS;
 	scaleOps["Linear"]		= XTRACT_LINEAR_SUBBANDS;
 
-    mParams["bin_offset"]	= ciXtractFeature::createFeatureParam( 0.0f,					CI_XTRACT_PARAM_DOUBLE );
-    mParams["function"]     = ciXtractFeature::createFeatureParam( XTRACT_SUM,				CI_XTRACT_PARAM_ENUM, funcOpts );
-    mParams["scale"]        = ciXtractFeature::createFeatureParam( XTRACT_LINEAR_SUBBANDS,	CI_XTRACT_PARAM_ENUM, scaleOps );
+    mParams["bin_offset"]	= ciXtractFeature::createFeatureParam( 0.0f,					CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
+    mParams["function"]     = ciXtractFeature::createFeatureParam( XTRACT_SUM,				CI_XTRACT_PARAM_ENUM,   funcOpts );
+    mParams["scale"]        = ciXtractFeature::createFeatureParam( XTRACT_LINEAR_SUBBANDS,	CI_XTRACT_PARAM_ENUM,   scaleOps );
 }
 
 void ciXtractSubBands::update()
@@ -594,7 +594,7 @@ ciXtractRolloff::ciXtractRolloff( ciXtract *xtract, std::string name )
     mEnumStr                = "XTRACT_ROLLOFF";
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
     mData                   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
-    mParams["threshold"]    = ciXtractFeature::createFeatureParam( 15.0f, CI_XTRACT_PARAM_DOUBLE );
+    mParams["threshold"]    = ciXtractFeature::createFeatureParam( 15.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
 }
 
 void ciXtractRolloff::update()
@@ -804,7 +804,7 @@ ciXtractLowestValue::ciXtractLowestValue( ciXtract *xtract, std::string name )
     mEnumStr                = "XTRACT_LOWEST_VALUE";
     mResult                 = std::shared_ptr<double>( new double(0.0f) );
     mData                   = mXtract->getFeatureResult(XTRACT_SPECTRUM);
-    mParams["lower_limit"]  = ciXtractFeature::createFeatureParam( 0.2f, CI_XTRACT_PARAM_DOUBLE );
+    mParams["lower_limit"]  = ciXtractFeature::createFeatureParam( 0.2f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
 }
 
 void ciXtractLowestValue::update()

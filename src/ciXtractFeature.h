@@ -129,7 +129,7 @@ public:
     
 protected:
 	// in VS you can create a struct with {..} but not assign {..} to an existing one, so we use this method until VS will become a decent platform
-	static ciXtractFeatureParam createFeatureParam( double val, ciXtractParamType type, std::map<std::string,double> options = std::map<std::string,double>() )
+	static ciXtractFeatureParam createFeatureParam( double val, ciXtractParamType type, std::map<std::string,double> options )
 	{
 		ciXtractFeatureParam param = { val, type, options };
 		return param;
