@@ -86,7 +86,7 @@ void ciXtract::update( const float *data )
 {
 	for( size_t k=0; k < PCM_SIZE; k++ )
 		mPcmData.get()[k] = data[k];
-
+    
     vector<ciXtractFeatureRef>::iterator    it;
     
     for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
