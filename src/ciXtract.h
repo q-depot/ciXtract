@@ -14,7 +14,7 @@
 
 #pragma once
 #include "cinder/app/App.h"
-#include "cinder/audio/Input.h"
+//#include "cinder/audio/Input.h"
 #include "ciXtractFeature.h"
 
 using namespace ci;
@@ -35,7 +35,7 @@ public:
     
     ~ciXtract();
     
-    void update( const float *data );
+    void update( const float *pcmData );
     
     void enableFeature( xtract_features_ feature );
     

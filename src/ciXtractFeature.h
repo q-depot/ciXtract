@@ -44,16 +44,16 @@ struct ciXtractFeatureParam {
 };
 
 
-#define PCM_SIZE            1024
-#define FFT_SIZE            512
-#define SAMPLERATE          44100
-#define SAMPLERATE_N        SAMPLERATE / (double)PCM_SIZE
+#define CIXTRACT_PCM_SIZE            1024
+#define CIXTRACT_FFT_SIZE            512
+#define CIXTRACT_SAMPLERATE          44100
+#define CIXTRACT_SAMPLERATE_N        CIXTRACT_SAMPLERATE / (double)CIXTRACT_PCM_SIZE
 
-#define PERIOD              100
-#define MFCC_FREQ_BANDS     13
-#define MFCC_FREQ_MIN       20
-#define MFCC_FREQ_MAX       20000
-#define SUBBANDS_N          32
+#define CIXTRACT_PERIOD              100
+#define CIXTRACT_MFCC_FREQ_BANDS     13
+#define CIXTRACT_MFCC_FREQ_MIN       20
+#define CIXTRACT_MFCC_FREQ_MAX       20000
+#define CIXTRACT_SUBBANDS_N          32
 
 #ifdef _MSC_VER
 	#ifndef isnan

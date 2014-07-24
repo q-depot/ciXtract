@@ -17,8 +17,8 @@ using namespace std;
 
 ciXtract::ciXtract()
 {	
-	mPcmData    = std::shared_ptr<double>( new double[ PCM_SIZE ] );
-    for( size_t k=0; k < PCM_SIZE; k++ )
+	mPcmData    = std::shared_ptr<double>( new double[ CIXTRACT_PCM_SIZE ] );
+    for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
         mPcmData.get()[k] = 0.0f;
     
     initFeatures();
@@ -82,11 +82,16 @@ void ciXtract::initFeatures()
 }
 
 
-void ciXtract::update( const float *data )
+void ciXtract::update( const float *pcmData )
 {
-	for( size_t k=0; k < PCM_SIZE; k++ )
-		mPcmData.get()[k] = data[k];
-
+	for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
+    {
+        console() << pcmData[k] << "_";
+		mPcmData.get()[k] = pcmData[k];
+    }
+    console() << endl;
+    
+    
     vector<ciXtractFeatureRef>::iterator    it;
     
     for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
