@@ -127,6 +127,9 @@ public:
     
     std::string getEnumStr() { return mEnumStr; }
     
+    virtual void draw( ci::Rectf rect, ci::ColorA plotCol = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ), ci::ColorA bgCol = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ) );
+    
+    
 protected:
 	// in VS you can create a struct with {..} but not assign {..} to an existing one, so we use this method until VS will become a decent platform
 	static ciXtractFeatureParam createFeatureParam( double val, ciXtractParamType type, std::map<std::string,double> options )

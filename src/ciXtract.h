@@ -14,7 +14,6 @@
 
 #pragma once
 #include "cinder/app/App.h"
-//#include "cinder/audio/Input.h"
 #include "ciXtractFeature.h"
 
 using namespace ci;

@@ -16,6 +16,47 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+
+void ciXtractFeature::draw( Rectf rect, ColorA plotCol, ColorA bgCol )
+{
+    glPushMatrix();
+    
+    gl::drawString( getName(), rect.getUpperLeft(), plotCol );
+    
+    rect.y1 += 10;
+    
+    gl::color( bgCol );
+    gl::drawSolidRect( rect );
+    
+    gl::translate( rect.getUpperLeft() );
+    
+    float                   step  = rect.getWidth() / mResultN;
+    float                   h     = rect.getHeight();
+    float                   val, barY;
+    
+    gl::color( plotCol );
+    
+    glBegin( GL_QUADS );
+    
+    for( int i = 0; i < mResultN; i++ )
+    {
+        val     = ( mResult.get()[i] - mResultMin ) / ( mResultMax - mResultMin );
+        val     = math<float>::clamp( val, 0.0f, 1.0f );
+        barY    = h * val;
+        
+        glVertex2f( i * step,           h );
+        glVertex2f( ( i + 1 ) * step,   h );
+        glVertex2f( ( i + 1 ) * step,   h-barY );
+        glVertex2f( i * step,           h-barY );
+    }
+    
+    glEnd();
+    
+    gl::popMatrices();
+}
+
+
+
 // ------------------------------------------------------------------------------------------------ //
 // ------------------------------------------------------------------------------------------------ //
 // *************************************** VECTOR FEATURES **************************************** //
