@@ -5,6 +5,9 @@
 
 #include "cinder/app/AppNative.h"
 
+#include "cinder/audio/Context.h"
+#include "cinder/audio/MonitorNode.h"
+
 #include "ciXtract.h"
 
 using namespace ci;
@@ -27,10 +30,15 @@ public:
 	void drawPcmData();
 	void drawData( ciXtractFeatureRef feature, Rectf rect );
     
-    audio::Input                mInput;
-    ciXtractRef                 mXtract;
+    ciXtractRef                     mXtract;
 	
-    vector<ciXtractFeatureRef>  mFeatures;
+    vector<ciXtractFeatureRef>      mFeatures;
+    
+    
+	audio::InputDeviceNodeRef		mInputDeviceNode;
+	audio::MonitorNodeRef           mMonitorNode;
+    audio::Buffer                   mPcmBuffer;
+    
 };
 
 
@@ -43,23 +51,33 @@ void BasicSampleApp::prepareSettings(Settings *settings)
 
 void BasicSampleApp::setup()
 {
-	// Initialise audio input
-    const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
-	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter )
-    {
-        if ( (*iter)->getName() == "Soundflower (2ch)" )
-        {
-            mInput = audio::Input( *iter );
-            mInput.start();
-            break;
-        }
-	}
- 
-    if ( !mInput )
-        exit(-1);
+    auto ctx = audio::Context::master();
+    
+    vector<audio::DeviceRef> devices = audio::Device::getInputDevices();
+    console() << "List audio devices:" << endl;
+    for( auto k=0; k < devices.size(); k++ )
+        console() << devices[k]->getName() << endl;
+
+    // init Soundflower
+    // audio::DeviceRef dev    = audio::Device::findDeviceByName( "Soundflower (2ch)" );
+    // mInputDeviceNode        = ctx->createInputDeviceNode( dev );
+    
+    // init default input device
+    mInputDeviceNode = ctx->createInputDeviceNode();
+    
+	// By providing an FFT size double that of the window size, we 'zero-pad' the analysis data, which gives
+	// an increase in resolution of the resulting spectrum data.
+	auto monitorFormat = audio::MonitorNode::Format().windowSize( CIXTRACT_PCM_SIZE );
+	mMonitorNode = ctx->makeNode( new audio::MonitorNode( monitorFormat ) );
+    
+	mInputDeviceNode >> mMonitorNode;
+    
+	// InputDeviceNode (and all InputNode subclasses) need to be enabled()'s to process audio. So does the Context:
+	mInputDeviceNode->enable();
+	ctx->enable();
  
 	// Initialise xtract and get feature refs.
-    mXtract     = ciXtract::create( mInput );
+    mXtract     = ciXtract::create();
     mFeatures   = mXtract->getFeatures();
     
 	// Features are disabled by default, enableFeature() also enable each feature dependencies
@@ -70,7 +88,9 @@ void BasicSampleApp::setup()
 
 void BasicSampleApp::update()
 {
-	mXtract->update();
+    mPcmBuffer = mMonitorNode->getBuffer();
+    
+	mXtract->update( mPcmBuffer.getData() );
 }
 
 
@@ -107,14 +127,9 @@ void BasicSampleApp::draw()
 
 void BasicSampleApp::drawPcmData()
 {
-    audio::PcmBuffer32fRef pcmBuffer = mInput.getPcmBuffer();
- 
-	if( !pcmBuffer )
-		return;
- 
-	uint32_t bufferLength           = pcmBuffer->getSampleCount();
-	audio::Buffer32fRef leftBuffer  = pcmBuffer->getChannelData( audio::CHANNEL_FRONT_LEFT );
- 
+	uint32_t    bufferLength    = mPcmBuffer.getSize() / mPcmBuffer.getNumChannels();
+    float       *leftBuffer     = mPcmBuffer.getData();
+
 	int     displaySize = getWindowWidth();
 	float   scale       = displaySize / (float)bufferLength;
 
@@ -125,7 +140,7 @@ void BasicSampleApp::drawPcmData()
 	for( int i = 0; i < bufferLength; i++ )
     {
 		float x = i * scale;
-        float y = 50 + leftBuffer->mData[i] * 60;
+        float y = 50 + leftBuffer[i] * 60;
 		leftBufferLine.push_back( Vec2f( x , y) );
 	}
 
