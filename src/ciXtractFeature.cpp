@@ -17,11 +17,11 @@ using namespace ci::app;
 using namespace std;
 
 
-void ciXtractFeature::draw( Rectf rect, ColorA plotCol, ColorA bgCol )
+void ciXtractFeature::draw( Rectf rect, ColorA plotCol, ColorA bgCol, ColorA labelCol )
 {
     glPushMatrix();
     
-    gl::drawString( getName(), rect.getUpperLeft(), plotCol );
+    gl::drawString( getName(), rect.getUpperLeft(), labelCol );
     
     rect.y1 += 10;
     

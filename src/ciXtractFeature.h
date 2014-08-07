@@ -127,7 +127,10 @@ public:
     
     std::string getEnumStr() { return mEnumStr; }
     
-    virtual void draw( ci::Rectf rect, ci::ColorA plotCol = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ), ci::ColorA bgCol = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ) );
+    virtual void draw(  ci::Rectf   rect,
+                        ci::ColorA  plotCol     = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ),
+                        ci::ColorA  bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
+                        ci::ColorA  labelCol    = ci::ColorA( 0.1f, 0.1f, 0.1f, 1.0f ) );
     
     
 protected:

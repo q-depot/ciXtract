@@ -14,27 +14,22 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define WIDGET_SIZE Vec2i( 150, 40 )
-
 
 class BasicSampleApp : public AppBasic {
 
 public:
-	
+
 	void prepareSettings( Settings *settings );
 	void setup();
 	void update();
     void draw();
-	void keyDown( KeyEvent event );
-	
+
 	void drawPcmData();
-	void drawData( ciXtractFeatureRef feature, Rectf rect );
-    
+
     ciXtractRef                     mXtract;
-	
+
     vector<ciXtractFeatureRef>      mFeatures;
-    
-    
+
 	audio::InputDeviceNodeRef		mInputDeviceNode;
 	audio::MonitorNodeRef           mMonitorNode;
     audio::Buffer                   mPcmBuffer;
@@ -58,29 +53,30 @@ void BasicSampleApp::setup()
     for( auto k=0; k < devices.size(); k++ )
         console() << devices[k]->getName() << endl;
 
-    // init Soundflower
-    // audio::DeviceRef dev    = audio::Device::findDeviceByName( "Soundflower (2ch)" );
-    // mInputDeviceNode        = ctx->createInputDeviceNode( dev );
+    // find and initialise a device by name
+    audio::DeviceRef dev    = audio::Device::findDeviceByName( "Soundflower (2ch)" );
+    mInputDeviceNode        = ctx->createInputDeviceNode( dev );
     
-    // init default input device
-    mInputDeviceNode = ctx->createInputDeviceNode();
+    // initialise default input device
+//    mInputDeviceNode = ctx->createInputDeviceNode();
     
-	// By providing an FFT size double that of the window size, we 'zero-pad' the analysis data, which gives
-	// an increase in resolution of the resulting spectrum data.
+    // initialise MonitorNode to get the PCM data
 	auto monitorFormat = audio::MonitorNode::Format().windowSize( CIXTRACT_PCM_SIZE );
 	mMonitorNode = ctx->makeNode( new audio::MonitorNode( monitorFormat ) );
     
+    // pipe the input device into the MonitorNode
 	mInputDeviceNode >> mMonitorNode;
     
 	// InputDeviceNode (and all InputNode subclasses) need to be enabled()'s to process audio. So does the Context:
 	mInputDeviceNode->enable();
 	ctx->enable();
  
-	// Initialise xtract and get feature refs.
+	// Initialise ciXtract
     mXtract     = ciXtract::create();
     mFeatures   = mXtract->getFeatures();
     
-	// Features are disabled by default, enableFeature() also enable each feature dependencies
+	// Features are disabled by default, call enableFeature() to enable each feature and its dependencies
+    // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
     for( auto k=0; k < XTRACT_FEATURES; k++ )
         mXtract->enableFeature( (xtract_features_)k );
 }
@@ -90,7 +86,8 @@ void BasicSampleApp::update()
 {
     mPcmBuffer = mMonitorNode->getBuffer();
     
-	mXtract->update( mPcmBuffer.getData() );
+    if ( !mPcmBuffer.isEmpty() )
+        mXtract->update( mPcmBuffer.getData() );
 }
 
 
@@ -102,31 +99,37 @@ void BasicSampleApp::draw()
 	gl::color( Color::gray( 0.1f ) );
 	drawPcmData();
     
-    if ( mXtract->isCalibrating() )
-        gl::drawString( "CALIBRATION IN PROGRESS", Vec2f( 15, getWindowHeight() - 20 ), Color::black() );
-    else
-        gl::drawString( "Press 'c' to run the calibration", Vec2f( 15, getWindowHeight() - 20 ), Color::black() );
-
-    Vec2f initPos( 15, 100 );
-    Vec2f pos = initPos;
+    Vec2i   widgetSize  = Vec2f( 160, 40 );
+    Vec2f   initPos     = Vec2f( 15, 100 );
+    Vec2f   pos         = initPos;
+    ColorA  bgCol       = ColorA( 0.0f, 0.0f, 0.0f, 0.1f );
+    ColorA  plotCol;
+    Rectf   rect;
     
     for( auto k=0; k < mFeatures.size(); k++ )
     {
-        drawData( mFeatures[k], Rectf( pos, pos + WIDGET_SIZE ) );
+        if ( !mFeatures[k]->isEnable() )
+            continue;
         
-        pos.y += WIDGET_SIZE.y + 25;
+        rect    = Rectf( pos, pos + widgetSize );
+        plotCol = ColorA( 1.0f, rect.y1 / getWindowHeight(), rect.x1 / getWindowWidth(), 1.0f );
         
-        if ( pos.y >= getWindowHeight() - WIDGET_SIZE.y )
-        {
-            pos.x += WIDGET_SIZE.x + initPos.x;
-            pos.y = initPos.y;
-        }
+        mFeatures[k]->draw( rect, plotCol, bgCol );
+        
+        pos.y += widgetSize.y + 25;
+        if ( pos.y >= getWindowHeight() - widgetSize.y )
+            pos = Vec2i( pos.x + widgetSize.x + initPos.x, initPos.y );
     }
 }
 
 
 void BasicSampleApp::drawPcmData()
 {
+    if ( mPcmBuffer.isEmpty() )
+        return;
+    
+    // draw the first(left) channel in the PCM buffer
+    // getData() returns a pointer to the first sample in the buffer
 	uint32_t    bufferLength    = mPcmBuffer.getSize() / mPcmBuffer.getNumChannels();
     float       *leftBuffer     = mPcmBuffer.getData();
 
@@ -145,62 +148,6 @@ void BasicSampleApp::drawPcmData()
 	}
 
 	gl::draw( leftBufferLine );
-}
-
-
-void BasicSampleApp::drawData( ciXtractFeatureRef feature, Rectf rect )
-{
-    ColorA bgCol    = ColorA( 0.0f, 0.0f, 0.0f, 0.1f );
-    
-    ColorA dataCol  = ColorA( 1.0f, rect.y1 / getWindowHeight(), rect.x1 / getWindowWidth(), 1.0f );
-    
-    glPushMatrix();
-    
-    gl::drawString( feature->getName(), rect.getUpperLeft(), Color::black() );
-    
-    rect.y1 += 10;
-    
-    gl::color( bgCol );
-    gl::drawSolidRect( rect );
-    
-    gl::translate( rect.getUpperLeft() );
-    
-    glBegin( GL_QUADS );
-    
-    std::shared_ptr<double> data  = feature->getResult();
-    int                     dataN = feature->getResultN();
-    float                   min   = feature->getResultMin();
-    float                   max   = feature->getResultMax();
-    float                   step  = rect.getWidth() / dataN;
-    float                   h     = rect.getHeight();
-    float                   val, barY;
-    
-    gl::color( dataCol );
-    
-    for( int i = 0; i < dataN; i++ )
-    {
-        val     = ( data.get()[i] - min ) / ( max - min );
-        val     = math<float>::clamp( val, 0.0f, 1.0f );
-        barY    = h * val;
-        
-        glVertex2f( i * step,           h );
-        glVertex2f( ( i + 1 ) * step,   h );
-        glVertex2f( ( i + 1 ) * step,   h-barY );
-        glVertex2f( i * step,           h-barY );
-    }
-
-    glEnd();
-
-    gl::popMatrices();
-}
-
-
-void BasicSampleApp::keyDown( KeyEvent event )
-{
-    char c = event.getChar();
-    
-    if ( c == 'c' )
-        mXtract->calibrateFeatures();
 }
 
 
