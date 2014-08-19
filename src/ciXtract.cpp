@@ -212,3 +212,14 @@ void ciXtract::updateCalibration()
 	}
 }
 
+
+void ciXtract::listFeatures()
+{
+    console() << endl << "--- ciXtract available features ---" << endl;
+    
+    vector<ciXtractFeatureRef>::iterator it;
+    for( it = mFeatures.begin(); it != mFeatures.end(); ++it )
+        console() << (*it)->getEnumStr() << endl;
+
+    console() << "-----------------------------------" << endl << endl;
+}

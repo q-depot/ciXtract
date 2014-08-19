@@ -75,6 +75,9 @@ void BasicSampleApp::setup()
     mXtract     = ciXtract::create();
     mFeatures   = mXtract->getFeatures();
     
+    // List all available features, this prints out the enumerator that can be used to select or toggle the feature
+    mXtract->listFeatures();
+    
 	// Features are disabled by default, call enableFeature() to enable each feature and its dependencies
     // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
     for( auto k=0; k < XTRACT_FEATURES; k++ )
