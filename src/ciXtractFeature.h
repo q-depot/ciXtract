@@ -70,26 +70,32 @@ public:
     
     friend class ciXtract;
     
-    virtual void update() {}
+    enum ciXtractDataType {
+        CIXTRACT_DATA,          // processed data (gain, offset, damping etc..)
+        CIXTRACT_DATA_RAW       // raw data
+    };
+    
+    virtual void update();
     
     bool isEnable() { return mIsEnable; }
     
     xtract_features_ getEnum() { return mFeature; }
     
-    double getResultMin() { return mResultMin; }
-    double getResultMax() { return mResultMax; }
+    double getMin() { return mMin; }
+    double getMax() { return mMax; }
     
     ciXtractFeatureType getType() { return mType; }
     
     std::string getName() { return mName; }
     
-    std::shared_ptr<double>         getResult() { return mResult; }
-    uint32_t                        getResultN() { return mResultN; }
+    std::shared_ptr<double>         getResults()    { return mResults; }
+    std::shared_ptr<double>         getResultsRaw() { return mResultsRaw; }
+    uint32_t                        getResultsN()   { return mResultsN; }
     
     void resetCalibration()
     {    
-        mResultMin = std::numeric_limits<double>::max();
-        mResultMax = -std::numeric_limits<double>::max();
+        mMin = std::numeric_limits<double>::max();
+        mMax = -std::numeric_limits<double>::max();
     }
     
     void calibrate()
@@ -100,22 +106,22 @@ public:
         double val;
         
             
-        for( uint32_t k=0; k < mResultN; k++ )
+        for( uint32_t k=0; k < mResultsN; k++ )
         {
-            val = mResult.get()[k];
+            val = mResultsRaw.get()[k];
 
             if ( isnan(val) || isinf(val) )
                 continue;
 
-            if ( val > mResultMax )
-                mResultMax = val;
+            if ( val > mMax )
+                mMax = val;
             
-            else if ( val < mResultMin )
-                mResultMin = val;
+            else if ( val < mMin )
+                mMin = val;
         }
         
-        if ( mResultMin == mResultMax )
-            mResultMax += 0.001f;
+        if ( mMin == mMax )
+            mMax += 0.001f;
     }
     
     std::map<std::string,ciXtractFeatureParam>  getParams() { return mParams; }
@@ -127,11 +133,21 @@ public:
     
     std::string getEnumStr() { return mEnumStr; }
     
-    virtual void draw(  ci::Rectf   rect,
-                        ci::ColorA  plotCol     = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ),
-                        ci::ColorA  bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
-                        ci::ColorA  labelCol    = ci::ColorA( 0.1f, 0.1f, 0.1f, 1.0f ) );
+    virtual void draw(  ci::Rectf           rect,
+                        ciXtractDataType    dataType    = CIXTRACT_DATA_RAW,
+                        ci::ColorA          plotCol     = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ),
+                        ci::ColorA          bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
+                        ci::ColorA          labelCol    = ci::ColorA( 0.1f, 0.1f, 0.1f, 1.0f ) );
     
+    float   getGain()       { return mGain; }
+    float   getOffset()     { return mOffset; }
+    float   getDamping()    { return mDamping; }
+    bool    isLog()         { return mIsLog; }
+    
+    void setGain( float val )       { mGain = val; }
+    void setOffset( float val )     { mOffset = val; }
+    void setDamping( float val )    { mDamping = val; }
+    void setLog( bool isLog )       { mIsLog = isLog; }
     
 protected:
 	// in VS you can create a struct with {..} but not assign {..} to an existing one, so we use this method until VS will become a decent platform
@@ -144,18 +160,7 @@ protected:
 protected:
     
 //    ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, std::vector<xtract_features_> dependencies, uint32_t resultN = 1 )
-    ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, uint32_t resultN = 1 )
-    {
-        mXtract         = xtract;
-        mFeature        = feature;
-        mName           = name;
-        mType           = type;
-//        mDependencies   = dependencies; // windows doesn't support initialiser list!
-        mResultN        = resultN;
-        mResultMin      = 0.0f;
-        mResultMax      = 1.0f;
-        mIsEnable       = false;
-    }
+    ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, uint32_t resultsN = 1, int resultArraySize = -1 );
 
     
 protected:
@@ -167,13 +172,18 @@ protected:
     ciXtractFeatureType             mType;
     std::vector<xtract_features_>   mDependencies;
     
-    std::shared_ptr<double>         mData;
+    std::shared_ptr<double>         mDataInput;
     
-    std::shared_ptr<double>         mResult;
-    uint32_t                        mResultN;
+    std::shared_ptr<double>         mResultsRaw;        // raw data, no gain, damping etc. - spectrum features also include the frequency bins
+    std::shared_ptr<double>         mResults;           // processed data, spectrum features do NOT include frequency bins
+    uint32_t                        mResultsN;          // results N size, DATA size only, no frequency bins
     
-    double                          mResultMin;
-    double                          mResultMax;
+    // mResults parameters, these are used to process the mResultsRaw
+    float                           mGain, mOffset, mDamping;
+    bool                            mIsLog;
+    
+    double                          mMin;
+    double                          mMax;
     
     bool                            mIsEnable;
     double                          mArgd[4];
