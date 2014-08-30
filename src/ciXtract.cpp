@@ -227,13 +227,6 @@ void ciXtract::listFeatures()
 
 void ciXtract::drawPcm( ci::Rectf rect, const float *pcmData, size_t pcmSize )
 {
-    // draw the first(left) channel in the PCM buffer
-    // getData() returns a pointer to the first sample in the buffer
-//	uint32_t    bufferLength    = mPcmBuffer.getSize() / mPcmBuffer.getNumChannels();
-//    float       *leftBuffer     = mPcmBuffer.getData();
-    
-//	int     displaySize = getWindowWidth();
-    
     gl::pushMatrices();
     
     gl::translate( rect.x1, rect.y1 + rect.getHeight() * 0.5f );
@@ -256,3 +249,42 @@ void ciXtract::drawPcm( ci::Rectf rect, const float *pcmData, size_t pcmSize )
     gl::popMatrices();
 }
 
+
+void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, bool drawRaw, ColorA plotCol, ColorA bgCol, ColorA labelCol )
+{
+    glPushMatrix();
+    
+    gl::drawString( feature->getName(), rect.getUpperLeft(), labelCol );
+    
+    rect.y1 += 10;
+    
+    std::shared_ptr<double> data    = drawRaw ? feature->getResultsRaw() : feature->getResults();
+    float                   step    = rect.getWidth() / feature->getResultsN();
+    float                   h       = rect.getHeight();
+    float                   val, barY;
+    
+    gl::color( bgCol );
+    gl::drawSolidRect( rect );
+    
+    gl::translate( rect.getUpperLeft() );
+    
+    gl::color( plotCol );
+    
+    glBegin( GL_QUADS );
+    
+    for( int i = 0; i < feature->getResultsN(); i++ )
+    {
+        val     = ( data.get()[i] - feature->getMin() ) / ( feature->getMax() - feature->getMin() );
+        val     = math<float>::clamp( val, 0.0f, 1.0f );
+        barY    = h * val;
+        
+        glVertex2f( i * step,           h );
+        glVertex2f( ( i + 1 ) * step,   h );
+        glVertex2f( ( i + 1 ) * step,   h-barY );
+        glVertex2f( i * step,           h-barY );
+    }
+    
+    glEnd();
+    
+    gl::popMatrices();
+}

@@ -84,7 +84,16 @@ public:
     //! list all the available features, the enumarators can be used to identify or toggle the features
     void listFeatures();
     
+    //! draw the PCM waveform
 	static void drawPcm( ci::Rectf rect, const float *pcmData, size_t pcmSize );
+
+    //! draw the feature data
+    static void drawData(   ciXtractFeatureRef  feature,
+                            Rectf               rect,
+                            bool                drawRaw     = false,
+                            ci::ColorA          plotCol     = ci::ColorA::white(),
+                            ci::ColorA          bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
+                            ci::ColorA          labelCol    = ci::ColorA::white() );
     
 private:
     

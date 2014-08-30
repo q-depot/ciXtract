@@ -131,22 +131,6 @@ public:
     
     std::string getEnumStr() { return mEnumStr; }
     
-    void draw(  ci::Rectf   rect,
-                ci::ColorA  plotCol     = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ),
-                ci::ColorA  bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
-                ci::ColorA  labelCol    = ci::ColorA( 0.1f, 0.1f, 0.1f, 1.0f ) )
-    {
-        drawData( mResults, rect, plotCol, bgCol, labelCol );
-    }
-    
-    void drawRaw(   ci::Rectf   rect,
-                    ci::ColorA  plotCol     = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ),
-                    ci::ColorA  bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
-                    ci::ColorA  labelCol    = ci::ColorA( 0.1f, 0.1f, 0.1f, 1.0f ) )
-    {
-        drawData( mResultsRaw, rect, plotCol, bgCol, labelCol );
-    }
-    
     float   getGain()       { return mGain; }
     float   getOffset()     { return mOffset; }
     float   getDamping()    { return mDamping; }
@@ -170,8 +154,6 @@ protected:
     
     ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, uint32_t resultsN = 1, int resultArraySize = -1 );
 
-    void drawData( std::shared_ptr<double> data, ci::Rectf rect, ci::ColorA  plotCol, ci::ColorA  bgCol, ci::ColorA  labelCol );
-    
 protected:
     
     ciXtract                        *mXtract;

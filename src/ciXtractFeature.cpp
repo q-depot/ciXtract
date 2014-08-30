@@ -79,46 +79,6 @@ void ciXtractFeature::update()
 }
 
 
-void ciXtractFeature::drawData( std::shared_ptr<double> data, ci::Rectf rect, ci::ColorA  plotCol, ci::ColorA  bgCol, ci::ColorA  labelCol )
-{
-    glPushMatrix();
-    
-    gl::drawString( getName(), rect.getUpperLeft(), labelCol );
-    
-    rect.y1 += 10;
-    
-    gl::color( bgCol );
-    gl::drawSolidRect( rect );
-    
-    gl::translate( rect.getUpperLeft() );
-    
-    float                   step  = rect.getWidth() / mResultsN;
-    float                   h     = rect.getHeight();
-    float                   val, barY;
-    
-    gl::color( plotCol );
-    
-    glBegin( GL_QUADS );
-    
-    for( int i = 0; i < mResultsN; i++ )
-    {
-        val     = ( data.get()[i] - mMin ) / ( mMax - mMin );
-        val     = math<float>::clamp( val, 0.0f, 1.0f );
-        barY    = h * val;
-        
-        glVertex2f( i * step,           h );
-        glVertex2f( ( i + 1 ) * step,   h );
-        glVertex2f( ( i + 1 ) * step,   h-barY );
-        glVertex2f( i * step,           h-barY );
-    }
-    
-    glEnd();
-    
-    gl::popMatrices();
-}
-
-
-
 // ------------------------------------------------------------------------------------------------ //
 // ------------------------------------------------------------------------------------------------ //
 // *************************************** VECTOR FEATURES **************************************** //
