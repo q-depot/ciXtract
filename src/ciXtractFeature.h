@@ -70,11 +70,6 @@ public:
     
     friend class ciXtract;
     
-    enum ciXtractDataType {
-        CIXTRACT_DATA,          // processed data (gain, offset, damping etc..)
-        CIXTRACT_DATA_RAW       // raw data
-    };
-    
     virtual void update();
     
     bool isEnable() { return mIsEnable; }
@@ -91,6 +86,9 @@ public:
     std::shared_ptr<double>         getResults()    { return mResults; }
     std::shared_ptr<double>         getResultsRaw() { return mResultsRaw; }
     uint32_t                        getResultsN()   { return mResultsN; }
+    
+    double getDataValue( int k ) { return mResults.get()[ k % mResultsN ]; }
+    double getDataValueRaw( int k ) { return mResultsRaw.get()[ k % mResultsN ]; }
     
     void resetCalibration()
     {    
@@ -133,11 +131,21 @@ public:
     
     std::string getEnumStr() { return mEnumStr; }
     
-    virtual void draw(  ci::Rectf           rect,
-                        ciXtractDataType    dataType    = CIXTRACT_DATA_RAW,
-                        ci::ColorA          plotCol     = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ),
-                        ci::ColorA          bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
-                        ci::ColorA          labelCol    = ci::ColorA( 0.1f, 0.1f, 0.1f, 1.0f ) );
+    void draw(  ci::Rectf   rect,
+                ci::ColorA  plotCol     = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ),
+                ci::ColorA  bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
+                ci::ColorA  labelCol    = ci::ColorA( 0.1f, 0.1f, 0.1f, 1.0f ) )
+    {
+        drawData( mResults, rect, plotCol, bgCol, labelCol );
+    }
+    
+    void drawRaw(   ci::Rectf   rect,
+                    ci::ColorA  plotCol     = ci::ColorA( 0.0f, 1.0f, 1.0f, 0.85f ),
+                    ci::ColorA  bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
+                    ci::ColorA  labelCol    = ci::ColorA( 0.1f, 0.1f, 0.1f, 1.0f ) )
+    {
+        drawData( mResultsRaw, rect, plotCol, bgCol, labelCol );
+    }
     
     float   getGain()       { return mGain; }
     float   getOffset()     { return mOffset; }
@@ -150,6 +158,7 @@ public:
     void setLog( bool isLog )       { mIsLog = isLog; }
     
 protected:
+    
 	// in VS you can create a struct with {..} but not assign {..} to an existing one, so we use this method until VS will become a decent platform
 	static ciXtractFeatureParam createFeatureParam( double val, ciXtractParamType type, std::map<std::string,double> options )
 	{
@@ -159,9 +168,9 @@ protected:
 
 protected:
     
-//    ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, std::vector<xtract_features_> dependencies, uint32_t resultN = 1 )
     ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type, uint32_t resultsN = 1, int resultArraySize = -1 );
 
+    void drawData( std::shared_ptr<double> data, ci::Rectf rect, ci::ColorA  plotCol, ci::ColorA  bgCol, ci::ColorA  labelCol );
     
 protected:
     

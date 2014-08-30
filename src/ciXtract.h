@@ -83,7 +83,9 @@ public:
     
     //! list all the available features, the enumarators can be used to identify or toggle the features
     void listFeatures();
-
+    
+	static void drawPcm( ci::Rectf rect, const float *pcmData, size_t pcmSize );
+    
 private:
     
     ciXtract();

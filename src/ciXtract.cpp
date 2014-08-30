@@ -223,3 +223,36 @@ void ciXtract::listFeatures()
 
     console() << "-----------------------------------" << endl << endl;
 }
+
+
+void ciXtract::drawPcm( ci::Rectf rect, const float *pcmData, size_t pcmSize )
+{
+    // draw the first(left) channel in the PCM buffer
+    // getData() returns a pointer to the first sample in the buffer
+//	uint32_t    bufferLength    = mPcmBuffer.getSize() / mPcmBuffer.getNumChannels();
+//    float       *leftBuffer     = mPcmBuffer.getData();
+    
+//	int     displaySize = getWindowWidth();
+    
+    gl::pushMatrices();
+    
+    gl::translate( rect.x1, rect.y1 + rect.getHeight() * 0.5f );
+    
+	float   scale       = rect.getWidth() / (float)pcmSize;
+    
+	PolyLine<Vec2f>	leftBufferLine;
+    
+    gl::color( Color::gray( 0.4f ) );
+	
+	for( int i = 0; i < pcmSize; i++ )
+    {
+		float x = i * scale;
+        float y = pcmData[i] * rect.getHeight() * 0.5f;
+		leftBufferLine.push_back( Vec2f( x , y) );
+	}
+    
+	gl::draw( leftBufferLine );
+
+    gl::popMatrices();
+}
+

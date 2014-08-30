@@ -79,10 +79,8 @@ void ciXtractFeature::update()
 }
 
 
-void ciXtractFeature::draw( Rectf rect, ciXtractDataType dataType, ColorA plotCol, ColorA bgCol, ColorA labelCol )
+void ciXtractFeature::drawData( std::shared_ptr<double> data, ci::Rectf rect, ci::ColorA  plotCol, ci::ColorA  bgCol, ci::ColorA  labelCol )
 {
-    std::shared_ptr<double> data = ( dataType == CIXTRACT_DATA ) ? mResults : mResultsRaw;
-    
     glPushMatrix();
     
     gl::drawString( getName(), rect.getUpperLeft(), labelCol );
