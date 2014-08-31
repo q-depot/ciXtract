@@ -24,8 +24,6 @@ public:
 	void update();
     void draw();
 
-	void drawPcmData();
-
     ciXtractRef                     mXtract;
 
     vector<ciXtractFeatureRef>      mFeatures;
@@ -58,7 +56,7 @@ void BasicSampleApp::setup()
     mInputDeviceNode        = ctx->createInputDeviceNode( dev );
     
     // initialise default input device
-//    mInputDeviceNode = ctx->createInputDeviceNode();
+    // mInputDeviceNode = ctx->createInputDeviceNode();
     
     // initialise MonitorNode to get the PCM data
 	auto monitorFormat = audio::MonitorNode::Format().windowSize( CIXTRACT_PCM_SIZE );
@@ -82,6 +80,8 @@ void BasicSampleApp::setup()
     // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
     for( auto k=0; k < XTRACT_FEATURES; k++ )
         mXtract->enableFeature( (xtract_features_)k );
+    
+    mXtract->getFeature( XTRACT_SPECTRUM )->setLog( true );
 }
 
 
@@ -100,12 +100,13 @@ void BasicSampleApp::draw()
     gl::enableAlphaBlending();
     
 	gl::color( Color::gray( 0.1f ) );
-	drawPcmData();
+    ciXtract::drawPcm( Rectf( 0, 0, getWindowWidth(), 60 ), mPcmBuffer.getData(), mPcmBuffer.getSize() / mPcmBuffer.getNumChannels() );
     
     Vec2i   widgetSize  = Vec2f( 160, 40 );
     Vec2f   initPos     = Vec2f( 15, 100 );
     Vec2f   pos         = initPos;
     ColorA  bgCol       = ColorA( 0.0f, 0.0f, 0.0f, 0.1f );
+    ColorA  labelCol    = Color::gray( 0.35f );
     ColorA  plotCol;
     Rectf   rect;
     
@@ -117,40 +118,12 @@ void BasicSampleApp::draw()
         rect    = Rectf( pos, pos + widgetSize );
         plotCol = ColorA( 1.0f, rect.y1 / getWindowHeight(), rect.x1 / getWindowWidth(), 1.0f );
         
-        mFeatures[k]->draw( rect, plotCol, bgCol );
+        ciXtract::drawData( mFeatures[k], rect, false, plotCol, bgCol, labelCol );
         
         pos.y += widgetSize.y + 25;
         if ( pos.y >= getWindowHeight() - widgetSize.y )
             pos = Vec2i( pos.x + widgetSize.x + initPos.x, initPos.y );
     }
-}
-
-
-void BasicSampleApp::drawPcmData()
-{
-    if ( mPcmBuffer.isEmpty() )
-        return;
-    
-    // draw the first(left) channel in the PCM buffer
-    // getData() returns a pointer to the first sample in the buffer
-	uint32_t    bufferLength    = mPcmBuffer.getSize() / mPcmBuffer.getNumChannels();
-    float       *leftBuffer     = mPcmBuffer.getData();
-
-	int     displaySize = getWindowWidth();
-	float   scale       = displaySize / (float)bufferLength;
-
-	PolyLine<Vec2f>	leftBufferLine;
-
-    gl::color( Color::gray( 0.4f ) );
-	
-	for( int i = 0; i < bufferLength; i++ )
-    {
-		float x = i * scale;
-        float y = 50 + leftBuffer[i] * 60;
-		leftBufferLine.push_back( Vec2f( x , y) );
-	}
-
-	gl::draw( leftBufferLine );
 }
 
 

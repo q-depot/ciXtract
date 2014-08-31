@@ -50,18 +50,14 @@ void ciXtractFeature::update()
     for( size_t i=0; i < mResultsN; i++ )
     {
         // clamp min-max range
-//        val = ( mResultsRaw.get()[i] - mMin ) / ( mMax - mMin );
-        val = mResultsRaw.get()[i];
+        val = ( mResultsRaw.get()[i] - mMin ) / ( mMax - mMin );
+        
+        // this function doesn't work properly.
+        // val = min( (float)(i + 25) / (float)mResultsN, 1.0f ) * 100 * log10( 1.0f + val );
 
-        //        val = ( val - mMin ) / ( mMax - mMin );
-        
-        // TODO: this function doesn't work well!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-//        if ( mIsLog )
-//            val = 20 * log10( val );
-//            val = audio::linearToDecibel( val );
-//            val = min( (float)(i + 25) / (float)mResultsN, 1.0f ) * 100 * log10( 1.0f + val );
-        
-        
+        if ( mIsLog )
+            val = 0.01f * audio::linearToDecibel( val );
+    
         val = mOffset + mGain * val;
         
         val = math<float>::clamp( val, 0.0f, 1.0f );
