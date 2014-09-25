@@ -43,43 +43,36 @@ public:
     //! disable a feature
     void disableFeature( xtract_features_ feature );
     
-    //! toggle a feature
-    void toggleFeature( xtract_features_ feature );
-    
-    //! return all the available features
-    std::vector<ciXtractFeatureRef> getFeatures() { return mFeatures; };
+    //! return all the features enabled
+    std::vector<ciXtractFeatureRef> getActiveFeatures() { return mActiveFeatures; };
     
     //! get a specific feature
-    ciXtractFeatureRef getFeature( xtract_features_ feature );
+    ciXtractFeatureRef getActiveFeature( xtract_features_ feature );
     
     //! get raw feature results
-    std::shared_ptr<double> getFeatureResultsRaw( xtract_features_ feature )
+    DataBuffer getFeatureDataRaw( xtract_features_ feature )
     {
-        return getFeature(feature)->getResultsRaw();
+        ciXtractFeatureRef f = getActiveFeature(feature);
+        
+        if ( f )
+            return f->getDataRaw();
+        else
+            return DataBuffer();
     }
 
     //! get feature results
-    std::shared_ptr<double> getFeatureResults( xtract_features_ feature )
+    DataBuffer getFeatureData( xtract_features_ feature )
     {
-        return getFeature(feature)->getResults();
+        ciXtractFeatureRef f = getActiveFeature(feature);
+        
+        if ( f )
+            return f->getData();
+        else
+            return DataBuffer();
     }
-
-    // The calibration is very rough and it doesn't work for all the features
-
-    //! return true if there is any feature calibration in progress
-    bool isCalibrating() { return !mCalibrationFeatures.empty(); }
-
-    //! calibrate all the features at once
-    void calibrateFeatures();
-    
-    //! calibrate a feature
-    void calibrateFeature( ciXtractFeatureRef feature );
-    
-    //! calibrate a feature
-    void calibrateFeature( xtract_features_ featureEnum );
-    
+        
     //! get PCM data
-    std::shared_ptr<double> getPcmData() { return mPcmData; }
+    DataBuffer getPcmData() { return mPcmData; }
     
     //! list all the available features, the enumarators can be used to identify or toggle the features
     void listFeatures();
@@ -103,21 +96,17 @@ private:
     
     bool featureDependsOn( xtract_features_ this_feature, xtract_features_ test_feature );
     
-    void updateCalibration();
-    
+    void processData();
     
 private:
     
-    struct ciXtractFeatureCalibration
-    {
-        ciXtractFeatureRef  feature;
-        double              StartedAt;
-    };
+//    std::vector<ciXtractFeatureRef>     mFeatures;
     
-    std::vector<ciXtractFeatureRef>             mFeatures;
-    std::vector<ciXtractFeatureCalibration>     mCalibrationFeatures;
+    ciXtractFeatureRef                  mAvailableFeatures[XTRACT_FEATURES];    //! an array of XTRACT_FEATURES with all the available features
+    std::vector<ciXtractFeatureRef>     mActiveFeatures;                        //! a vector contaning a pointer to each feature enabled
     
-    std::shared_ptr<double>                     mPcmData;
+    DataBuffer                          mPcmData;
+    int                                 mLastUpdateAt;
     
 };
 

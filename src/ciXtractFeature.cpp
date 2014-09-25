@@ -16,107 +16,219 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ feature, std::string name, ciXtractFeatureType type,
-                                  uint32_t resultsN, int resultArraySize )
+
+ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ featureEnum, uint32_t resultsN, xtract_features_ inputFeature, std::vector<xtract_features_> extraDependencies )
+: mXtract(xtract), mFeatureEnum(featureEnum), mDataSize(resultsN), mInputFeatureEnum(inputFeature)
 {
-    mXtract         = xtract;
-    mFeature        = feature;
-    mName           = name;
-    mType           = type;
-    mResultsN       = resultsN;
-    mMin            = 0.0f;
-    mMax            = 1.0f;
-    mIsEnable       = false;
-    mGain           = 1.0f;
-    mOffset         = 0.0f;
-    mDamping        = 0.96f;
-    mIsLog          = false;
+    mDependencies       = extraDependencies;
     
-    if ( resultArraySize < 0.0 )
-        resultArraySize = resultsN;
+    if ( inputFeature < XTRACT_FEATURES )
+        mDependencies.insert( mDependencies.begin(), inputFeature );
     
-    mResultsRaw = std::shared_ptr<double>( new double[resultArraySize] );
-    mResults    = std::shared_ptr<double>( new double[resultsN] );
+    mIsEnable           = false;
+    mLastUpdateAt       = -1;
+    mMin                = 0.0f;
+    mMax                = 1.0f;
+    mGain               = 1.0f;
+    mOffset             = 0.0f;
+    mDamping            = 0.96f;
+    mIsLog              = false;
+    mData               = DataBuffer( new double[mDataSize] );
+    mDataRaw            = DataBuffer( new double[mDataSize] );
     
-    for( uint32_t k=0; k < mResultsN; k++ )
-        mResults.get()[k] = 0.0;
+    for( uint32_t k=0; k < mDataSize; k++ )
+    {
+        mData.get()[k]      = 0.0;
+        mDataRaw.get()[k]   = 0.0;
+    }
+    
+    mParams.resize(4);      // features have at the most 4 args
+    
+    console() << "ciXtractFeature() " << getName() << " | ";
+    for( auto k=0; k < mDependencies.size(); k++ )
+        console() << mDependencies[k] << " ";
+    console() << endl;
 }
 
 
-void ciXtractFeature::update()
-{
-    float                   val;
+void ciXtractFeature::update( int frameN )
+{    
+    ciXtractFeatureRef inputFeature = mXtract->getActiveFeature( mInputFeatureEnum );
     
-    for( size_t i=0; i < mResultsN; i++ )
+    if ( !inputFeature )
+        return;
+    
+    updateArgs();
+        
+    doUpdate( frameN, inputFeature->getDataRaw().get(), inputFeature->getDataSize(), mArgd, mDataRaw.get() );
+}
+
+
+void ciXtractFeature::doUpdate( int frameN, const double *inputData, const int inputDataSize, const void *args, double *outputData )
+{
+    if ( !isReady( frameN ) )
+        return;
+    
+    xtract[mFeatureEnum]( inputData, inputDataSize, args, outputData );
+    
+    processData();
+    
+    mLastUpdateAt = frameN;
+}
+
+
+bool ciXtractFeature::checkDependencies( int frameN )
+{
+//    if( !mInputData || mInputDataSize == 0 )
+//        return false;
+    
+    ciXtractFeatureRef dep;
+    for( size_t k=0; k < mDependencies.size(); k++ )
+    {
+        dep = mXtract->getActiveFeature( mDependencies[k] );
+        if ( !dep )
+            return false;
+        
+        if ( !dep->isUpdated( frameN ) )
+            dep->update( frameN );
+    }
+    return true;
+}
+
+
+void ciXtractFeature::processData()
+{
+    float val;
+    
+    for( size_t i=0; i < mDataSize; i++ )
     {
         // clamp min-max range
-        val = ( mResultsRaw.get()[i] - mMin ) / ( mMax - mMin );
+        val = ( mDataRaw.get()[i] - mMin ) / ( mMax - mMin );
         
         // this function doesn't work properly.
         // val = min( (float)(i + 25) / (float)mResultsN, 1.0f ) * 100 * log10( 1.0f + val );
-
+        
         if ( mIsLog )
             val = 0.01f * audio::linearToDecibel( val );
-    
+        
         val = mOffset + mGain * val;
         
         val = math<float>::clamp( val, 0.0f, 1.0f );
         
         if ( mDamping > 0.0f )
         {
-            if (  val >= mResults.get()[i] )
-                mResults.get()[i] = val;
+            if (  val >= mData.get()[i] )
+                mData.get()[i] = val;
             else
-                mResults.get()[i] *= mDamping;
+                mData.get()[i] *= mDamping;
         }
         else
-            mResults.get()[i] = val;
-    }    
+            mData.get()[i] = val;
+    }
 }
 
-
 // ------------------------------------------------------------------------------------------------ //
 // ------------------------------------------------------------------------------------------------ //
-// *************************************** VECTOR FEATURES **************************************** //
+// ---------------------------------------------- FEATURES ---------------------------------------- //
 // ------------------------------------------------------------------------------------------------ //
-// ------------------------------------------------------------------------------------------------ //
-
-
-// Spectrum                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 
-ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRUM, name, CI_XTRACT_VECTOR, CIXTRACT_FFT_SIZE, CIXTRACT_PCM_SIZE )
+
+// Mean ------------------------------------------------------------------------------------------- //
+
+ciXtractMean::ciXtractMean( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_MEAN, 1, XTRACT_SPECTRUM ) {}
+
+
+
+// Spectrum --------------------------------------------------------------------------------------- //
+
+ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_SPECTRUM, CIXTRACT_FFT_SIZE * 2 )
 {
-    mEnumStr    = "XTRACT_SPECTRUM";
-    mDataInput  = mXtract->getPcmData();
+    mParams[0] = FeatureParam::create( "samplerate", CIXTRACT_SAMPLERATE, FeatureParam::PARAM_READONLY );
     
-	std::map<std::string,double> opts;
-	opts["Magnitude"]		= XTRACT_MAGNITUDE_SPECTRUM;
-	opts["Log Magnitude"]	= XTRACT_LOG_MAGNITUDE_SPECTRUM;
-	opts["Power"]			= XTRACT_POWER_SPECTRUM;
-	opts["Log Power"]		= XTRACT_LOG_POWER_SPECTRUM;
-
-    // params
-    mParams["dc"]			= ciXtractFeature::createFeatureParam( false, CI_XTRACT_PARAM_BOOL, std::map<std::string,double>() );
-    mParams["norm"]			= ciXtractFeature::createFeatureParam( false, CI_XTRACT_PARAM_BOOL, std::map<std::string,double>() );
-	mParams["type"]			= ciXtractFeature::createFeatureParam( XTRACT_MAGNITUDE_SPECTRUM, CI_XTRACT_PARAM_ENUM, opts ); 
+    mParams[1] = FeatureParam::create( "type", XTRACT_MAGNITUDE_SPECTRUM );
+    mParams[1]->addOption( "Magnitude",     XTRACT_MAGNITUDE_SPECTRUM );
+    mParams[1]->addOption( "Log Magnitude", XTRACT_LOG_MAGNITUDE_SPECTRUM );
+    mParams[1]->addOption( "Power",         XTRACT_POWER_SPECTRUM );
+    mParams[1]->addOption( "Log Power",     XTRACT_LOG_POWER_SPECTRUM );
+    
+    mParams[2] = FeatureParam::create( "dc", 0.0 );
+    mParams[2]->addOption( "yes",           1.0 );
+    mParams[2]->addOption( "no",            0.0 );
+    
+    mParams[3] = FeatureParam::create( "norm", 0.0 );
+    mParams[3]->addOption( "yes",           1.0 );
+    mParams[3]->addOption( "no",            0.0 );
     
 	xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_SPECTRUM );
 }
 
-void ciXtractSpectrum::update()
+ciXtractSpectrum::~ciXtractSpectrum()
 {
-    mArgd[0] = CIXTRACT_SAMPLERATE_N;
-    mArgd[1] = mParams["type"].val;
-    mArgd[2] = mParams["dc"].val;
-    mArgd[3] = mParams["norm"].val;
-    
-    xtract_spectrum( mDataInput.get(), CIXTRACT_PCM_SIZE, mArgd, mResultsRaw.get() );
-    
-    ciXtractFeature::update();
+    xtract_free_fft();
 }
 
+void ciXtractSpectrum::update( int frameN )
+{
+    updateArgs();
+    
+    doUpdate( frameN, mXtract->getPcmData().get(), CIXTRACT_PCM_SIZE, mArgd, mDataRaw.get() );
+}
+
+
+// Bark ------------------------------------------------------------------------------------------- //
+
+ciXtractBark::ciXtractBark( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_BARK_COEFFICIENTS, XTRACT_BARK_BANDS, XTRACT_SPECTRUM )
+{
+    mBandLimits = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
+    
+    xtract_init_bark( CIXTRACT_FFT_SIZE, CIXTRACT_SAMPLERATE, mBandLimits.get() );
+}
+
+void ciXtractBark::update( int frameN )
+{
+    ciXtractFeatureRef inputFeature = mXtract->getActiveFeature( mInputFeatureEnum );
+    
+    if ( !inputFeature )
+        return;
+    
+    doUpdate( frameN, inputFeature->getDataRaw().get(), inputFeature->getDataSize(), mBandLimits.get(), mDataRaw.get() );
+}
+
+
+// Mfcc ------------------------------------------------------------------------------------------- //
+
+ciXtractMfcc::ciXtractMfcc( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_MFCC, CIXTRACT_MFCC_FREQ_BANDS, XTRACT_SPECTRUM )
+{
+    mMelFilters.n_filters       = CIXTRACT_MFCC_FREQ_BANDS;
+    mMelFilters.filters         = (double **)malloc(CIXTRACT_MFCC_FREQ_BANDS * sizeof(double *));
+    for( int n = 0; n < CIXTRACT_MFCC_FREQ_BANDS; ++n )
+        mMelFilters.filters[n] = (double *)malloc(CIXTRACT_PCM_SIZE * sizeof(double));
+    
+    // XTRACT_EQUAL_GAIN, XTRACT_EQUAL_AREA
+    xtract_init_mfcc( CIXTRACT_FFT_SIZE, CIXTRACT_SAMPLERATE >> 1, XTRACT_EQUAL_AREA, CIXTRACT_MFCC_FREQ_MIN, CIXTRACT_MFCC_FREQ_MAX, mMelFilters.n_filters, mMelFilters.filters );
+}
+
+ciXtractMfcc::~ciXtractMfcc()
+{
+    for( auto n = 0; n < CIXTRACT_MFCC_FREQ_BANDS; ++n )
+        free( mMelFilters.filters[n] );
+    free( mMelFilters.filters );
+}
+
+void ciXtractMfcc::update( int frameN )
+{
+    ciXtractFeatureRef inputFeature = mXtract->getActiveFeature( mInputFeatureEnum );
+    
+    if ( !inputFeature )
+        return;
+    
+    doUpdate( frameN, inputFeature->getDataRaw().get(), inputFeature->getDataSize(), &mMelFilters, mDataRaw.get() );
+}
+
+
+
+/*
 // Autocorrelation                                                                                  //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractAutocorrelation::ciXtractAutocorrelation( ciXtract *xtract, std::string name )
@@ -964,4 +1076,4 @@ void ciXtractNonZeroCount::update()
     
     ciXtractFeature::update();
 }
-
+*/

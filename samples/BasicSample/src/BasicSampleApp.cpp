@@ -7,6 +7,7 @@
 
 #include "cinder/audio/Context.h"
 #include "cinder/audio/MonitorNode.h"
+#include "cinder/params/Params.h"
 
 #include "ciXtract.h"
 
@@ -32,13 +33,16 @@ public:
 	audio::MonitorNodeRef           mMonitorNode;
     audio::Buffer                   mPcmBuffer;
     
+    params::InterfaceGl             mParams;
+    
+    float                           mGain, mDamping, mOffset;
 };
 
 
 void BasicSampleApp::prepareSettings(Settings *settings)
 {
 	settings->setTitle("ciXtract Sample");
-	settings->setWindowSize( 900, 700 );
+	settings->setWindowSize( 1200, 700 );
 }
 
 
@@ -71,22 +75,76 @@ void BasicSampleApp::setup()
  
 	// Initialise ciXtract
     mXtract     = ciXtract::create();
-    mFeatures   = mXtract->getFeatures();
+    
+    
+    
+    mXtract->enableFeature( XTRACT_MEAN );
+    mXtract->enableFeature( XTRACT_SPECTRUM );
+    mXtract->enableFeature( XTRACT_BARK_COEFFICIENTS );
+    mXtract->enableFeature( XTRACT_MFCC );
+    
+    
+    
+    mFeatures   = mXtract->getActiveFeatures();
+    
+    
+    
+    
+    
     
     // List all available features, this prints out the enumerator that can be used to select or toggle the feature
     mXtract->listFeatures();
     
-	// Features are disabled by default, call enableFeature() to enable each feature and its dependencies
-    // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
-    for( auto k=0; k < XTRACT_FEATURES; k++ )
-        mXtract->enableFeature( (xtract_features_)k );
+//	// Features are disabled by default, call enableFeature() to enable each feature and its dependencies
+//    // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
+//    for( auto k=0; k < XTRACT_FEATURES; k++ )
+//        mXtract->enableFeature( (xtract_features_)k );
+//    
+//    mXtract->getActiveFeature( XTRACT_SPECTRUM )->setLog( true );
     
-    mXtract->getFeature( XTRACT_SPECTRUM )->setLog( true );
+    mGain       = 1.0f;
+    mDamping    = 0.96f;
+    mOffset     = 0.0f;
+
+    // init params
+    mParams = params::InterfaceGl( "Params", Vec2i( 250, 450 ) );
+    mParams.addParam( "Gain",       &mGain,     "min=0.0 step=0.1" );
+    mParams.addParam( "Offset",     &mOffset,   "min=-1.0 max=1.0 step=0.01" );
+    mParams.addParam( "Damping",    &mDamping,  "min=0.0 max=0.99 step=0.01" );
+
+    FeatureParamRef                 p;
+    std::vector<FeatureParamRef>    featureParams;
+    
+    for( size_t k=0; k < mFeatures.size(); k++ )
+    {
+        featureParams = mFeatures[k]->getParams();
+        
+        if ( featureParams.empty() )
+            continue;
+    
+        mParams.addSeparator("AAA" + to_string(k) );
+        mParams.addText("bb " + to_string(k) );
+        
+        for( size_t i=0; i < featureParams.size(); i++ )
+        {
+            p = featureParams[i];
+            if( p )
+                mParams.addParam( p->getName(), p->getValuePtr() );
+        }
+    }
+    
 }
 
 
 void BasicSampleApp::update()
 {
+    for( size_t k=0; k < mFeatures.size(); k++ )
+    {
+        mFeatures[k]->setGain( mGain );
+        mFeatures[k]->setOffset( mOffset );
+        mFeatures[k]->setDamping( mDamping );
+    }
+    
     mPcmBuffer = mMonitorNode->getBuffer();
     
     if ( !mPcmBuffer.isEmpty() )
@@ -102,7 +160,7 @@ void BasicSampleApp::draw()
 	gl::color( Color::gray( 0.1f ) );
     ciXtract::drawPcm( Rectf( 0, 0, getWindowWidth(), 60 ), mPcmBuffer.getData(), mPcmBuffer.getSize() / mPcmBuffer.getNumChannels() );
     
-    Vec2i   widgetSize  = Vec2f( 160, 40 );
+    Vec2i   widgetSize  = Vec2f( CIXTRACT_FFT_SIZE * 2, 60 );
     Vec2f   initPos     = Vec2f( 15, 100 );
     Vec2f   pos         = initPos;
     ColorA  bgCol       = ColorA( 0.0f, 0.0f, 0.0f, 0.1f );
@@ -124,6 +182,8 @@ void BasicSampleApp::draw()
         if ( pos.y >= getWindowHeight() - widgetSize.y )
             pos = Vec2i( pos.x + widgetSize.x + initPos.x, initPos.y );
     }
+    
+    mParams.draw();
 }
 
 
