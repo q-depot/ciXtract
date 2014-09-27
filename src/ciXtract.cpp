@@ -29,8 +29,8 @@ ciXtract::ciXtract()
 
 ciXtract::~ciXtract()
 {
-    // TODO clean up
-//    xtract_free_fft();
+    // global, this free fft, autocorrelation and other stuff
+    xtract_free_fft();
 }
 
 
@@ -44,8 +44,14 @@ void ciXtract::initFeatures()
     mAvailableFeatures[ XTRACT_BARK_COEFFICIENTS ]      = ciXtractFeature::create<ciXtractBark>( this );
     
     mAvailableFeatures[ XTRACT_MFCC ]                   = ciXtractFeature::create<ciXtractMfcc>( this );
+    mAvailableFeatures[ XTRACT_AUTOCORRELATION ]        = ciXtractFeature::create<ciXtractAutocorrelation>( this );
+//    mAvailableFeatures[ XTRACT_AUTOCORRELATION_FFT ]    = ciXtractFeature::create<ciXtractAutocorrelationFft>( this );
     
+    mAvailableFeatures[ XTRACT_AMDF ]                   = ciXtractFeature::create<ciXtractAmdf>( this );
+    mAvailableFeatures[ XTRACT_ASDF ]                   = ciXtractFeature::create<ciXtractAsdf>( this );
     
+    mAvailableFeatures[ XTRACT_LPC]                     = ciXtractFeature::create<ciXtractLpc>( this );
+    mAvailableFeatures[ XTRACT_LPCC]                    = ciXtractFeature::create<ciXtractLpcc>( this );
 }
 
 void ciXtract::update( const float *pcmData )
@@ -179,7 +185,7 @@ void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, bool drawRaw, C
 {
     glPushMatrix();
     
-//    gl::drawString( feature->getName(), rect.getUpperLeft(), labelCol );
+    gl::drawString( feature->getName(), rect.getUpperLeft(), labelCol );
     
     rect.y1 += 10;
     

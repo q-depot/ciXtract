@@ -83,6 +83,27 @@ static const std::string xtract_features_names[XTRACT_FEATURES] = {
 
 
 
+#define CIXTRACT_PCM_SIZE           1024
+#define CIXTRACT_FFT_SIZE           512
+#define CIXTRACT_SAMPLERATE         22050 // 44100
+#define CIXTRACT_SAMPLERATE_N       CIXTRACT_SAMPLERATE / (double)CIXTRACT_PCM_SIZE
+
+#define CIXTRACT_PERIOD             100
+#define CIXTRACT_MFCC_FREQ_BANDS    13
+#define CIXTRACT_MFCC_FREQ_MIN      20
+#define CIXTRACT_MFCC_FREQ_MAX      20000
+#define CIXTRACT_SUBBANDS_N         32
+
+#ifdef _MSC_VER
+#ifndef isnan
+#define isnan(x) ((x)!=(x))
+#endif
+#ifndef isinf
+#define isinf(x) ((x)!=(x))
+#endif
+#endif
+
+
 class ciXtractFeature;
 typedef std::shared_ptr<ciXtractFeature>       ciXtractFeatureRef;
 
@@ -94,6 +115,11 @@ typedef std::shared_ptr<double>     DataBuffer;
 
 class FeatureParam;
 typedef std::shared_ptr<FeatureParam>   FeatureParamRef;
+
+
+// ------------------------------------------------------------------------------------------------ //
+// FeatureParam features -------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------------------------------ //
 
 class FeatureParam {
     
@@ -134,25 +160,10 @@ private:
     
 };
 
-#define CIXTRACT_PCM_SIZE           1024
-#define CIXTRACT_FFT_SIZE           512
-#define CIXTRACT_SAMPLERATE         22050 // 44100
-#define CIXTRACT_SAMPLERATE_N       CIXTRACT_SAMPLERATE / (double)CIXTRACT_PCM_SIZE
 
-#define CIXTRACT_PERIOD             100
-#define CIXTRACT_MFCC_FREQ_BANDS    13
-#define CIXTRACT_MFCC_FREQ_MIN      20
-#define CIXTRACT_MFCC_FREQ_MAX      20000
-#define CIXTRACT_SUBBANDS_N         32
-
-#ifdef _MSC_VER
-	#ifndef isnan
-		#define isnan(x) ((x)!=(x)) 
-	#endif
-	#ifndef isinf
-		#define isinf(x) ((x)!=(x)) 
-	#endif
-#endif
+// ------------------------------------------------------------------------------------------------ //
+// Feature class ---------------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------------------------------ //
 
 class ciXtractFeature {
 
@@ -169,9 +180,6 @@ public:
     {
         return ciXtractFeatureRef( new T( xtract ) );
     }
-    
-    
-    ///////////////////////////
     
     bool isEnable() { return mIsEnable; }
     
@@ -213,9 +221,10 @@ protected:
     
     ciXtractFeature(    ciXtract                        *xtract,
                         xtract_features_                featureEnum,
-                        uint32_t                        resultsN            = 1,                                        // feature has at least 1 result
-                        xtract_features_                inputFeature        = (xtract_features_)(XTRACT_FEATURES),      // XTRACT_FEATURES is for the features that use the PCM as input data
-                        std::vector<xtract_features_>   extraDependencies   = std::vector<xtract_features_>() );        // feature can have more dependencies, the input feature if != XTRACT_FEATURES, is automatically added
+                        uint32_t                        dataSize,                                                   // feature has at least 1 result
+                        uint32_t                        bufferSize,                                                 // some features need a buffer double the size of the actual data(ie. fft)
+                        xtract_features_                inputFeature        = (xtract_features_)(XTRACT_FEATURES),  // XTRACT_FEATURES is for the features that use the PCM as input data
+                        std::vector<xtract_features_>   extraDependencies   = std::vector<xtract_features_>() );    // feature can have more dependencies, the input feature if != XTRACT_FEATURES, is automatically added
 protected:
     
     bool checkDependencies( int frameN );
@@ -226,11 +235,7 @@ protected:
     
     void doUpdate( int frameN, const double *inputData, const int inputDataSize, const void *args, double *outputData );
     
-    void updateArgs()
-    {
-        for( size_t k=0; k < mParams.size(); k++ )
-            mArgd[k] = mParams[k] ? mParams[k]->getValue() : NULL;
-    }
+    void updateArgs();
     
 protected:
     
@@ -243,6 +248,7 @@ protected:
     DataBuffer                      mDataRaw;           // raw data, no gain, damping etc. - spectrum features also include the frequency bins
     DataBuffer                      mData;              // processed data, spectrum features do NOT include frequency bins
     size_t                          mDataSize;          // results N size, DATA size only, no frequency bins
+    size_t                          mBufferDataSize;    // the size of the buffer, sometimes this(ie. fft) this is double the size the actual data
     
     // mResults parameters, these are used to process the mResultsRaw
     float                           mGain, mOffset, mDamping;
@@ -262,44 +268,30 @@ protected:
 
 
 // ------------------------------------------------------------------------------------------------ //
+// Vector features -------------------------------------------------------------------------------- //
 // ------------------------------------------------------------------------------------------------ //
-// *************************************** VECTOR FEATURES **************************************** //
-// ------------------------------------------------------------------------------------------------ //
-// ------------------------------------------------------------------------------------------------ //
-
-// Mean
-class ciXtractMean : public ciXtractFeature {
-    
-public:
-    //    static ciXtractFeatureRef create( ciXtract *xtract ) { return ciXtractFeatureRef( new ciXtractMean( xtract ) ); }
-    ciXtractMean( ciXtract *xtract );
-    ~ciXtractMean() {}
-};
 
 
 // Spectrum
 class ciXtractSpectrum : public ciXtractFeature {
-    
 public:
     ciXtractSpectrum( ciXtract *xtract );
-    ~ciXtractSpectrum();
+    ~ciXtractSpectrum() {}
     void update( int frameN  );
 };
 
-// Bark
-class ciXtractBark : public ciXtractFeature {
-    
-public:
-    ciXtractBark( ciXtract *xtract );
-    ~ciXtractBark() {}
-    void update( int frameN );
-private:
-    std::shared_ptr<int> mBandLimits;
-};
+/*
+ // AutocorrelationFft
+ class ciXtractAutocorrelationFft : public ciXtractFeature {
+ public:
+ ciXtractAutocorrelationFft( ciXtract *xtract );
+ ~ciXtractAutocorrelationFft() {}
+ void update( int frameN );
+ };
+ */
 
 // Mfcc
 class ciXtractMfcc : public ciXtractFeature {
-    
 public:
     ciXtractMfcc( ciXtract *xtract );
     ~ciXtractMfcc();
@@ -308,592 +300,236 @@ private:
     xtract_mel_filter   mMelFilters;
 };
 
+//int 	xtract_dct (const double *data, const int N, const void *argv, double *result)
 
-/*
 // Autocorrelation
 class ciXtractAutocorrelation : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractAutocorrelation( xtract, name ) ); }
+    ciXtractAutocorrelation( ciXtract *xtract );
     ~ciXtractAutocorrelation() {}
-    void update();
-    
-private:
-    ciXtractAutocorrelation( ciXtract *xtract, std::string name );
-    
+    void update( int frameN );
 };
 
-// Autocorrelation Fft
-class ciXtractAutocorrelationFft : public ciXtractFeature {
-    
+// Amdf
+class ciXtractAmdf : public ciXtractFeature {
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractAutocorrelationFft( xtract, name ) ); }
-    ~ciXtractAutocorrelationFft() {}
-    void update();
-    
-private:
-    ciXtractAutocorrelationFft( ciXtract *xtract, std::string name );
-    
+    ciXtractAmdf( ciXtract *xtract );
+    ~ciXtractAmdf() {}
 };
 
-// Harmonic Spectrum
-class ciXtractHarmonicSpectrum : public ciXtractFeature {
-    
+// Asdf
+class ciXtractAsdf : public ciXtractFeature {
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractHarmonicSpectrum( xtract, name ) ); }
-    ~ciXtractHarmonicSpectrum() {}
-    void update();
-    
-private:
-    ciXtractHarmonicSpectrum( ciXtract *xtract, std::string name );
-    
+    ciXtractAsdf( ciXtract *xtract );
+    ~ciXtractAsdf() {}
 };
 
-// Peak Spectrum
-class ciXtractPeakSpectrum : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractPeakSpectrum( xtract, name ) ); }
-    ~ciXtractPeakSpectrum() {}
-    void update();
-    
-private:
-    ciXtractPeakSpectrum( ciXtract *xtract, std::string name );
-    
-};
-
-// SubBands
-class ciXtractSubBands : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSubBands( xtract, name ) ); }
-    ~ciXtractSubBands() {}
-    void update();
-    
-private:
-    ciXtractSubBands( ciXtract *xtract, std::string name );
-    
-};
-
-// Mffc
-class ciXtractMfcc : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractMfcc( xtract, name ) ); }
-    ~ciXtractMfcc();
-    void update();
-    
-private:
-    ciXtractMfcc( ciXtract *xtract, std::string name );
-    
-    xtract_mel_filter   mMelFilters;
-};
 
 // Bark
 class ciXtractBark : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractBark( xtract, name ) ); }
+    ciXtractBark( ciXtract *xtract );
     ~ciXtractBark() {}
-    void update();
-    
+    void update( int frameN );
 private:
-    ciXtractBark( ciXtract *xtract, std::string name );
-    
-    std::shared_ptr<int>    mBandLimits;
-    
+    std::shared_ptr<int> mBandLimits;
 };
 
+//int 	xtract_peak_spectrum (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_harmonic_spectrum (const double *data, const int N, const void *argv, double *result)
 
-// ------------------------------------------------------------------------------------------------ //
-// ------------------------------------------------------------------------------------------------ //
-// *************************************** SCALAR FEATURES **************************************** //
-// ------------------------------------------------------------------------------------------------ //
-// ------------------------------------------------------------------------------------------------ //
-
-// F0
-class ciXtractF0 : public ciXtractFeature {
-    
+// Lpc
+class ciXtractLpc : public ciXtractFeature {
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractF0( xtract, name ) ); }
-    ~ciXtractF0() {}
-    void update();
-    
-private:
-    ciXtractF0( ciXtract *xtract, std::string name );
-    
+    ciXtractLpc( ciXtract *xtract );
+    ~ciXtractLpc() {}
 };
 
-// Failsafe F0
-class ciXtractFailsafeF0 : public ciXtractFeature {
-    
+// Lpcc
+class ciXtractLpcc : public ciXtractFeature {
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractFailsafeF0( xtract, name ) ); }
-    ~ciXtractFailsafeF0() {}
-    void update();
-    
-private:
-    ciXtractFailsafeF0( ciXtract *xtract, std::string name );
-    
+    ciXtractLpcc( ciXtract *xtract );
+    ~ciXtractLpcc() {}
+    void update( int frameN );
 };
 
+//int 	xtract_lpcc (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_subbands (const double *data, const int N, const void *argv, double *result)
 
-// Wavelet F0
-class ciXtractWaveletF0 : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractWaveletF0( xtract, name ) ); }
-    ~ciXtractWaveletF0() {}
-    void update();
-    
-private:
-    ciXtractWaveletF0( ciXtract *xtract, std::string name );
-    
-};
+
+// ------------------------------------------------------------------------------------------------ //
+// Scalar features -------------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------------------------------ //
 
 // Mean
 class ciXtractMean : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractMean( xtract, name ) ); }
+    ciXtractMean( ciXtract *xtract );
     ~ciXtractMean() {}
-    void update();
-    
-private:
-    ciXtractMean( ciXtract *xtract, std::string name );
-    
 };
 
 // Variance
 class ciXtractVariance : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractVariance( xtract, name ) ); }
+    ciXtractVariance( ciXtract *xtract );
     ~ciXtractVariance() {}
-    void update();
-    
-private:
-    ciXtractVariance( ciXtract *xtract, std::string name );
-    
 };
 
 // Standard Deviation
 class ciXtractStandardDeviation : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractStandardDeviation( xtract, name ) ); }
+    ciXtractStandardDeviation( ciXtract *xtract );
     ~ciXtractStandardDeviation() {}
-    void update();
-    
-private:
-    ciXtractStandardDeviation( ciXtract *xtract, std::string name );
-    
 };
 
 // Average Deviation
 class ciXtractAverageDeviation : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractAverageDeviation( xtract, name ) ); }
+    ciXtractAverageDeviation( ciXtract *xtract );
     ~ciXtractAverageDeviation() {}
-    void update();
-    
-private:
-    ciXtractAverageDeviation( ciXtract *xtract, std::string name );
-    
 };
 
 // Skewness
 class ciXtractSkewness : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSkewness( xtract, name ) ); }
+    ciXtractSkewness( ciXtract *xtract );
     ~ciXtractSkewness() {}
-    void update();
-    
-private:
-    ciXtractSkewness( ciXtract *xtract, std::string name );
-    
 };
 
 // Kurtosis
 class ciXtractKurtosis : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractKurtosis( xtract, name ) ); }
+    ciXtractKurtosis( ciXtract *xtract );
     ~ciXtractKurtosis() {}
-    void update();
-    
-private:
-    ciXtractKurtosis( ciXtract *xtract, std::string name );
-    
 };
+
 
 // Spectral Mean
 class ciXtractSpectralMean : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSpectralMean( xtract, name ) ); }
+    ciXtractSpectralMean( ciXtract *xtract );
     ~ciXtractSpectralMean() {}
-    void update();
-    
-private:
-    ciXtractSpectralMean( ciXtract *xtract, std::string name );
-    
 };
 
 // Spectral Variance
 class ciXtractSpectralVariance : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSpectralVariance( xtract, name ) ); }
+    ciXtractSpectralVariance( ciXtract *xtract );
     ~ciXtractSpectralVariance() {}
-    void update();
-    
-private:
-    ciXtractSpectralVariance( ciXtract *xtract, std::string name );
-    
 };
 
 // Spectral Standard Deviation
 class ciXtractSpectralStandardDeviation : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSpectralStandardDeviation( xtract, name ) ); }
+    ciXtractSpectralStandardDeviation( ciXtract *xtract );
     ~ciXtractSpectralStandardDeviation() {}
-    void update();
-    
-private:
-    ciXtractSpectralStandardDeviation( ciXtract *xtract, std::string name );
-    
 };
 
 // Spectral Skewness
 class ciXtractSpectralSkewness : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSpectralSkewness( xtract, name ) ); }
+    ciXtractSpectralSkewness( ciXtract *xtract );
     ~ciXtractSpectralSkewness() {}
-    void update();
-    
-private:
-    ciXtractSpectralSkewness( ciXtract *xtract, std::string name );
-    
 };
 
 // Spectral Kurtosis
 class ciXtractSpectralKurtosis : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSpectralKurtosis( xtract, name ) ); }
+    ciXtractSpectralKurtosis( ciXtract *xtract );
     ~ciXtractSpectralKurtosis() {}
-    void update();
-    
-private:
-    ciXtractSpectralKurtosis( ciXtract *xtract, std::string name );
-    
 };
 
 // Spectral Centroid
 class ciXtractSpectralCentroid : public ciXtractFeature {
-    
 public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSpectralCentroid( xtract, name ) ); }
+    ciXtractSpectralCentroid( ciXtract *xtract );
     ~ciXtractSpectralCentroid() {}
-    void update();
-    
-private:
-    ciXtractSpectralCentroid( ciXtract *xtract, std::string name );
-    
 };
 
-// Irregularity K
-class ciXtractIrregularityK : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractIrregularityK( xtract, name ) ); }
-    ~ciXtractIrregularityK() {}
-    void update();
-    
-private:
-    ciXtractIrregularityK( ciXtract *xtract, std::string name );
-    
-};
 
-// Irregularity J
-class ciXtractIrregularityJ : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractIrregularityJ( xtract, name ) ); }
-    ~ciXtractIrregularityJ() {}
-    void update();
-    
-private:
-    ciXtractIrregularityJ( ciXtract *xtract, std::string name );
-    
-};
 
-// Tristimulus 1
-class ciXtractTristimulus1 : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractTristimulus1( xtract, name ) ); }
-    ~ciXtractTristimulus1() {}
-    void update();
-    
-private:
-    ciXtractTristimulus1( ciXtract *xtract, std::string name );
-    
-};
 
-// Smoothness
-class ciXtractSmoothness : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSmoothness( xtract, name ) ); }
-    ~ciXtractSmoothness() {}
-    void update();
-    
-private:
-    ciXtractSmoothness( ciXtract *xtract, std::string name );
-    
-};
 
-// Spread
-class ciXtractSpread : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSpread( xtract, name ) ); }
-    ~ciXtractSpread() {}
-    void update();
-    
-private:
-    ciXtractSpread( ciXtract *xtract, std::string name );
-    
-};
 
-// Zcr
-class ciXtractZcr : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractZcr( xtract, name ) ); }
-    ~ciXtractZcr() {}
-    void update();
-    
-private:
-    ciXtractZcr( ciXtract *xtract, std::string name );
-    
-};
+//int 	xtract_irregularity_k (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_irregularity_j (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_tristimulus_1 (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_tristimulus_2 (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_tristimulus_3 (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_smoothness (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_spread (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_zcr (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_rolloff (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_loudness (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_flatness (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_flatness_db (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_tonality (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_noisiness (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_rms_amplitude (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_spectral_inharmonicity (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_crest (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_power (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_odd_even_ratio (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_sharpness (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_spectral_slope (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_lowest_value (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_highest_value (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_sum (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_hps (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_f0 (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_failsafe_f0 (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_wavelet_f0 (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_midicent (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_nonzero_count (const double *data, const int N, const void *argv, double *result)
+//int 	xtract_peak (const double *data, const int N, const void *argv, double *result)
 
-// Rolloff
-class ciXtractRolloff : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractRolloff( xtract, name ) ); }
-    ~ciXtractRolloff() {}
-    void update();
-    
-private:
-    ciXtractRolloff( ciXtract *xtract, std::string name );
-    
-};
 
-// Loudness
-class ciXtractLoudness : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractLoudness( xtract, name ) ); }
-    ~ciXtractLoudness() {}
-    void update();
-    
-private:
-    ciXtractLoudness( ciXtract *xtract, std::string name );
-    
-};
-
-// Flatness
-class ciXtractFlatness : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractFlatness( xtract, name ) ); }
-    ~ciXtractFlatness() {}
-    void update();
-    
-private:
-    ciXtractFlatness( ciXtract *xtract, std::string name );
-    
-};
-
-// Flatness Db
-class ciXtractFlatnessDb : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractFlatnessDb( xtract, name ) ); }
-    ~ciXtractFlatnessDb() {}
-    void update();
-    
-private:
-    ciXtractFlatnessDb( ciXtract *xtract, std::string name );
-    
-};
-
-// Tonality
-class ciXtractTonality : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractTonality( xtract, name ) ); }
-    ~ciXtractTonality() {}
-    void update();
-    
-private:
-    ciXtractTonality( ciXtract *xtract, std::string name );
-    
-};
-
-// RMS Amplitude
-class ciXtractRmsAmplitude : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractRmsAmplitude( xtract, name ) ); }
-    ~ciXtractRmsAmplitude() {}
-    void update();
-    
-private:
-    ciXtractRmsAmplitude( ciXtract *xtract, std::string name );
-    
-};
-
-// Spectral Inharmonicity Amplitude
-class ciXtractSpectralInharmonicity : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSpectralInharmonicity( xtract, name ) ); }
-    ~ciXtractSpectralInharmonicity() {}
-    void update();
-    
-private:
-    ciXtractSpectralInharmonicity( ciXtract *xtract, std::string name );
-    
-};
-
-// Crest
-class ciXtractCrest : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractCrest( xtract, name ) ); }
-    ~ciXtractCrest() {}
-    void update();
-    
-private:
-    ciXtractCrest( ciXtract *xtract, std::string name );
-    
-};
-
-// Power
-class ciXtractPower : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractPower( xtract, name ) ); }
-    ~ciXtractPower() {}
-    void update();
-    
-private:
-    ciXtractPower( ciXtract *xtract, std::string name );
-    
-};
-
-// Odd Even Ratio
-class ciXtractOddEvenRatio : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractOddEvenRatio( xtract, name ) ); }
-    ~ciXtractOddEvenRatio() {}
-    void update();
-    
-private:
-    ciXtractOddEvenRatio( ciXtract *xtract, std::string name );
-    
-};
-
-// Sharpness
-class ciXtractSharpness : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSharpness( xtract, name ) ); }
-    ~ciXtractSharpness() {}
-    void update();
-    
-private:
-    ciXtractSharpness( ciXtract *xtract, std::string name );
-    
-};
-
-// Spectral Slope
-class ciXtractSpectralSlope : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSpectralSlope( xtract, name ) ); }
-    ~ciXtractSpectralSlope() {}
-    void update();
-    
-private:
-    ciXtractSpectralSlope( ciXtract *xtract, std::string name );
-    
-};
-
-// Lowest Value
-class ciXtractLowestValue : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractLowestValue( xtract, name ) ); }
-    ~ciXtractLowestValue() {}
-    void update();
-    
-private:
-    ciXtractLowestValue( ciXtract *xtract, std::string name );
-    
-};
-
-// Highest Value
-class ciXtractHighestValue : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractHighestValue( xtract, name ) ); }
-    ~ciXtractHighestValue() {}
-    void update();
-    
-private:
-    ciXtractHighestValue( ciXtract *xtract, std::string name );
-    
-};
-
-// Sum
-class ciXtractSum : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractSum( xtract, name ) ); }
-    ~ciXtractSum() {}
-    void update();
-    
-private:
-    ciXtractSum( ciXtract *xtract, std::string name );
-    
-};
-
-// Non-Zero Count
-class ciXtractNonZeroCount : public ciXtractFeature {
-    
-public:
-    static ciXtractFeatureRef create( ciXtract *xtract, std::string name ) { return ciXtractFeatureRef( new ciXtractNonZeroCount( xtract, name ) ); }
-    ~ciXtractNonZeroCount() {}
-    void update();
-    
-private:
-    ciXtractNonZeroCount( ciXtract *xtract, std::string name );
-    
-};
-
+/*
+int 	xtract_mean (const double *data, const int N, const void *argv, double *result)
+int 	xtract_variance (const double *data, const int N, const void *argv, double *result)
+int 	xtract_standard_deviation (const double *data, const int N, const void *argv, double *result)
+int 	xtract_average_deviation (const double *data, const int N, const void *argv, double *result)
+int 	xtract_skewness (const double *data, const int N, const void *argv, double *result)
+int 	xtract_kurtosis (const double *data, const int N, const void *argv, double *result)
+int 	xtract_spectral_mean (const double *data, const int N, const void *argv, double *result)
+int 	xtract_spectral_variance (const double *data, const int N, const void *argv, double *result)
+int 	xtract_spectral_standard_deviation (const double *data, const int N, const void *argv, double *result)
+int 	xtract_spectral_skewness (const double *data, const int N, const void *argv, double *result)
+int 	xtract_spectral_kurtosis (const double *data, const int N, const void *argv, double *result)
+int 	xtract_spectral_centroid (const double *data, const int N, const void *argv, double *result)
+int 	xtract_irregularity_k (const double *data, const int N, const void *argv, double *result)
+int 	xtract_irregularity_j (const double *data, const int N, const void *argv, double *result)
+int 	xtract_tristimulus_1 (const double *data, const int N, const void *argv, double *result)
+int 	xtract_tristimulus_2 (const double *data, const int N, const void *argv, double *result)
+int 	xtract_tristimulus_3 (const double *data, const int N, const void *argv, double *result)
+int 	xtract_smoothness (const double *data, const int N, const void *argv, double *result)
+int 	xtract_spread (const double *data, const int N, const void *argv, double *result)
+int 	xtract_zcr (const double *data, const int N, const void *argv, double *result)
+int 	xtract_rolloff (const double *data, const int N, const void *argv, double *result)
+int 	xtract_loudness (const double *data, const int N, const void *argv, double *result)
+int 	xtract_flatness (const double *data, const int N, const void *argv, double *result)
+int 	xtract_flatness_db (const double *data, const int N, const void *argv, double *result)
+int 	xtract_tonality (const double *data, const int N, const void *argv, double *result)
+int 	xtract_noisiness (const double *data, const int N, const void *argv, double *result)
+int 	xtract_rms_amplitude (const double *data, const int N, const void *argv, double *result)
+int 	xtract_spectral_inharmonicity (const double *data, const int N, const void *argv, double *result)
+int 	xtract_crest (const double *data, const int N, const void *argv, double *result)
+int 	xtract_power (const double *data, const int N, const void *argv, double *result)
+int 	xtract_odd_even_ratio (const double *data, const int N, const void *argv, double *result)
+int 	xtract_sharpness (const double *data, const int N, const void *argv, double *result)
+int 	xtract_spectral_slope (const double *data, const int N, const void *argv, double *result)
+int 	xtract_lowest_value (const double *data, const int N, const void *argv, double *result)
+int 	xtract_highest_value (const double *data, const int N, const void *argv, double *result)
+int 	xtract_sum (const double *data, const int N, const void *argv, double *result)
+int 	xtract_hps (const double *data, const int N, const void *argv, double *result)
+int 	xtract_f0 (const double *data, const int N, const void *argv, double *result)
+int 	xtract_failsafe_f0 (const double *data, const int N, const void *argv, double *result)
+int 	xtract_wavelet_f0 (const double *data, const int N, const void *argv, double *result)
+int 	xtract_midicent (const double *data, const int N, const void *argv, double *result)
+int 	xtract_nonzero_count (const double *data, const int N, const void *argv, double *result)
+int 	xtract_peak (const double *data, const int N, const void *argv, double *result)
 */
 
 
 #endif
+
