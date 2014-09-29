@@ -38,20 +38,32 @@ void ciXtract::initFeatures()
 {
     mActiveFeatures.clear();
     
-    mAvailableFeatures[XTRACT_MEAN]                     = ciXtractFeature::create<ciXtractMean>( this );
+    // Scalar
+    mAvailableFeatures[XTRACT_MEAN]                         = ciXtractFeature::create<ciXtractMean>( this );
+    mAvailableFeatures[XTRACT_VARIANCE]                     = ciXtractFeature::create<ciXtractVariance>( this );
+    mAvailableFeatures[XTRACT_STANDARD_DEVIATION]           = ciXtractFeature::create<ciXtractStandardDeviation>( this );
+    mAvailableFeatures[XTRACT_AVERAGE_DEVIATION]            = ciXtractFeature::create<ciXtractAverageDeviation>( this );
+    mAvailableFeatures[XTRACT_SKEWNESS]                     = ciXtractFeature::create<ciXtractSkewness>( this );
+    mAvailableFeatures[XTRACT_KURTOSIS]                     = ciXtractFeature::create<ciXtractKurtosis>( this );
+    mAvailableFeatures[XTRACT_SPECTRAL_MEAN]                = ciXtractFeature::create<ciXtractSpectralMean>( this );
+    mAvailableFeatures[XTRACT_SPECTRAL_VARIANCE]            = ciXtractFeature::create<ciXtractSpectralVariance>( this );
+    mAvailableFeatures[XTRACT_SPECTRAL_STANDARD_DEVIATION]  = ciXtractFeature::create<ciXtractSpectralStandardDeviation>( this );
+    mAvailableFeatures[XTRACT_SPECTRAL_SKEWNESS]            = ciXtractFeature::create<ciXtractSpectralSkewness>( this );
+    mAvailableFeatures[XTRACT_SPECTRAL_KURTOSIS]            = ciXtractFeature::create<ciXtractSpectralKurtosis>( this );
+    mAvailableFeatures[XTRACT_SPECTRAL_CENTROID]            = ciXtractFeature::create<ciXtractSpectralCentroid>( this );
 
-    mAvailableFeatures[ XTRACT_SPECTRUM ]               = ciXtractFeature::create<ciXtractSpectrum>( this );
-    mAvailableFeatures[ XTRACT_BARK_COEFFICIENTS ]      = ciXtractFeature::create<ciXtractBark>( this );
     
-    mAvailableFeatures[ XTRACT_MFCC ]                   = ciXtractFeature::create<ciXtractMfcc>( this );
-    mAvailableFeatures[ XTRACT_AUTOCORRELATION ]        = ciXtractFeature::create<ciXtractAutocorrelation>( this );
-//    mAvailableFeatures[ XTRACT_AUTOCORRELATION_FFT ]    = ciXtractFeature::create<ciXtractAutocorrelationFft>( this );
     
-    mAvailableFeatures[ XTRACT_AMDF ]                   = ciXtractFeature::create<ciXtractAmdf>( this );
-    mAvailableFeatures[ XTRACT_ASDF ]                   = ciXtractFeature::create<ciXtractAsdf>( this );
+    // Vector
+    mAvailableFeatures[ XTRACT_SPECTRUM ]                   = ciXtractFeature::create<ciXtractSpectrum>( this );
+    mAvailableFeatures[ XTRACT_BARK_COEFFICIENTS ]          = ciXtractFeature::create<ciXtractBark>( this );
     
-    mAvailableFeatures[ XTRACT_LPC]                     = ciXtractFeature::create<ciXtractLpc>( this );
-    mAvailableFeatures[ XTRACT_LPCC]                    = ciXtractFeature::create<ciXtractLpcc>( this );
+    
+    
+    
+    for( int k=0; k < XTRACT_FEATURES; k++ )
+        if ( mAvailableFeatures[k] )
+            mAvailableFeatures[k]->init();
 }
 
 void ciXtract::update( const float *pcmData )

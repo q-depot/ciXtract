@@ -77,17 +77,20 @@ void BasicSampleApp::setup()
     mXtract     = ciXtract::create();
     
     
+
+    for( int k=0; k < XTRACT_FEATURES; k++ )
+        mXtract->enableFeature( (xtract_features_)k );
     
-    mXtract->enableFeature( XTRACT_MEAN );
-    mXtract->enableFeature( XTRACT_SPECTRUM );
-    mXtract->enableFeature( XTRACT_BARK_COEFFICIENTS );
-    mXtract->enableFeature( XTRACT_MFCC );
-    mXtract->enableFeature( XTRACT_AUTOCORRELATION );
-    //    mXtract->enableFeature( XTRACT_AUTOCORRELATION_FFT );
-    mXtract->enableFeature( XTRACT_AMDF );
-    mXtract->enableFeature( XTRACT_ASDF );
-    
-    mXtract->enableFeature( XTRACT_LPC );
+//    mXtract->enableFeature( XTRACT_MEAN );
+//    mXtract->enableFeature( XTRACT_SPECTRUM );
+//    mXtract->enableFeature( XTRACT_BARK_COEFFICIENTS );
+//    mXtract->enableFeature( XTRACT_MFCC );
+//    mXtract->enableFeature( XTRACT_AUTOCORRELATION );
+//    //    mXtract->enableFeature( XTRACT_AUTOCORRELATION_FFT );
+//    mXtract->enableFeature( XTRACT_AMDF );
+//    mXtract->enableFeature( XTRACT_ASDF );
+//    
+//    mXtract->enableFeature( XTRACT_LPC );
     
     
     

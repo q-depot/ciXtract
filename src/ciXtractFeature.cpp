@@ -17,13 +17,11 @@ using namespace ci::app;
 using namespace std;
 
 
-ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ featureEnum, uint32_t dataSize, uint32_t bufferSize, xtract_features_ inputFeature, std::vector<xtract_features_> extraDependencies )
-: mXtract(xtract), mFeatureEnum(featureEnum), mDataSize(dataSize), mBufferDataSize(bufferSize), mInputFeatureEnum(inputFeature)
+ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ featureEnum, int dataSize, int bufferSize )
+: mXtract(xtract), mFeatureEnum(featureEnum), mDataSize(dataSize), mBufferDataSize(bufferSize)
 {
-    mDependencies       = extraDependencies;
-    
-    if ( inputFeature < XTRACT_FEATURES )
-        mDependencies.insert( mDependencies.begin(), inputFeature );
+    if ( mBufferDataSize < 1 )
+        mBufferDataSize = mDataSize;
     
     mIsEnable           = false;
     mLastUpdateAt       = -1;
@@ -35,14 +33,14 @@ ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ featureEnum
     mIsLog              = false;
     mData               = DataBuffer( new double[mBufferDataSize] );
     mDataRaw            = DataBuffer( new double[mBufferDataSize] );
+    mInputDataSize      = 0;
+    mArgdPtr            = &mArgd[0];
     
     for( uint32_t k=0; k < mBufferDataSize; k++ )
     {
         mData.get()[k]      = 0.0;
         mDataRaw.get()[k]   = 0.0;
     }
-    
-//    mParams.resize(4);      // features have at the most 4 args
     
 //    console() << "ciXtractFeature() " << getName() << " | ";
 //    for( auto k=0; k < mDependencies.size(); k++ )
@@ -52,24 +50,13 @@ ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ featureEnum
 
 
 void ciXtractFeature::update( int frameN )
-{    
-    ciXtractFeatureRef inputFeature = mXtract->getActiveFeature( mInputFeatureEnum );
-    
-    if ( !inputFeature )
+{
+    if ( isUpdated(frameN) || !checkDependencies(frameN) )  // don't update twice, check dependencies are ready
         return;
     
     updateArgs();
-        
-    doUpdate( frameN, inputFeature->getDataRaw().get(), inputFeature->getDataSize(), mArgd, mDataRaw.get() );
-}
-
-
-void ciXtractFeature::doUpdate( int frameN, const double *inputData, const int inputDataSize, const void *args, double *outputData )
-{
-    if ( !isReady( frameN ) )
-        return;
     
-    xtract[mFeatureEnum]( inputData, inputDataSize, args, outputData );
+    xtract[mFeatureEnum]( mInputData.get(), mInputDataSize, mArgdPtr, mDataRaw.get() );
     
     processData();
     
@@ -79,8 +66,8 @@ void ciXtractFeature::doUpdate( int frameN, const double *inputData, const int i
 
 bool ciXtractFeature::checkDependencies( int frameN )
 {
-//    if( !mInputData || mInputDataSize == 0 )
-//        return false;
+    if( !mInputData || mInputDataSize == 0 )
+        return false;
     
     ciXtractFeatureRef dep;
     for( size_t k=0; k < mDependencies.size(); k++ )
@@ -92,6 +79,7 @@ bool ciXtractFeature::checkDependencies( int frameN )
         if ( !dep->isUpdated( frameN ) )
             dep->update( frameN );
     }
+    
     return true;
 }
 
@@ -127,16 +115,20 @@ void ciXtractFeature::processData()
     }
 }
 
-
-void ciXtractFeature::updateArgs()
+void ciXtractFeature::addInput( xtract_features_ feature )
 {
-    if ( mParams.empty() )
-        mArgd[0] = NULL;
-    
-    for( size_t k=0; k < mParams.size(); k++ )
-        mArgd[k] = mParams[k] ? mParams[k]->getValue() : NULL;
+    if ( feature < XTRACT_FEATURES )
+    {
+        mInputData      = mXtract->getAvailableFeature( feature )->getDataRaw();
+        mInputDataSize  = mXtract->getAvailableFeature( feature )->getDataSize();
+        mDependencies.push_back( feature );
+    }
+    else
+    {
+        mInputData      = mXtract->getPcmData();
+        mInputDataSize  = CIXTRACT_PCM_SIZE;
+    }
 }
-
 
 
 // ------------------------------------------------------------------------------------------------ //
@@ -145,92 +137,140 @@ void ciXtractFeature::updateArgs()
 
 // Mean
 // ------------------------------------------------------------------------------------------------ //
-ciXtractMean::ciXtractMean( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_MEAN, 1, 1, XTRACT_SPECTRUM ) {}
+void ciXtractMean::init()
+{
+    addInput( XTRACT_SPECTRUM );
+}
+
 
 // Variance
 // ------------------------------------------------------------------------------------------------ //
-ciXtractVariance::ciXtractVariance( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_VARIANCE, 1, 1, XTRACT_SPECTRUM, std::vector<xtract_features_>(XTRACT_MEAN) ) {}
+void ciXtractVariance::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mDependencies.push_back( XTRACT_MEAN );
+    
+    mArgdPtr = mXtract->getAvailableFeature( XTRACT_MEAN )->getDataRaw().get();
+}
 
 
 // Standard Deviation
 // ------------------------------------------------------------------------------------------------ //
-ciXtractStandardDeviation::ciXtractStandardDeviation( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_STANDARD_DEVIATION, 1, 1, XTRACT_SPECTRUM ) {}
+void ciXtractStandardDeviation::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mDependencies.push_back( XTRACT_VARIANCE );
+    
+    mArgdPtr = mXtract->getAvailableFeature( XTRACT_VARIANCE )->getDataRaw().get();
+}
 
 // Average Deviation
 // ------------------------------------------------------------------------------------------------ //
+void ciXtractAverageDeviation::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mDependencies.push_back( XTRACT_MEAN );
+    
+    mArgdPtr = mXtract->getAvailableFeature( XTRACT_MEAN )->getDataRaw().get();
+}
 
-ciXtractAverageDeviation::ciXtractAverageDeviation( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_AVERAGE_DEVIATION, 1, 1, XTRACT_SPECTRUM ) {}
 
-
-/*
 // Skewness
 // ------------------------------------------------------------------------------------------------ //
-class ciXtractSkewness : public ciXtractFeature {
-public:
-    ciXtractSkewness( ciXtract *xtract );
-    ~ciXtractSkewness() {}
-};
+void ciXtractSkewness::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mDependencies.push_back( XTRACT_MEAN );
+    mDependencies.push_back( XTRACT_STANDARD_DEVIATION );
+}
+
+void ciXtractSkewness::updateArgs()
+{
+    mArgd[0] = *mXtract->getActiveFeature( XTRACT_MEAN )->getDataRaw().get();
+    mArgd[1] = *mXtract->getActiveFeature( XTRACT_STANDARD_DEVIATION )->getDataRaw().get();
+}
 
 // Kurtosis
 // ------------------------------------------------------------------------------------------------ //
-class ciXtractKurtosis : public ciXtractFeature {
-public:
-    ciXtractKurtosis( ciXtract *xtract );
-    ~ciXtractKurtosis() {}
-};
+void ciXtractKurtosis::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mDependencies.push_back( XTRACT_MEAN );
+    mDependencies.push_back( XTRACT_STANDARD_DEVIATION );
+}
 
+void ciXtractKurtosis::updateArgs()
+{
+    mArgd[0] = *mXtract->getActiveFeature( XTRACT_MEAN )->getDataRaw().get();
+    mArgd[1] = *mXtract->getActiveFeature( XTRACT_STANDARD_DEVIATION )->getDataRaw().get();
+}
 
 // Spectral Mean
-// ------------------------------------------------------------------------------------------------ //
-class ciXtractSpectralMean : public ciXtractFeature {
-public:
-    ciXtractSpectralMean( ciXtract *xtract );
-    ~ciXtractSpectralMean() {}
-};
+void ciXtractSpectralMean::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mArgdPtr = NULL;
+}
+
 
 // Spectral Variance
-// ------------------------------------------------------------------------------------------------ //
-class ciXtractSpectralVariance : public ciXtractFeature {
-public:
-    ciXtractSpectralVariance( ciXtract *xtract );
-    ~ciXtractSpectralVariance() {}
-};
+void ciXtractSpectralVariance::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mDependencies.push_back( XTRACT_SPECTRAL_MEAN );
+    
+    mArgdPtr = mXtract->getAvailableFeature( XTRACT_SPECTRAL_MEAN )->getDataRaw().get();
+}
+
 
 // Spectral Standard Deviation
-// ------------------------------------------------------------------------------------------------ //
-class ciXtractSpectralStandardDeviation : public ciXtractFeature {
-public:
-    ciXtractSpectralStandardDeviation( ciXtract *xtract );
-    ~ciXtractSpectralStandardDeviation() {}
-};
+void ciXtractSpectralStandardDeviation::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mDependencies.push_back( XTRACT_SPECTRAL_VARIANCE );
+    
+    mArgdPtr = mXtract->getAvailableFeature( XTRACT_SPECTRAL_VARIANCE )->getDataRaw().get();
+}
+
 
 // Spectral Skewness
-// ------------------------------------------------------------------------------------------------ //
-class ciXtractSpectralSkewness : public ciXtractFeature {
-public:
-    ciXtractSpectralSkewness( ciXtract *xtract );
-    ~ciXtractSpectralSkewness() {}
-};
+void ciXtractSpectralSkewness::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mDependencies.push_back( XTRACT_SPECTRAL_MEAN );
+    mDependencies.push_back( XTRACT_SPECTRAL_STANDARD_DEVIATION );
+}
+
+void ciXtractSpectralSkewness::updateArgs()
+{
+    mArgd[0] = *mXtract->getActiveFeature( XTRACT_SPECTRAL_MEAN )->getDataRaw().get();
+    mArgd[1] = *mXtract->getActiveFeature( XTRACT_SPECTRAL_STANDARD_DEVIATION )->getDataRaw().get();
+}
 
 // Spectral Kurtosis
-// ------------------------------------------------------------------------------------------------ //
-class ciXtractSpectralKurtosis : public ciXtractFeature {
-public:
-    ciXtractSpectralKurtosis( ciXtract *xtract );
-    ~ciXtractSpectralKurtosis() {}
-};
+void ciXtractSpectralKurtosis::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mDependencies.push_back( XTRACT_SPECTRAL_MEAN );
+    mDependencies.push_back( XTRACT_SPECTRAL_STANDARD_DEVIATION );
+}
+
+void ciXtractSpectralKurtosis::updateArgs()
+{
+    mArgd[0] = *mXtract->getActiveFeature( XTRACT_SPECTRAL_MEAN )->getDataRaw().get();
+    mArgd[1] = *mXtract->getActiveFeature( XTRACT_SPECTRAL_STANDARD_DEVIATION )->getDataRaw().get();
+}
+
 
 // Spectral Centroid
-class ciXtractSpectralCentroid : public ciXtractFeature {
-public:
-    ciXtractSpectralCentroid( ciXtract *xtract );
-    ~ciXtractSpectralCentroid() {}
-};
+void ciXtractSpectralCentroid::init()
+{
+    addInput( XTRACT_SPECTRUM );
+    mArgdPtr = NULL;
+}
 
 
-PARAMS and ARGS can shared a pointer so there is no need to update the args array on each update, this also would help to pass other scalar features as parameters. 
-in this way all the features can share exactly the same update function!
-*/
+
 
 // ------------------------------------------------------------------------------------------------ //
 // Vector features -------------------------------------------------------------------------------- //
@@ -238,34 +278,26 @@ in this way all the features can share exactly the same update function!
 
 // Spectrum --------------------------------------------------------------------------------------- //
 // ------------------------------------------------------------------------------------------------ //
-ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_SPECTRUM, CIXTRACT_FFT_SIZE, CIXTRACT_FFT_SIZE * 2 )
-{
-    mParams.resize(4);
-    
-    mParams[0] = FeatureParam::create( "samplerate", CIXTRACT_SAMPLERATE, FeatureParam::PARAM_READONLY );
-    
-    mParams[1] = FeatureParam::create( "type", XTRACT_MAGNITUDE_SPECTRUM );
-    mParams[1]->addOption( "Magnitude",     XTRACT_MAGNITUDE_SPECTRUM );
-    mParams[1]->addOption( "Log Magnitude", XTRACT_LOG_MAGNITUDE_SPECTRUM );
-    mParams[1]->addOption( "Power",         XTRACT_POWER_SPECTRUM );
-    mParams[1]->addOption( "Log Power",     XTRACT_LOG_POWER_SPECTRUM );
-    
-    mParams[2] = FeatureParam::create( "dc", 0.0 );
-    mParams[2]->addOption( "yes",           1.0 );
-    mParams[2]->addOption( "no",            0.0 );
-    
-    mParams[3] = FeatureParam::create( "norm", 0.0 );
-    mParams[3]->addOption( "yes",           1.0 );
-    mParams[3]->addOption( "no",            0.0 );
-    
-	xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_SPECTRUM );
-}
 
-void ciXtractSpectrum::update( int frameN )
+void ciXtractSpectrum::init()
 {
-    updateArgs();
+    // LibXtract init
+	xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_SPECTRUM );
     
-    doUpdate( frameN, mXtract->getPcmData().get(), CIXTRACT_PCM_SIZE, mArgd, mDataRaw.get() );
+    // Input Data
+    addInput( (xtract_features_)CIXTRACT_PCM_INPUT );
+    
+    // Params & Args
+    mArgd[0] = CIXTRACT_SAMPLERATE;
+    
+    mParams.push_back( FeatureParam::create( "type", XTRACT_MAGNITUDE_SPECTRUM, &mArgd[1] ) );
+    mParams.back()->addOption( "Magnitude",     XTRACT_MAGNITUDE_SPECTRUM );
+    mParams.back()->addOption( "Log Magnitude", XTRACT_LOG_MAGNITUDE_SPECTRUM );
+    mParams.back()->addOption( "Power",         XTRACT_POWER_SPECTRUM );
+    mParams.back()->addOption( "Log Power",     XTRACT_LOG_POWER_SPECTRUM );
+    
+    mParams.push_back( FeatureParam::create( "dc", 0.0, &mArgd[2] )->addOptionBool() );
+    mParams.push_back( FeatureParam::create( "norm", 0.0, &mArgd[3] )->addOptionBool() );
 }
 
 // AutocorrelationFft ----------------------------------------------------------------------------- //
@@ -284,7 +316,7 @@ void ciXtractAutocorrelationFft::update( int frameN )
     doUpdate( frameN, mXtract->getPcmData().get(), CIXTRACT_PCM_SIZE, mArgd, mDataRaw.get() );
 }
 */
-
+/*
 // Mfcc ------------------------------------------------------------------------------------------- //
 // ------------------------------------------------------------------------------------------------ //
 
@@ -339,28 +371,27 @@ ciXtractAmdf::ciXtractAmdf( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT
 // ------------------------------------------------------------------------------------------------ //
 ciXtractAsdf::ciXtractAsdf( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_ASDF, CIXTRACT_FFT_SIZE, CIXTRACT_FFT_SIZE, XTRACT_SPECTRUM ) {}
 
-
+*/
 // Bark ------------------------------------------------------------------------------------------- //
 // ------------------------------------------------------------------------------------------------ //
 
-ciXtractBark::ciXtractBark( ciXtract *xtract ) : ciXtractFeature( xtract, XTRACT_BARK_COEFFICIENTS, XTRACT_BARK_BANDS, XTRACT_BARK_BANDS, XTRACT_SPECTRUM )
+
+void ciXtractBark::init()
 {
+    // LibXtract init
     mBandLimits = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
-    
     xtract_init_bark( CIXTRACT_FFT_SIZE, CIXTRACT_SAMPLERATE, mBandLimits.get() );
+
+    // Input Data
+    mInputData      = mXtract->getAvailableFeature( XTRACT_SPECTRUM )->getDataRaw();
+    mInputDataSize  = mXtract->getAvailableFeature( XTRACT_SPECTRUM )->getDataSize();
+    mDependencies.push_back( XTRACT_SPECTRUM );
+
+    // Params & Args
+    mArgdPtr = mBandLimits.get();
 }
 
-void ciXtractBark::update( int frameN )
-{
-    ciXtractFeatureRef inputFeature = mXtract->getActiveFeature( mInputFeatureEnum );
-    
-    if ( !inputFeature )
-        return;
-    
-    doUpdate( frameN, inputFeature->getDataRaw().get(), inputFeature->getDataSize(), mBandLimits.get(), mDataRaw.get() );
-}
-
-
+/*
 //int 	xtract_peak_spectrum (const double *data, const int N, const void *argv, double *result)
 //int 	xtract_harmonic_spectrum (const double *data, const int N, const void *argv, double *result)
 
@@ -381,27 +412,7 @@ void ciXtractLpcc::update( int frameN )
 {
     
 }
-
-//Extract Linear Predictive Coding Cepstral Coefficients.
-//
-//Parameters
-//*data
-//a pointer to the first element in an array of LPC coeffiecients e.g. a pointer to the second half of the array pointed to by *result from xtract_lpc()
-//
-//N
-//the number of LPC coefficients to be considered
-//
-//*argv
-//a pointer to a double representing the order of the result vector.
-//This must be a whole number. According to Rabiner and Juang the ratio between the number (p) of LPC coefficients and the order (Q) of the LPC cepstrum is given by Q ~ (3/2)p where Q > p.
-//
-//*result
-//a pointer to an array containing the resultant LPCC.
-//
-//
-//An array of size Q, where Q is given by argv[0] must be allocated, and *result must point to its first element.
-
-
+*/
 
 
 //int 	xtract_subbands (const double *data, const int N, const void *argv, double *result)
