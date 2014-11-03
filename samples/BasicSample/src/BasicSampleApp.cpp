@@ -42,7 +42,7 @@ public:
 void BasicSampleApp::prepareSettings(Settings *settings)
 {
 	settings->setTitle("ciXtract Sample");
-	settings->setWindowSize( 1200, 900 );
+	settings->setWindowSize( 1200, 700 );
 }
 
 
@@ -77,20 +77,11 @@ void BasicSampleApp::setup()
     mXtract     = ciXtract::create();
     
     
-
-    for( int k=0; k < XTRACT_FEATURES; k++ )
-        mXtract->enableFeature( (xtract_features_)k );
     
-//    mXtract->enableFeature( XTRACT_MEAN );
-//    mXtract->enableFeature( XTRACT_SPECTRUM );
-//    mXtract->enableFeature( XTRACT_BARK_COEFFICIENTS );
-//    mXtract->enableFeature( XTRACT_MFCC );
-//    mXtract->enableFeature( XTRACT_AUTOCORRELATION );
-//    //    mXtract->enableFeature( XTRACT_AUTOCORRELATION_FFT );
-//    mXtract->enableFeature( XTRACT_AMDF );
-//    mXtract->enableFeature( XTRACT_ASDF );
-//    
-//    mXtract->enableFeature( XTRACT_LPC );
+    mXtract->enableFeature( XTRACT_MEAN );
+    mXtract->enableFeature( XTRACT_SPECTRUM );
+    mXtract->enableFeature( XTRACT_BARK_COEFFICIENTS );
+    mXtract->enableFeature( XTRACT_MFCC );
     
     
     
@@ -131,7 +122,8 @@ void BasicSampleApp::setup()
         if ( featureParams.empty() )
             continue;
     
-        mParams.addText( mFeatures[k]->getName() + " " + to_string( featureParams.size() ) );
+        mParams.addSeparator("AAA" + to_string(k) );
+        mParams.addText("bb " + to_string(k) );
         
         for( size_t i=0; i < featureParams.size(); i++ )
         {
@@ -168,7 +160,7 @@ void BasicSampleApp::draw()
 	gl::color( Color::gray( 0.1f ) );
     ciXtract::drawPcm( Rectf( 0, 0, getWindowWidth(), 60 ), mPcmBuffer.getData(), mPcmBuffer.getSize() / mPcmBuffer.getNumChannels() );
     
-    Vec2i   widgetSize  = Vec2f( CIXTRACT_FFT_SIZE, 60 );
+    Vec2i   widgetSize  = Vec2f( CIXTRACT_FFT_SIZE * 2, 60 );
     Vec2f   initPos     = Vec2f( 15, 100 );
     Vec2f   pos         = initPos;
     ColorA  bgCol       = ColorA( 0.0f, 0.0f, 0.0f, 0.1f );

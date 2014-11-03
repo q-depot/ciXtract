@@ -46,17 +46,8 @@ public:
     //! return all the features enabled
     std::vector<ciXtractFeatureRef> getActiveFeatures() { return mActiveFeatures; };
     
-    //! get the active feature
+    //! get a specific feature
     ciXtractFeatureRef getActiveFeature( xtract_features_ feature );
-    
-    //! get the available feature
-    ciXtractFeatureRef getAvailableFeature( xtract_features_ feature )
-    {
-        if ( feature < XTRACT_FEATURES )
-            return mAvailableFeatures[feature];
-        else
-            return ciXtractFeatureRef();
-    }
     
     //! get raw feature results
     DataBuffer getFeatureDataRaw( xtract_features_ feature )
@@ -114,7 +105,10 @@ private:
     ciXtractFeatureRef                  mAvailableFeatures[XTRACT_FEATURES];    //! an array of XTRACT_FEATURES with all the available features
     std::vector<ciXtractFeatureRef>     mActiveFeatures;                        //! a vector contaning a pointer to each feature enabled
     
+    DataBuffer                          mPcmDataRaw;
     DataBuffer                          mPcmData;
+    
+    double                              *mWindowFunc;
     int                                 mLastUpdateAt;
     
 };

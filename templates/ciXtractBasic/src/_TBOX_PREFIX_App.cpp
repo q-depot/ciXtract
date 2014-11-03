@@ -53,7 +53,7 @@ void _TBOX_PREFIX_App::setup()
     // audio::DeviceRef dev    = audio::Device::findDeviceByName( "Soundflower (2ch)" );
     // mInputDeviceNode        = ctx->createInputDeviceNode( dev );
     
-    initialise default input device
+    // initialise default input device
     mInputDeviceNode = ctx->createInputDeviceNode();
     
     // initialise MonitorNode to get the PCM data

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 44;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,41 +12,23 @@
 		00B784B40FF439BC000DE1D7 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B00FF439BC000DE1D7 /* AudioToolbox.framework */; };
 		00B784B50FF439BC000DE1D7 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B10FF439BC000DE1D7 /* AudioUnit.framework */; };
 		00B784B60FF439BC000DE1D7 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B20FF439BC000DE1D7 /* CoreAudio.framework */; };
+		2F614EEF90124371BE92E108 /* delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D5387C02F3A4B68BECC06A1 /* delta.c */; };
+		3DA6105ED2EE485C957BD760 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 6F4C8AD18C3B49EB82F5DB29 /* CinderApp.icns */; };
+		505681FBDBA3412C80C2CA2A /* libxtract.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E70BA8278B64CBE81B8AE45 /* libxtract.c */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
-		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		71BEB311A8424B8CA64FBCC9 /* xtract_vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 45AD6EAC4BA84FE88AC0CED4 /* xtract_vector.h */; };
-		789AD87D82BF4D2784601FAC /* xtract_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D8253CCEFB748129539EC1A /* xtract_types.h */; };
-		1CA0615A45D340C195265AA2 /* xtract_scalar.h in Headers */ = {isa = PBXBuildFile; fileRef = A838ED5772DC481D9F5A0C04 /* xtract_scalar.h */; };
-		CA07949B8C6849B58736D86F /* xtract_macros.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E598ED7B00048D9ACB063B7 /* xtract_macros.h */; };
-		D4654F97CA8F4CD9813E8856 /* xtract_helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 37654A7882804A86B768C925 /* xtract_helper.h */; };
-		C306CB7AD08E45F48146B03F /* xtract_delta.h in Headers */ = {isa = PBXBuildFile; fileRef = B21E0CAE247842B4B8BC5439 /* xtract_delta.h */; };
-		2131F8F4D76546EEB23BA0B4 /* libxtract.h in Headers */ = {isa = PBXBuildFile; fileRef = 2667A17593BA43BD89581281 /* libxtract.h */; };
-		DD4CF5DC398849FB8A96A9DC /* fftsg.h in Headers */ = {isa = PBXBuildFile; fileRef = 77C9E2E3B3A947399845E08C /* fftsg.h */; };
-		B9EA91ED73C445F68DD95A6C /* fftsg.c in Headers */ = {isa = PBXBuildFile; fileRef = BAEF3F612C8349B2A5FBACA1 /* fftsg.c */; };
-		9D40F62A59F54B0192C9D8D4 /* dywapitchtrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A351FE3D7CB4FA38C465178 /* dywapitchtrack.h */; };
-		B75F06EE036E4B568E3DD996 /* xtract_window_private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA295578EBF4F71994004F8 /* xtract_window_private.h */; };
-		64DF28457AE04B23BEE3CC3B /* xtract_macros_private.h in Headers */ = {isa = PBXBuildFile; fileRef = D2ABF44500D745FA8233DE62 /* xtract_macros_private.h */; };
-		AB5D0EC7CB654C17B4E148CE /* xtract_globals_private.h in Headers */ = {isa = PBXBuildFile; fileRef = F42C354AC5B843908F71FEF3 /* xtract_globals_private.h */; };
-		A92257A42D8649C1BC7F2157 /* fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 33B8119823734940B81EC71A /* fft.h */; };
-		55EDC8AFDFD645EC8436570C /* ciXtractFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 11AEBAEB869C42EFB0F11F51 /* ciXtractFeature.h */; };
-		A32070E2966948A1BACB4415 /* ciXtract.h in Headers */ = {isa = PBXBuildFile; fileRef = 97152736C0914EF0A8D3796D /* ciXtract.h */; };
-		8E89DAF0DE3244AA83F0AFCB /* dywapitchtrack.c in Sources */ = {isa = PBXBuildFile; fileRef = 417794970E404117AF216075 /* dywapitchtrack.c */; };
-		F506D56FBBE042F285B50718 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A1C4CE01DDE4055A69326E7 /* window.c */; };
-		D08BD2AF44464936BE930E48 /* vector.c in Sources */ = {isa = PBXBuildFile; fileRef = F24595BDC1384F1CB377BDEE /* vector.c */; };
-		8CC2B277B72C439F856DBE09 /* scalar.c in Sources */ = {isa = PBXBuildFile; fileRef = 77C36BED669F48249C0F0525 /* scalar.c */; };
-		505681FBDBA3412C80C2CA2A /* libxtract.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E70BA8278B64CBE81B8AE45 /* libxtract.c */; };
-		D875FF65BC81450280B3D802 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = AD54A7A18D4848388CAFEA58 /* init.c */; };
 		6A7E72AD7A3348499CE6DC4F /* helper.c in Sources */ = {isa = PBXBuildFile; fileRef = C068330F11E342C6B68081EC /* helper.c */; };
-		F593AF45EB054DD6B7756956 /* fini.c in Sources */ = {isa = PBXBuildFile; fileRef = A58FCC4558144937AEAB169C /* fini.c */; };
-		D473653397D140ECBAC7191D /* descriptors.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CC17CA84ADE4B0BBD98D52C /* descriptors.c */; };
-		2F614EEF90124371BE92E108 /* delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D5387C02F3A4B68BECC06A1 /* delta.c */; };
-		FAA62B3F6B774305AB5E9806 /* ciXtractFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C89FCDDB4303431E8FC61FE1 /* ciXtractFeature.cpp */; };
-		9D63FCDE6A514F4E8D21743F /* ciXtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D810D5DC7C845B6BFAB31AF /* ciXtract.cpp */; };
+		8CC2B277B72C439F856DBE09 /* scalar.c in Sources */ = {isa = PBXBuildFile; fileRef = 77C36BED669F48249C0F0525 /* scalar.c */; };
+		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		8E89DAF0DE3244AA83F0AFCB /* dywapitchtrack.c in Sources */ = {isa = PBXBuildFile; fileRef = 417794970E404117AF216075 /* dywapitchtrack.c */; };
 		97677451273F4E80AE765650 /* BasicSampleApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20ACC762F3F94C72BC3E554B /* BasicSampleApp.cpp */; };
-		F495DBC2DE854807B38FD08F /* BasicSample_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = F4E661EADFB14C98AEB17291 /* BasicSample_Prefix.pch */; };
-		3DA6105ED2EE485C957BD760 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 6F4C8AD18C3B49EB82F5DB29 /* CinderApp.icns */; };
-		BFC65E37BE4743FCB1BB8F10 /* Resources.h in Headers */ = {isa = PBXBuildFile; fileRef = 397A4A18F01743899C1D2658 /* Resources.h */; };
+		9D63FCDE6A514F4E8D21743F /* ciXtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D810D5DC7C845B6BFAB31AF /* ciXtract.cpp */; };
+		D08BD2AF44464936BE930E48 /* vector.c in Sources */ = {isa = PBXBuildFile; fileRef = F24595BDC1384F1CB377BDEE /* vector.c */; };
+		D473653397D140ECBAC7191D /* descriptors.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CC17CA84ADE4B0BBD98D52C /* descriptors.c */; };
+		D875FF65BC81450280B3D802 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = AD54A7A18D4848388CAFEA58 /* init.c */; };
+		F506D56FBBE042F285B50718 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A1C4CE01DDE4055A69326E7 /* window.c */; };
+		F593AF45EB054DD6B7756956 /* fini.c in Sources */ = {isa = PBXBuildFile; fileRef = A58FCC4558144937AEAB169C /* fini.c */; };
+		FAA62B3F6B774305AB5E9806 /* ciXtractFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C89FCDDB4303431E8FC61FE1 /* ciXtractFeature.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,44 +38,44 @@
 		00B784B10FF439BC000DE1D7 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		00B784B20FF439BC000DE1D7 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		11AEBAEB869C42EFB0F11F51 /* ciXtractFeature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ciXtractFeature.h; path = ../../../src/ciXtractFeature.h; sourceTree = "<group>"; };
+		1CC17CA84ADE4B0BBD98D52C /* descriptors.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = descriptors.c; path = ../../../src/LibXtract/src/descriptors.c; sourceTree = "<group>"; };
+		1D5387C02F3A4B68BECC06A1 /* delta.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = delta.c; path = ../../../src/LibXtract/src/delta.c; sourceTree = "<group>"; };
+		20ACC762F3F94C72BC3E554B /* BasicSampleApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = BasicSampleApp.cpp; path = ../src/BasicSampleApp.cpp; sourceTree = "<group>"; };
+		2667A17593BA43BD89581281 /* libxtract.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = libxtract.h; path = ../../../src/LibXtract/xtract/libxtract.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		33B8119823734940B81EC71A /* fft.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = fft.h; path = ../../../src/LibXtract/src/fft.h; sourceTree = "<group>"; };
+		37654A7882804A86B768C925 /* xtract_helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xtract_helper.h; path = ../../../src/LibXtract/xtract/xtract_helper.h; sourceTree = "<group>"; };
+		397A4A18F01743899C1D2658 /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../include/Resources.h; sourceTree = "<group>"; };
+		3CA295578EBF4F71994004F8 /* xtract_window_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xtract_window_private.h; path = ../../../src/LibXtract/src/xtract_window_private.h; sourceTree = "<group>"; };
+		3D810D5DC7C845B6BFAB31AF /* ciXtract.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = ciXtract.cpp; path = ../../../src/ciXtract.cpp; sourceTree = "<group>"; };
+		417794970E404117AF216075 /* dywapitchtrack.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = dywapitchtrack.c; path = ../../../src/LibXtract/src/dywapitchtrack/dywapitchtrack.c; sourceTree = "<group>"; };
+		45AD6EAC4BA84FE88AC0CED4 /* xtract_vector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xtract_vector.h; path = ../../../src/LibXtract/xtract/xtract_vector.h; sourceTree = "<group>"; };
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
+		6E70BA8278B64CBE81B8AE45 /* libxtract.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = libxtract.c; path = ../../../src/LibXtract/src/libxtract.c; sourceTree = "<group>"; };
+		6F4C8AD18C3B49EB82F5DB29 /* CinderApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = CinderApp.icns; path = ../resources/CinderApp.icns; sourceTree = "<group>"; };
+		77C36BED669F48249C0F0525 /* scalar.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = scalar.c; path = ../../../src/LibXtract/src/scalar.c; sourceTree = "<group>"; };
+		77C9E2E3B3A947399845E08C /* fftsg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = fftsg.h; path = ../../../src/LibXtract/src/ooura/fftsg.h; sourceTree = "<group>"; };
+		7A1C4CE01DDE4055A69326E7 /* window.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = window.c; path = ../../../src/LibXtract/src/window.c; sourceTree = "<group>"; };
+		7D8253CCEFB748129539EC1A /* xtract_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xtract_types.h; path = ../../../src/LibXtract/xtract/xtract_types.h; sourceTree = "<group>"; };
+		7E598ED7B00048D9ACB063B7 /* xtract_macros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xtract_macros.h; path = ../../../src/LibXtract/xtract/xtract_macros.h; sourceTree = "<group>"; };
+		8A351FE3D7CB4FA38C465178 /* dywapitchtrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dywapitchtrack.h; path = ../../../src/LibXtract/src/dywapitchtrack/dywapitchtrack.h; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* BasicSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BasicSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		397A4A18F01743899C1D2658 /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../include/Resources.h; sourceTree = "<group>"; name = Resources.h; };
-		6F4C8AD18C3B49EB82F5DB29 /* CinderApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ../resources/CinderApp.icns; sourceTree = "<group>"; name = CinderApp.icns; };
-		C54F07488DBB4740992B326C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; name = Info.plist; };
-		F4E661EADFB14C98AEB17291 /* BasicSample_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = BasicSample_Prefix.pch; sourceTree = "<group>"; name = BasicSample_Prefix.pch; };
-		20ACC762F3F94C72BC3E554B /* BasicSampleApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; path = ../src/BasicSampleApp.cpp; sourceTree = "<group>"; name = BasicSampleApp.cpp; };
-		3D810D5DC7C845B6BFAB31AF /* ciXtract.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; path = ../../../src/ciXtract.cpp; sourceTree = "<group>"; name = ciXtract.cpp; };
-		C89FCDDB4303431E8FC61FE1 /* ciXtractFeature.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; path = ../../../src/ciXtractFeature.cpp; sourceTree = "<group>"; name = ciXtractFeature.cpp; };
-		1D5387C02F3A4B68BECC06A1 /* delta.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/delta.c; sourceTree = "<group>"; name = delta.c; };
-		1CC17CA84ADE4B0BBD98D52C /* descriptors.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/descriptors.c; sourceTree = "<group>"; name = descriptors.c; };
-		A58FCC4558144937AEAB169C /* fini.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/fini.c; sourceTree = "<group>"; name = fini.c; };
-		C068330F11E342C6B68081EC /* helper.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/helper.c; sourceTree = "<group>"; name = helper.c; };
-		AD54A7A18D4848388CAFEA58 /* init.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/init.c; sourceTree = "<group>"; name = init.c; };
-		6E70BA8278B64CBE81B8AE45 /* libxtract.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/libxtract.c; sourceTree = "<group>"; name = libxtract.c; };
-		77C36BED669F48249C0F0525 /* scalar.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/scalar.c; sourceTree = "<group>"; name = scalar.c; };
-		F24595BDC1384F1CB377BDEE /* vector.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/vector.c; sourceTree = "<group>"; name = vector.c; };
-		7A1C4CE01DDE4055A69326E7 /* window.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/window.c; sourceTree = "<group>"; name = window.c; };
-		417794970E404117AF216075 /* dywapitchtrack.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/dywapitchtrack/dywapitchtrack.c; sourceTree = "<group>"; name = dywapitchtrack.c; };
-		97152736C0914EF0A8D3796D /* ciXtract.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/ciXtract.h; sourceTree = "<group>"; name = ciXtract.h; };
-		11AEBAEB869C42EFB0F11F51 /* ciXtractFeature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/ciXtractFeature.h; sourceTree = "<group>"; name = ciXtractFeature.h; };
-		33B8119823734940B81EC71A /* fft.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/src/fft.h; sourceTree = "<group>"; name = fft.h; };
-		F42C354AC5B843908F71FEF3 /* xtract_globals_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/src/xtract_globals_private.h; sourceTree = "<group>"; name = xtract_globals_private.h; };
-		D2ABF44500D745FA8233DE62 /* xtract_macros_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/src/xtract_macros_private.h; sourceTree = "<group>"; name = xtract_macros_private.h; };
-		3CA295578EBF4F71994004F8 /* xtract_window_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/src/xtract_window_private.h; sourceTree = "<group>"; name = xtract_window_private.h; };
-		8A351FE3D7CB4FA38C465178 /* dywapitchtrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/src/dywapitchtrack/dywapitchtrack.h; sourceTree = "<group>"; name = dywapitchtrack.h; };
-		BAEF3F612C8349B2A5FBACA1 /* fftsg.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ../../../src/LibXtract/src/ooura/fftsg.c; sourceTree = "<group>"; name = fftsg.c; };
-		77C9E2E3B3A947399845E08C /* fftsg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/src/ooura/fftsg.h; sourceTree = "<group>"; name = fftsg.h; };
-		2667A17593BA43BD89581281 /* libxtract.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/xtract/libxtract.h; sourceTree = "<group>"; name = libxtract.h; };
-		B21E0CAE247842B4B8BC5439 /* xtract_delta.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/xtract/xtract_delta.h; sourceTree = "<group>"; name = xtract_delta.h; };
-		37654A7882804A86B768C925 /* xtract_helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/xtract/xtract_helper.h; sourceTree = "<group>"; name = xtract_helper.h; };
-		7E598ED7B00048D9ACB063B7 /* xtract_macros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/xtract/xtract_macros.h; sourceTree = "<group>"; name = xtract_macros.h; };
-		A838ED5772DC481D9F5A0C04 /* xtract_scalar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/xtract/xtract_scalar.h; sourceTree = "<group>"; name = xtract_scalar.h; };
-		7D8253CCEFB748129539EC1A /* xtract_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/xtract/xtract_types.h; sourceTree = "<group>"; name = xtract_types.h; };
-		45AD6EAC4BA84FE88AC0CED4 /* xtract_vector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../../../src/LibXtract/xtract/xtract_vector.h; sourceTree = "<group>"; name = xtract_vector.h; };
+		97152736C0914EF0A8D3796D /* ciXtract.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ciXtract.h; path = ../../../src/ciXtract.h; sourceTree = "<group>"; };
+		A58FCC4558144937AEAB169C /* fini.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = fini.c; path = ../../../src/LibXtract/src/fini.c; sourceTree = "<group>"; };
+		A838ED5772DC481D9F5A0C04 /* xtract_scalar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xtract_scalar.h; path = ../../../src/LibXtract/xtract/xtract_scalar.h; sourceTree = "<group>"; };
+		AD54A7A18D4848388CAFEA58 /* init.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = init.c; path = ../../../src/LibXtract/src/init.c; sourceTree = "<group>"; };
+		B21E0CAE247842B4B8BC5439 /* xtract_delta.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xtract_delta.h; path = ../../../src/LibXtract/xtract/xtract_delta.h; sourceTree = "<group>"; };
+		BAEF3F612C8349B2A5FBACA1 /* fftsg.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = fftsg.c; path = ../../../src/LibXtract/src/ooura/fftsg.c; sourceTree = "<group>"; };
+		C068330F11E342C6B68081EC /* helper.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = helper.c; path = ../../../src/LibXtract/src/helper.c; sourceTree = "<group>"; };
+		C54F07488DBB4740992B326C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C89FCDDB4303431E8FC61FE1 /* ciXtractFeature.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = ciXtractFeature.cpp; path = ../../../src/ciXtractFeature.cpp; sourceTree = "<group>"; };
+		D2ABF44500D745FA8233DE62 /* xtract_macros_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xtract_macros_private.h; path = ../../../src/LibXtract/src/xtract_macros_private.h; sourceTree = "<group>"; };
+		F24595BDC1384F1CB377BDEE /* vector.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = vector.c; path = ../../../src/LibXtract/src/vector.c; sourceTree = "<group>"; };
+		F42C354AC5B843908F71FEF3 /* xtract_globals_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xtract_globals_private.h; path = ../../../src/LibXtract/src/xtract_globals_private.h; sourceTree = "<group>"; };
+		F4E661EADFB14C98AEB17291 /* BasicSample_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = BasicSample_Prefix.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +97,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		01B97315FEAEA392516A2CEA /* Blocks */ = {
+			isa = PBXGroup;
+			children = (
+				8B24D498358246F7B97FCDC4 /* ciXtract */,
+			);
+			name = Blocks;
+			sourceTree = "<group>";
+		};
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -168,97 +158,6 @@
 			name = BasicSample;
 			sourceTree = "<group>";
 		};
-		F07D3C40DB184C9780AD190F /* dywapitchtrack */ = {
-			isa = PBXGroup;
-			children = (
-				417794970E404117AF216075 /* dywapitchtrack.c */,
-				8A351FE3D7CB4FA38C465178 /* dywapitchtrack.h */,
-			);
-			name = dywapitchtrack;
-			sourceTree = "<group>";
-		};
-		8366DD15194A4A21A51C97BB /* ooura */ = {
-			isa = PBXGroup;
-			children = (
-				BAEF3F612C8349B2A5FBACA1 /* fftsg.c */,
-				77C9E2E3B3A947399845E08C /* fftsg.h */,
-			);
-			name = ooura;
-			sourceTree = "<group>";
-		};
-		D38CD2E031F644D88135F072 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				1D5387C02F3A4B68BECC06A1 /* delta.c */,
-				1CC17CA84ADE4B0BBD98D52C /* descriptors.c */,
-				A58FCC4558144937AEAB169C /* fini.c */,
-				C068330F11E342C6B68081EC /* helper.c */,
-				AD54A7A18D4848388CAFEA58 /* init.c */,
-				6E70BA8278B64CBE81B8AE45 /* libxtract.c */,
-				77C36BED669F48249C0F0525 /* scalar.c */,
-				F24595BDC1384F1CB377BDEE /* vector.c */,
-				7A1C4CE01DDE4055A69326E7 /* window.c */,
-				F07D3C40DB184C9780AD190F /* dywapitchtrack */,
-				33B8119823734940B81EC71A /* fft.h */,
-				F42C354AC5B843908F71FEF3 /* xtract_globals_private.h */,
-				D2ABF44500D745FA8233DE62 /* xtract_macros_private.h */,
-				3CA295578EBF4F71994004F8 /* xtract_window_private.h */,
-				8366DD15194A4A21A51C97BB /* ooura */,
-			);
-			name = src;
-			sourceTree = "<group>";
-		};
-		B97615AB67284077B89206A7 /* xtract */ = {
-			isa = PBXGroup;
-			children = (
-				2667A17593BA43BD89581281 /* libxtract.h */,
-				B21E0CAE247842B4B8BC5439 /* xtract_delta.h */,
-				37654A7882804A86B768C925 /* xtract_helper.h */,
-				7E598ED7B00048D9ACB063B7 /* xtract_macros.h */,
-				A838ED5772DC481D9F5A0C04 /* xtract_scalar.h */,
-				7D8253CCEFB748129539EC1A /* xtract_types.h */,
-				45AD6EAC4BA84FE88AC0CED4 /* xtract_vector.h */,
-			);
-			name = xtract;
-			sourceTree = "<group>";
-		};
-		98B56983C8694B4DA5AF9678 /* LibXtract */ = {
-			isa = PBXGroup;
-			children = (
-				D38CD2E031F644D88135F072 /* src */,
-				B97615AB67284077B89206A7 /* xtract */,
-			);
-			name = LibXtract;
-			sourceTree = "<group>";
-		};
-		43BF669D0B124C7FBC4C6E3E /* src */ = {
-			isa = PBXGroup;
-			children = (
-				3D810D5DC7C845B6BFAB31AF /* ciXtract.cpp */,
-				C89FCDDB4303431E8FC61FE1 /* ciXtractFeature.cpp */,
-				98B56983C8694B4DA5AF9678 /* LibXtract */,
-				97152736C0914EF0A8D3796D /* ciXtract.h */,
-				11AEBAEB869C42EFB0F11F51 /* ciXtractFeature.h */,
-			);
-			name = src;
-			sourceTree = "<group>";
-		};
-		8B24D498358246F7B97FCDC4 /* ciXtract */ = {
-			isa = PBXGroup;
-			children = (
-				43BF669D0B124C7FBC4C6E3E /* src */,
-			);
-			name = ciXtract;
-			sourceTree = "<group>";
-		};
-		01B97315FEAEA392516A2CEA /* Blocks */ = {
-			isa = PBXGroup;
-			children = (
-				8B24D498358246F7B97FCDC4 /* ciXtract */,
-			);
-			name = Blocks;
-			sourceTree = "<group>";
-		};
 		29B97315FDCFA39411CA2CEA /* Headers */ = {
 			isa = PBXGroup;
 			children = (
@@ -284,6 +183,89 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		43BF669D0B124C7FBC4C6E3E /* src */ = {
+			isa = PBXGroup;
+			children = (
+				3D810D5DC7C845B6BFAB31AF /* ciXtract.cpp */,
+				C89FCDDB4303431E8FC61FE1 /* ciXtractFeature.cpp */,
+				98B56983C8694B4DA5AF9678 /* LibXtract */,
+				97152736C0914EF0A8D3796D /* ciXtract.h */,
+				11AEBAEB869C42EFB0F11F51 /* ciXtractFeature.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		8366DD15194A4A21A51C97BB /* ooura */ = {
+			isa = PBXGroup;
+			children = (
+				BAEF3F612C8349B2A5FBACA1 /* fftsg.c */,
+				77C9E2E3B3A947399845E08C /* fftsg.h */,
+			);
+			name = ooura;
+			sourceTree = "<group>";
+		};
+		8B24D498358246F7B97FCDC4 /* ciXtract */ = {
+			isa = PBXGroup;
+			children = (
+				43BF669D0B124C7FBC4C6E3E /* src */,
+			);
+			name = ciXtract;
+			sourceTree = "<group>";
+		};
+		98B56983C8694B4DA5AF9678 /* LibXtract */ = {
+			isa = PBXGroup;
+			children = (
+				D38CD2E031F644D88135F072 /* src */,
+				B97615AB67284077B89206A7 /* xtract */,
+			);
+			name = LibXtract;
+			sourceTree = "<group>";
+		};
+		B97615AB67284077B89206A7 /* xtract */ = {
+			isa = PBXGroup;
+			children = (
+				2667A17593BA43BD89581281 /* libxtract.h */,
+				B21E0CAE247842B4B8BC5439 /* xtract_delta.h */,
+				37654A7882804A86B768C925 /* xtract_helper.h */,
+				7E598ED7B00048D9ACB063B7 /* xtract_macros.h */,
+				A838ED5772DC481D9F5A0C04 /* xtract_scalar.h */,
+				7D8253CCEFB748129539EC1A /* xtract_types.h */,
+				45AD6EAC4BA84FE88AC0CED4 /* xtract_vector.h */,
+			);
+			name = xtract;
+			sourceTree = "<group>";
+		};
+		D38CD2E031F644D88135F072 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				1D5387C02F3A4B68BECC06A1 /* delta.c */,
+				1CC17CA84ADE4B0BBD98D52C /* descriptors.c */,
+				A58FCC4558144937AEAB169C /* fini.c */,
+				C068330F11E342C6B68081EC /* helper.c */,
+				AD54A7A18D4848388CAFEA58 /* init.c */,
+				6E70BA8278B64CBE81B8AE45 /* libxtract.c */,
+				77C36BED669F48249C0F0525 /* scalar.c */,
+				F24595BDC1384F1CB377BDEE /* vector.c */,
+				7A1C4CE01DDE4055A69326E7 /* window.c */,
+				F07D3C40DB184C9780AD190F /* dywapitchtrack */,
+				33B8119823734940B81EC71A /* fft.h */,
+				F42C354AC5B843908F71FEF3 /* xtract_globals_private.h */,
+				D2ABF44500D745FA8233DE62 /* xtract_macros_private.h */,
+				3CA295578EBF4F71994004F8 /* xtract_window_private.h */,
+				8366DD15194A4A21A51C97BB /* ooura */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		F07D3C40DB184C9780AD190F /* dywapitchtrack */ = {
+			isa = PBXGroup;
+			children = (
+				417794970E404117AF216075 /* dywapitchtrack.c */,
+				8A351FE3D7CB4FA38C465178 /* dywapitchtrack.h */,
+			);
+			name = dywapitchtrack;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -312,6 +294,8 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "BasicSample" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -370,24 +354,24 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = BasicSample_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = BasicSample_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "\"$(CINDER_PATH)/lib/libcinder_d.a\"";
 				PRODUCT_NAME = BasicSample;
-				WRAPPER_EXTENSION = app;
 				SYMROOT = ./build;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
@@ -409,48 +393,42 @@
 				OTHER_LDFLAGS = "\"$(CINDER_PATH)/lib/libcinder.a\"";
 				PRODUCT_NAME = BasicSample;
 				STRIP_INSTALLED_PRODUCT = YES;
-				WRAPPER_EXTENSION = app;
 				SYMROOT = ./build;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
-				CLANG_CXX_LIBRARY = "libc++";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
-				CINDER_PATH = "../../../../..";
+				CINDER_PATH = ../../../../..;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = (
-					"\"$(CINDER_PATH)/include\" ../include",
-					../../../src/LibXtract,
-				);
+				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include ../../../src/LibXtract";
 			};
 			name = Debug;
 		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
-				CLANG_CXX_LIBRARY = "libc++";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
-				CINDER_PATH = "../../../../..";
+				CINDER_PATH = ../../../../..;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = (
-					"\"$(CINDER_PATH)/include\" ../include",
-					../../../src/LibXtract,
-				);
+				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include ../../../src/LibXtract";
 			};
 			name = Release;
 		};

@@ -18,8 +18,14 @@ using namespace std;
 ciXtract::ciXtract()
 {
 	mPcmData    = std::shared_ptr<double>( new double[ CIXTRACT_PCM_SIZE ] );
+	mPcmDataRaw = std::shared_ptr<double>( new double[ CIXTRACT_PCM_SIZE ] );
     for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
-        mPcmData.get()[k] = 0.0f;
+    {
+        mPcmData.get()[k]       = 0.0f;
+        mPcmDataRaw.get()[k]    = 0.0f;
+    }
+    
+    mWindowFunc = NULL;
     
     mLastUpdateAt = -1;
     
@@ -29,8 +35,7 @@ ciXtract::ciXtract()
 
 ciXtract::~ciXtract()
 {
-    // global, this free fft, autocorrelation and other stuff
-    xtract_free_fft();
+    xtract_free_window( mWindowFunc );
 }
 
 
@@ -38,32 +43,18 @@ void ciXtract::initFeatures()
 {
     mActiveFeatures.clear();
     
-    // Scalar
-    mAvailableFeatures[XTRACT_MEAN]                         = ciXtractFeature::create<ciXtractMean>( this );
-    mAvailableFeatures[XTRACT_VARIANCE]                     = ciXtractFeature::create<ciXtractVariance>( this );
-    mAvailableFeatures[XTRACT_STANDARD_DEVIATION]           = ciXtractFeature::create<ciXtractStandardDeviation>( this );
-    mAvailableFeatures[XTRACT_AVERAGE_DEVIATION]            = ciXtractFeature::create<ciXtractAverageDeviation>( this );
-    mAvailableFeatures[XTRACT_SKEWNESS]                     = ciXtractFeature::create<ciXtractSkewness>( this );
-    mAvailableFeatures[XTRACT_KURTOSIS]                     = ciXtractFeature::create<ciXtractKurtosis>( this );
-    mAvailableFeatures[XTRACT_SPECTRAL_MEAN]                = ciXtractFeature::create<ciXtractSpectralMean>( this );
-    mAvailableFeatures[XTRACT_SPECTRAL_VARIANCE]            = ciXtractFeature::create<ciXtractSpectralVariance>( this );
-    mAvailableFeatures[XTRACT_SPECTRAL_STANDARD_DEVIATION]  = ciXtractFeature::create<ciXtractSpectralStandardDeviation>( this );
-    mAvailableFeatures[XTRACT_SPECTRAL_SKEWNESS]            = ciXtractFeature::create<ciXtractSpectralSkewness>( this );
-    mAvailableFeatures[XTRACT_SPECTRAL_KURTOSIS]            = ciXtractFeature::create<ciXtractSpectralKurtosis>( this );
-    mAvailableFeatures[XTRACT_SPECTRAL_CENTROID]            = ciXtractFeature::create<ciXtractSpectralCentroid>( this );
+    // create the window function
+    mWindowFunc = xtract_init_window( CIXTRACT_PCM_SIZE, XTRACT_HANN );
+    
+    
+    mAvailableFeatures[XTRACT_MEAN]                     = ciXtractFeature::create<ciXtractMean>( this );
 
+    mAvailableFeatures[ XTRACT_SPECTRUM ]               = ciXtractFeature::create<ciXtractSpectrum>( this );
+    mAvailableFeatures[ XTRACT_BARK_COEFFICIENTS ]      = ciXtractFeature::create<ciXtractBark>( this );
+    
+    mAvailableFeatures[ XTRACT_MFCC ]                   = ciXtractFeature::create<ciXtractMfcc>( this );
     
     
-    // Vector
-    mAvailableFeatures[ XTRACT_SPECTRUM ]                   = ciXtractFeature::create<ciXtractSpectrum>( this );
-    mAvailableFeatures[ XTRACT_BARK_COEFFICIENTS ]          = ciXtractFeature::create<ciXtractBark>( this );
-    
-    
-    
-    
-    for( int k=0; k < XTRACT_FEATURES; k++ )
-        if ( mAvailableFeatures[k] )
-            mAvailableFeatures[k]->init();
 }
 
 void ciXtract::update( const float *pcmData )
@@ -71,8 +62,10 @@ void ciXtract::update( const float *pcmData )
     mLastUpdateAt = getElapsedFrames();
     
 	for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
-        mPcmData.get()[k] = pcmData[k];
-
+        mPcmDataRaw.get()[k] = pcmData[k];
+    
+    xtract_windowed( mPcmDataRaw.get(), CIXTRACT_PCM_SIZE, mWindowFunc, mPcmData.get() );
+    
     vector<ciXtractFeatureRef>::iterator    it;
     
     for( it = mActiveFeatures.begin(); it!=mActiveFeatures.end(); ++it )
@@ -197,7 +190,7 @@ void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, bool drawRaw, C
 {
     glPushMatrix();
     
-    gl::drawString( feature->getName(), rect.getUpperLeft(), labelCol );
+//    gl::drawString( feature->getName(), rect.getUpperLeft(), labelCol );
     
     rect.y1 += 10;
     
