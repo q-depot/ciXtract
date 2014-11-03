@@ -224,11 +224,14 @@ protected:
     
     void processData();
     
-    bool isReady( int frameN ) { return !isUpdated(frameN) && checkDependencies(frameN); }
+    bool prepareUpdate( int frameN );
     
     void doUpdate( int frameN, const double *inputData, const int inputDataSize, const void *args, double *outputData );
+    void doUpdate( int frameN );
     
-    void updateArgs();
+    void updateWithArgdFeatures( int frameN, std::vector<xtract_features_> features );
+    
+    void updateWithPcm( int frameN );
     
 protected:
     
@@ -264,9 +267,20 @@ protected:
 // *************************************** VECTOR FEATURES **************************************** //
 // ------------------------------------------------------------------------------------------------ //
 // ------------------------------------------------------------------------------------------------ //
-
-
-
+//
+//    xtract_spectrum
+//    xtract_autocorrelation_fft
+//    xtract_mfcc
+//    xtract_dct
+//    xtract_autocorrelation
+//    xtract_amdf
+//    xtract_asdf
+//    xtract_bark_coefficients
+//    xtract_peak_spectrum
+//    xtract_harmonic_spectrum
+//    xtract_lpc
+//    xtract_lpcc
+//    xtract_subbands
 
 // Spectrum
 class ciXtractSpectrum : public ciXtractFeature {
@@ -277,15 +291,13 @@ public:
     void update( int frameN  );
 };
 
-// Bark
-class ciXtractBark : public ciXtractFeature {
+// Autocorrelation Fft
+class ciXtractAutocorrelationFft : public ciXtractFeature {
     
 public:
-    ciXtractBark( ciXtract *xtract );
-    ~ciXtractBark() {}
+    ciXtractAutocorrelationFft( ciXtract *xtract );
+    ~ciXtractAutocorrelationFft() {}
     void update( int frameN );
-private:
-    std::shared_ptr<int> mBandLimits;
 };
 
 // Mfcc
@@ -298,6 +310,52 @@ public:
 private:
     xtract_mel_filter   mMelFilters;
 };
+
+//    xtract_dct
+
+// Autocorrelation
+class ciXtractAutocorrelation : public ciXtractFeature {
+    
+public:
+    ciXtractAutocorrelation( ciXtract *xtract );
+    ~ciXtractAutocorrelation() {}
+    void update( int frameN );
+};
+
+//    xtract_amdf
+//    xtract_asdf
+
+// Bark
+class ciXtractBark : public ciXtractFeature {
+    
+public:
+    ciXtractBark( ciXtract *xtract );
+    ~ciXtractBark() {}
+    void update( int frameN );
+private:
+    std::shared_ptr<int> mBandLimits;
+};
+
+// Peak Spectrum
+class ciXtractPeakSpectrum : public ciXtractFeature {
+    
+public:
+    ciXtractPeakSpectrum( ciXtract *xtract );
+    ~ciXtractPeakSpectrum()  {}
+};
+
+// Harmonic Spectrum
+class ciXtractHarmonicSpectrum : public ciXtractFeature {
+    
+public:
+    ciXtractHarmonicSpectrum( ciXtract *xtract );
+    ~ciXtractHarmonicSpectrum()  {}
+    void update( int frameN );
+};
+
+//    xtract_lpc
+//    xtract_lpcc
+//    xtract_subbands
 
 
 // ------------------------------------------------------------------------------------------------ //
@@ -353,16 +411,16 @@ class ciXtractMean : public ciXtractFeature {
 public:
     ciXtractMean( ciXtract *xtract );
     ~ciXtractMean() {}
+    void update( int frameN );
 };
 
-
-
-//    variance
+// Variance
 class ciXtractVariance : public ciXtractFeature {
     
 public:
     ciXtractVariance( ciXtract *xtract );
     ~ciXtractVariance() {}
+    void update( int frameN );
 };
 
 // Standard Deviation
@@ -371,6 +429,7 @@ class ciXtractStandardDeviation : public ciXtractFeature {
 public:
     ciXtractStandardDeviation( ciXtract *xtract );
     ~ciXtractStandardDeviation() {}
+    void update( int frameN );
 };
 
 // Average Deviation
@@ -379,6 +438,7 @@ class ciXtractAverageDeviation : public ciXtractFeature {
 public:
     ciXtractAverageDeviation( ciXtract *xtract );
     ~ciXtractAverageDeviation() {}
+    void update( int frameN );
 };
 
 // Skewness
@@ -387,6 +447,7 @@ class ciXtractSkewness : public ciXtractFeature {
 public:
     ciXtractSkewness( ciXtract *xtract );
     ~ciXtractSkewness() {}
+    void update( int frameN  );
 };
 
 // Kurtosis
@@ -395,6 +456,7 @@ class ciXtractKurtosis : public ciXtractFeature {
 public:
     ciXtractKurtosis( ciXtract *xtract );
     ~ciXtractKurtosis() {}
+    void update( int frameN  );
 };
 
 // Spectral Mean
@@ -411,6 +473,7 @@ class ciXtractSpectralVariance : public ciXtractFeature {
 public:
     ciXtractSpectralVariance( ciXtract *xtract );
     ~ciXtractSpectralVariance() {}
+    void update( int frameN  );
 };
 
 // Spectral Standard Deviation
@@ -419,6 +482,7 @@ class ciXtractSpectralStandardDeviation : public ciXtractFeature {
 public:
     ciXtractSpectralStandardDeviation( ciXtract *xtract );
     ~ciXtractSpectralStandardDeviation() {}
+    void update( int frameN  );
 };
 
 // Spectral Skewness
@@ -427,6 +491,7 @@ class ciXtractSpectralSkewness : public ciXtractFeature {
 public:
     ciXtractSpectralSkewness( ciXtract *xtract );
     ~ciXtractSpectralSkewness() {}
+    void update( int frameN  );
 };
 
 // Spectral Kurtosis
@@ -435,6 +500,8 @@ class ciXtractSpectralKurtosis : public ciXtractFeature {
 public:
     ciXtractSpectralKurtosis( ciXtract *xtract );
     ~ciXtractSpectralKurtosis() {}
+    void update( int frameN  );
+
 };
 
 // Spectral Centroid
@@ -467,6 +534,7 @@ class ciXtractTristimulus1 : public ciXtractFeature {
 public:
     ciXtractTristimulus1( ciXtract *xtract );
     ~ciXtractTristimulus1() {}
+    void update( int frameN  );
 };
 
 // Smoothness
@@ -483,6 +551,7 @@ class ciXtractSpread : public ciXtractFeature {
 public:
     ciXtractSpread( ciXtract *xtract );
     ~ciXtractSpread() {}
+    void update( int frameN  );
 };
 
 // Zcr
@@ -494,12 +563,13 @@ public:
 };
 
 // Rolloff
-class ciXtractRolloff : public ciXtractFeature {
-    
-public:
-    ciXtractRolloff( ciXtract *xtract );
-    ~ciXtractRolloff() {}
-};
+//class ciXtractRolloff : public ciXtractFeature {
+//    
+//public:
+//    ciXtractRolloff( ciXtract *xtract );
+//    ~ciXtractRolloff() {}
+//    void update( int frameN  );
+//};
 
 // Loudness
 class ciXtractLoudness : public ciXtractFeature {
@@ -531,14 +601,7 @@ class ciXtractTonality : public ciXtractFeature {
 public:
     ciXtractTonality( ciXtract *xtract );
     ~ciXtractTonality() {}
-};
-
-// Noisiness
-class ciXtractNoisiness : public ciXtractFeature {
-    
-public:
-    ciXtractNoisiness( ciXtract *xtract );
-    ~ciXtractNoisiness() {}
+    void update( int frameN  );
 };
 
 // Rms Amplitude
@@ -549,25 +612,136 @@ public:
     ~ciXtractRmsAmplitude() {}
 };
 
+// Spectral Inharmonicity
+class ciXtractSpectralInharmonicity : public ciXtractFeature {
+    
+public:
+    ciXtractSpectralInharmonicity( ciXtract *xtract );
+    ~ciXtractSpectralInharmonicity() {}
+    void update( int frameN  );
+};
 
+// Crest
+class ciXtractCrest : public ciXtractFeature {
+    
+public:
+    ciXtractCrest( ciXtract *xtract );
+    ~ciXtractCrest() {}
+    void update( int frameN  );
+};
 
+// Power
+class ciXtractPower : public ciXtractFeature {
+    
+public:
+    ciXtractPower( ciXtract *xtract );
+    ~ciXtractPower() {}
+};
 
-//    spectral_inharmonicity
-//    crest
-//    power
-//    odd_even_ratio
-//    sharpness
-//    spectral_slope
-//    lowest_value
-//    highest_value
-//    sum
-//    hps
-//    f0
-//    failsafe_f0
-//    wavelet_f0
-//    midicent
-//    nonzero_count
-//    peak
+// Odd Even Ratio
+class ciXtractOddEvenRatio : public ciXtractFeature {
+    
+public:
+    ciXtractOddEvenRatio( ciXtract *xtract );
+    ~ciXtractOddEvenRatio() {}
+    void update( int frameN  );
+};
+
+// Sharpness
+class ciXtractSharpness : public ciXtractFeature {
+    
+public:
+    ciXtractSharpness( ciXtract *xtract );
+    ~ciXtractSharpness() {}
+};
+
+// Spectral Slope
+class ciXtractSpectralSlope : public ciXtractFeature {
+    
+public:
+    ciXtractSpectralSlope( ciXtract *xtract );
+    ~ciXtractSpectralSlope() {}
+};
+
+// Lowest Value
+class ciXtractLowestValue : public ciXtractFeature {
+    
+public:
+    ciXtractLowestValue( ciXtract *xtract );
+    ~ciXtractLowestValue() {}
+};
+
+// Highest Value
+class ciXtractHighestValue : public ciXtractFeature {
+    
+public:
+    ciXtractHighestValue( ciXtract *xtract );
+    ~ciXtractHighestValue() {}
+};
+
+// Sum
+class ciXtractSum : public ciXtractFeature {
+    
+public:
+    ciXtractSum( ciXtract *xtract );
+    ~ciXtractSum() {}
+};
+
+// Hps
+class ciXtractHps : public ciXtractFeature {
+    
+public:
+    ciXtractHps( ciXtract *xtract );
+    ~ciXtractHps() {}
+};
+
+// F0
+class ciXtractF0 : public ciXtractFeature {
+    
+public:
+    ciXtractF0( ciXtract *xtract );
+    ~ciXtractF0() {}
+};
+
+// Failsafe F0
+class ciXtractFailsafeF0 : public ciXtractFeature {
+    
+public:
+    ciXtractFailsafeF0( ciXtract *xtract );
+    ~ciXtractFailsafeF0() {}
+};
+
+// Wavelet F0
+class ciXtractWaveletF0 : public ciXtractFeature {
+    
+public:
+    ciXtractWaveletF0( ciXtract *xtract );
+    ~ciXtractWaveletF0() {}
+};
+
+// Midicent     UTILITY <<<<<<<<<<<<<<<<<<
+//class ciXtractMidicent : public ciXtractFeature {
+//    
+//public:
+//    ciXtractMidicent( ciXtract *xtract );
+//    ~ciXtractMidicent() {}
+//};
+
+// Non Zero Count
+class ciXtractNonZeroCount : public ciXtractFeature {
+    
+public:
+    ciXtractNonZeroCount( ciXtract *xtract );
+    ~ciXtractNonZeroCount() {}
+};
+
+// Peak
+//class ciXtractPeak : public ciXtractFeature {
+//    
+//public:
+//    ciXtractPeak( ciXtract *xtract );
+//    ~ciXtractPeak() {}
+//};
 
 
 #endif

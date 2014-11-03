@@ -46,15 +46,54 @@ void ciXtract::initFeatures()
     // create the window function
     mWindowFunc = xtract_init_window( CIXTRACT_PCM_SIZE, XTRACT_HANN );
     
+    // Vector
+    mAvailableFeatures[ XTRACT_SPECTRUM ]                       = ciXtractFeature::create<ciXtractSpectrum>( this );
+    mAvailableFeatures[ XTRACT_AUTOCORRELATION_FFT ]            = ciXtractFeature::create<ciXtractAutocorrelationFft>( this );
+    mAvailableFeatures[ XTRACT_MFCC ]                           = ciXtractFeature::create<ciXtractMfcc>( this );
+    mAvailableFeatures[ XTRACT_AUTOCORRELATION ]                = ciXtractFeature::create<ciXtractAutocorrelation>( this );
+    mAvailableFeatures[ XTRACT_BARK_COEFFICIENTS ]              = ciXtractFeature::create<ciXtractBark>( this );
+    mAvailableFeatures[ XTRACT_PEAK_SPECTRUM ]                  = ciXtractFeature::create<ciXtractPeakSpectrum>( this );
+    mAvailableFeatures[ XTRACT_HARMONIC_SPECTRUM ]              = ciXtractFeature::create<ciXtractHarmonicSpectrum>( this );
     
-    mAvailableFeatures[XTRACT_MEAN]                     = ciXtractFeature::create<ciXtractMean>( this );
+    // Scalar
+    mAvailableFeatures[ XTRACT_MEAN ]                           = ciXtractFeature::create<ciXtractMean>( this );
+    mAvailableFeatures[ XTRACT_VARIANCE ]                       = ciXtractFeature::create<ciXtractVariance>( this );
+    mAvailableFeatures[ XTRACT_STANDARD_DEVIATION ]             = ciXtractFeature::create<ciXtractStandardDeviation>( this );
+    mAvailableFeatures[ XTRACT_AVERAGE_DEVIATION ]              = ciXtractFeature::create<ciXtractAverageDeviation>( this );
+    mAvailableFeatures[ XTRACT_SKEWNESS ]                       = ciXtractFeature::create<ciXtractSkewness>( this );
+    mAvailableFeatures[ XTRACT_KURTOSIS ]                       = ciXtractFeature::create<ciXtractKurtosis>( this );
+    mAvailableFeatures[ XTRACT_SPECTRAL_MEAN ]                  = ciXtractFeature::create<ciXtractSpectralMean>( this );
+    mAvailableFeatures[ XTRACT_SPECTRAL_VARIANCE ]              = ciXtractFeature::create<ciXtractSpectralVariance>( this );
+    mAvailableFeatures[ XTRACT_SPECTRAL_STANDARD_DEVIATION ]    = ciXtractFeature::create<ciXtractSpectralStandardDeviation>( this );
+    mAvailableFeatures[ XTRACT_SPECTRAL_SKEWNESS ]              = ciXtractFeature::create<ciXtractSpectralSkewness>( this );
+    mAvailableFeatures[ XTRACT_SPECTRAL_KURTOSIS ]              = ciXtractFeature::create<ciXtractSpectralKurtosis>( this );
+    mAvailableFeatures[ XTRACT_SPECTRAL_CENTROID ]              = ciXtractFeature::create<ciXtractSpectralCentroid>( this );
+    mAvailableFeatures[ XTRACT_IRREGULARITY_K ]                 = ciXtractFeature::create<ciXtractIrregularityK>( this );
+    mAvailableFeatures[ XTRACT_IRREGULARITY_J ]                 = ciXtractFeature::create<ciXtractIrregularityJ>( this );
+    mAvailableFeatures[ XTRACT_TRISTIMULUS_1 ]                  = ciXtractFeature::create<ciXtractTristimulus1>( this );
+    mAvailableFeatures[ XTRACT_SMOOTHNESS ]                     = ciXtractFeature::create<ciXtractSmoothness>( this );
+    mAvailableFeatures[ XTRACT_SPREAD ]                         = ciXtractFeature::create<ciXtractSpread>( this );
+    mAvailableFeatures[ XTRACT_ZCR ]                            = ciXtractFeature::create<ciXtractZcr>( this );
+    mAvailableFeatures[ XTRACT_LOUDNESS ]                       = ciXtractFeature::create<ciXtractLoudness>( this );
+    mAvailableFeatures[ XTRACT_FLATNESS ]                       = ciXtractFeature::create<ciXtractFlatness>( this );
+    mAvailableFeatures[ XTRACT_FLATNESS_DB ]                    = ciXtractFeature::create<ciXtractFlatnessDb>( this );
+    mAvailableFeatures[ XTRACT_TONALITY ]                       = ciXtractFeature::create<ciXtractTonality>( this );
+    mAvailableFeatures[ XTRACT_RMS_AMPLITUDE ]                  = ciXtractFeature::create<ciXtractRmsAmplitude>( this );
+    mAvailableFeatures[ XTRACT_SPECTRAL_INHARMONICITY ]         = ciXtractFeature::create<ciXtractSpectralInharmonicity>( this );
+    mAvailableFeatures[ XTRACT_CREST ]                          = ciXtractFeature::create<ciXtractCrest>( this );
+    mAvailableFeatures[ XTRACT_POWER ]                          = ciXtractFeature::create<ciXtractPower>( this );
+    mAvailableFeatures[ XTRACT_ODD_EVEN_RATIO ]                 = ciXtractFeature::create<ciXtractOddEvenRatio>( this );
+    mAvailableFeatures[ XTRACT_SHARPNESS ]                      = ciXtractFeature::create<ciXtractSharpness>( this );
+    mAvailableFeatures[ XTRACT_SPECTRAL_SLOPE ]                 = ciXtractFeature::create<ciXtractSpectralSlope>( this );
+    mAvailableFeatures[ XTRACT_LOWEST_VALUE ]                   = ciXtractFeature::create<ciXtractLowestValue>( this );
+    mAvailableFeatures[ XTRACT_HIGHEST_VALUE ]                  = ciXtractFeature::create<ciXtractHighestValue>( this );
+    mAvailableFeatures[ XTRACT_SUM ]                            = ciXtractFeature::create<ciXtractSum>( this );
+    mAvailableFeatures[ XTRACT_HPS ]                            = ciXtractFeature::create<ciXtractHps>( this );
+    mAvailableFeatures[ XTRACT_F0 ]                             = ciXtractFeature::create<ciXtractF0>( this );
+    mAvailableFeatures[ XTRACT_FAILSAFE_F0 ]                    = ciXtractFeature::create<ciXtractFailsafeF0>( this );
+    mAvailableFeatures[ XTRACT_WAVELET_F0 ]                     = ciXtractFeature::create<ciXtractWaveletF0>( this );
+    mAvailableFeatures[ XTRACT_NONZERO_COUNT ]                  = ciXtractFeature::create<ciXtractNonZeroCount>( this );
 
-    mAvailableFeatures[ XTRACT_SPECTRUM ]               = ciXtractFeature::create<ciXtractSpectrum>( this );
-    mAvailableFeatures[ XTRACT_BARK_COEFFICIENTS ]      = ciXtractFeature::create<ciXtractBark>( this );
-    
-    mAvailableFeatures[ XTRACT_MFCC ]                   = ciXtractFeature::create<ciXtractMfcc>( this );
-    
-    
 }
 
 void ciXtract::update( const float *pcmData )
@@ -189,8 +228,8 @@ void ciXtract::drawPcm( ci::Rectf rect, const float *pcmData, size_t pcmSize )
 void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, bool drawRaw, ColorA plotCol, ColorA bgCol, ColorA labelCol )
 {
     glPushMatrix();
-    
-//    gl::drawString( feature->getName(), rect.getUpperLeft(), labelCol );
+
+    gl::drawString( feature->getName(), rect.getUpperLeft(), labelCol, Font( "Arial", 8 ) );
     
     rect.y1 += 10;
     

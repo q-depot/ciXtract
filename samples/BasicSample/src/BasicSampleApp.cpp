@@ -42,7 +42,7 @@ public:
 void BasicSampleApp::prepareSettings(Settings *settings)
 {
 	settings->setTitle("ciXtract Sample");
-	settings->setWindowSize( 1200, 700 );
+	settings->setWindowSize( 1400, 700 );
 }
 
 
@@ -78,11 +78,18 @@ void BasicSampleApp::setup()
     
     
     
-    mXtract->enableFeature( XTRACT_MEAN );
-    mXtract->enableFeature( XTRACT_SPECTRUM );
-    mXtract->enableFeature( XTRACT_BARK_COEFFICIENTS );
-    mXtract->enableFeature( XTRACT_MFCC );
+//    mXtract->enableFeature( XTRACT_MEAN );
+//    mXtract->enableFeature( XTRACT_SPECTRUM );
+//    mXtract->enableFeature( XTRACT_BARK_COEFFICIENTS );
+//    mXtract->enableFeature( XTRACT_MFCC );
+//    
     
+	// Features are disabled by default, call enableFeature() to enable each feature and its dependencies
+    // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
+    for( auto k=0; k < XTRACT_FEATURES; k++ )
+        mXtract->enableFeature( (xtract_features_)k );
+
+//    mXtract->getActiveFeature( XTRACT_SPECTRUM )->setLog( true );
     
     
     mFeatures   = mXtract->getActiveFeatures();
@@ -95,12 +102,6 @@ void BasicSampleApp::setup()
     // List all available features, this prints out the enumerator that can be used to select or toggle the feature
     mXtract->listFeatures();
     
-//	// Features are disabled by default, call enableFeature() to enable each feature and its dependencies
-//    // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
-//    for( auto k=0; k < XTRACT_FEATURES; k++ )
-//        mXtract->enableFeature( (xtract_features_)k );
-//    
-//    mXtract->getActiveFeature( XTRACT_SPECTRUM )->setLog( true );
     
     mGain       = 1.0f;
     mDamping    = 0.96f;
@@ -108,10 +109,12 @@ void BasicSampleApp::setup()
 
     // init params
     mParams = params::InterfaceGl( "Params", Vec2i( 250, 450 ) );
-    mParams.addParam( "Gain",       &mGain,     "min=0.0 step=0.1" );
+    mParams.addParam( "Gain",       &mGain,     "min=0.0 step=0.0001" );
     mParams.addParam( "Offset",     &mOffset,   "min=-1.0 max=1.0 step=0.01" );
     mParams.addParam( "Damping",    &mDamping,  "min=0.0 max=0.99 step=0.01" );
 
+    return;
+    
     FeatureParamRef                 p;
     std::vector<FeatureParamRef>    featureParams;
     
@@ -160,7 +163,7 @@ void BasicSampleApp::draw()
 	gl::color( Color::gray( 0.1f ) );
     ciXtract::drawPcm( Rectf( 0, 0, getWindowWidth(), 60 ), mPcmBuffer.getData(), mPcmBuffer.getSize() / mPcmBuffer.getNumChannels() );
     
-    Vec2i   widgetSize  = Vec2f( CIXTRACT_FFT_SIZE * 2, 60 );
+    Vec2i   widgetSize  = Vec2f( 180, 60 );
     Vec2f   initPos     = Vec2f( 15, 100 );
     Vec2f   pos         = initPos;
     ColorA  bgCol       = ColorA( 0.0f, 0.0f, 0.0f, 0.1f );
@@ -174,7 +177,9 @@ void BasicSampleApp::draw()
             continue;
         
         rect    = Rectf( pos, pos + widgetSize );
-        plotCol = ColorA( 1.0f, rect.y1 / getWindowHeight(), rect.x1 / getWindowWidth(), 1.0f );
+//        plotCol = ColorA( 1.0f, rect.y1 / getWindowHeight(), rect.x1 / getWindowWidth(), 1.0f );
+        
+        plotCol = ColorA( 1.0f, 0.2, 0.2, 1.0f );
         
         ciXtract::drawData( mFeatures[k], rect, false, plotCol, bgCol, labelCol );
         
