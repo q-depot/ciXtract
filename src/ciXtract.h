@@ -14,7 +14,8 @@
 
 #pragma once
 #include "cinder/app/App.h"
-#include "ciXtractFeature.h"
+#include "ciXtractScalarFeature.h"
+#include "ciXtractVectorFeature.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -53,15 +54,15 @@ public:
     ciXtractFeatureRef getFeature( xtract_features_ feature );
     
     //! get raw feature results
-    std::shared_ptr<double> getFeatureResultsRaw( xtract_features_ feature )
+    std::shared_ptr<double> getFeatureDataRaw( xtract_features_ feature )
     {
-        return getFeature(feature)->getResultsRaw();
+        return getFeature(feature)->getDataRaw();
     }
 
     //! get feature results
-    std::shared_ptr<double> getFeatureResults( xtract_features_ feature )
+    std::shared_ptr<double> getFeatureData( xtract_features_ feature )
     {
-        return getFeature(feature)->getResults();
+        return getFeature(feature)->getData();
     }
 
     // The calibration is very rough and it doesn't work for all the features
@@ -117,8 +118,9 @@ private:
     std::vector<ciXtractFeatureRef>             mFeatures;
     std::vector<ciXtractFeatureCalibration>     mCalibrationFeatures;
     
-    std::shared_ptr<double>                     mPcmData;
+    std::shared_ptr<double>                     mPcmData, mPcmDataRaw;
     
+    double                                      *mWindowFunc;
 };
 
 #endif

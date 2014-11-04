@@ -16,10 +16,14 @@ using namespace std;
 
 
 ciXtract::ciXtract()
-{	
+{
+	mPcmDataRaw = std::shared_ptr<double>( new double[ CIXTRACT_PCM_SIZE ] );
 	mPcmData    = std::shared_ptr<double>( new double[ CIXTRACT_PCM_SIZE ] );
+    
     for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
         mPcmData.get()[k] = 0.0f;
+    
+    mWindowFunc = NULL;
     
     initFeatures();
 }
@@ -27,71 +31,89 @@ ciXtract::ciXtract()
 
 ciXtract::~ciXtract()
 {
-    // TODO clean up
     xtract_free_fft();
+    xtract_free_window( mWindowFunc );
 }
 
 
 void ciXtract::initFeatures()
 {
-    mFeatures.push_back( ciXtractSpectrum::create( this, "Spectrum" ) );
-    mFeatures.push_back( ciXtractAutocorrelation::create( this, "Auto Correlation" ) );
-    // mFeatures.push_back( ciXtractAutocorrelationFft::create( this, "Auto Correlation Fft" ) );
-    mFeatures.push_back( ciXtractHarmonicSpectrum::create( this, "Harmonic Spectrum" ) );    
-    mFeatures.push_back( ciXtractF0::create( this, "F0" ) );
-    mFeatures.push_back( ciXtractFailsafeF0::create( this, "Failsafe F0" ) );
-    mFeatures.push_back( ciXtractWaveletF0::create( this, "Wavelet F0" ) );
-    mFeatures.push_back( ciXtractPeakSpectrum::create( this, "Peak Spectrum" ) );
-    mFeatures.push_back( ciXtractSubBands::create( this, "Sub Bands" ) );
-    mFeatures.push_back( ciXtractMfcc::create( this, "Mfcc" ) );
-    mFeatures.push_back( ciXtractBark::create( this, "Bark" ) );
-    mFeatures.push_back( ciXtractMean::create( this, "Mean" ) );
-    mFeatures.push_back( ciXtractVariance::create( this, "Variance" ) );
-    mFeatures.push_back( ciXtractStandardDeviation::create( this, "Standard Deviation" ) );
-    mFeatures.push_back( ciXtractAverageDeviation::create( this, "Average Deviation" ) );
-    mFeatures.push_back( ciXtractSkewness::create( this, "Skewness" ) );
-    mFeatures.push_back( ciXtractKurtosis::create( this, "Kurtosis" ) );
-    mFeatures.push_back( ciXtractSpectralMean::create( this, "Spectral Mean" ) );
-    mFeatures.push_back( ciXtractSpectralVariance::create( this, "Spectral Variance" ) );
-    mFeatures.push_back( ciXtractSpectralStandardDeviation::create( this, "Spectral Standard Deviation" ) );
-    mFeatures.push_back( ciXtractSpectralSkewness::create( this, "Spectral Skewness" ) );
-    mFeatures.push_back( ciXtractSpectralKurtosis::create( this, "Spectral Kurtosis" ) );
-    mFeatures.push_back( ciXtractSpectralCentroid::create( this, "Spectral Centroid" ) );
-    mFeatures.push_back( ciXtractIrregularityK::create( this, "Irregularity K" ) );
-    mFeatures.push_back( ciXtractIrregularityJ::create( this, "Irregularity J" ) );
-    mFeatures.push_back( ciXtractTristimulus1::create( this, "Tristimulus 1" ) );
-    mFeatures.push_back( ciXtractSmoothness::create( this, "Smoothness" ) );
-    mFeatures.push_back( ciXtractSpread::create( this, "Spread" ) );
-    mFeatures.push_back( ciXtractZcr::create( this, "Zcr" ) );
-    mFeatures.push_back( ciXtractRolloff::create( this, "Rolloff" ) );
-    mFeatures.push_back( ciXtractLoudness::create( this, "Loudness" ) );
-    mFeatures.push_back( ciXtractFlatness::create( this, "Flatness" ) );
-    mFeatures.push_back( ciXtractFlatnessDb::create( this, "Flatness Db" ) );
-    mFeatures.push_back( ciXtractTonality::create( this, "Tonality" ) );
-    mFeatures.push_back( ciXtractRmsAmplitude::create( this, "RMS Amplitude" ) );
-    mFeatures.push_back( ciXtractSpectralInharmonicity::create( this, "Spectral Inhamornicity" ) );
-    mFeatures.push_back( ciXtractPower::create( this, "Power" ) );
-    mFeatures.push_back( ciXtractOddEvenRatio::create( this, "Odd Even Ratio" ) );
-    mFeatures.push_back( ciXtractSharpness::create( this, "Sharpness" ) );
-    mFeatures.push_back( ciXtractSpectralSlope::create( this, "Spectral Slope" ) );
-    mFeatures.push_back( ciXtractLowestValue::create( this, "Lowest Value" ) );
-    mFeatures.push_back( ciXtractHighestValue::create( this, "Highest Value" ) );
-    mFeatures.push_back( ciXtractSum::create( this, "Sum" ) );
-    mFeatures.push_back( ciXtractNonZeroCount::create( this, "Non-Zero Count" ) );
-    mFeatures.push_back( ciXtractCrest::create( this, "Crest" ) );
+    mWindowFunc = xtract_init_window( CIXTRACT_PCM_SIZE, XTRACT_HANN );
+    
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpectrum>( this, "Spectrum" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractAutocorrelation>( this, "Auto Correlation" ) );
+    
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractAutocorrelationFft>( this, "Auto Correlation Fft" ) );
+    
+     
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractHarmonicSpectrum>( this, "Harmonic Spectrum" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractF0>( this, "F0" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractFailsafeF0>( this, "Failsafe F0" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractWaveletF0>( this, "Wavelet F0" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractPeakSpectrum>( this, "Peak Spectrum" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractSubBands>( this, "Sub Bands" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractMfcc>( this, "Mfcc" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractBark>( this, "Bark" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractMean>( this, "Mean" ) );
+    
+/*
+    mFeatures.push_back( ciXtractFeature::create<ciXtractVariance>( this, "Variance" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractStandardDeviation>( this, "Standard Deviation" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractAverageDeviation>( this, "Average Deviation" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSkewness>( this, "Skewness" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractKurtosis>( this, "Kurtosis" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpectralMean>( this, "Spectral Mean" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpectralVariance>( this, "Spectral Variance" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpectralStandardDeviation>( this, "Spectral Standard Deviation" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpectralSkewness>( this, "Spectral Skewness" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpectralKurtosis>( this, "Spectral Kurtosis" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpectralCentroid>( this, "Spectral Centroid" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractIrregularityK>( this, "Irregularity K" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractIrregularityJ>( this, "Irregularity J" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractTristimulus1>( this, "Tristimulus 1" ) );
+  */
+    /*
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSmoothness>( this, "Smoothness" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpread>( this, "Spread" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractZcr>( this, "Zcr" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractRolloff>( this, "Rolloff" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractLoudness>( this, "Loudness" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractFlatness>( this, "Flatness" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractFlatnessDb>( this, "Flatness Db" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractTonality>( this, "Tonality" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractRmsAmplitude>( this, "RMS Amplitude" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpectralInharmonicity>( this, "Spectral Inhamornicity" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractPower>( this, "Power" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractOddEvenRatio>( this, "Odd Even Ratio" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSharpness>( this, "Sharpness" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSpectralSlope>( this, "Spectral Slope" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractLowestValue>( this, "Lowest Value" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractHighestValue>( this, "Highest Value" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractSum>( this, "Sum" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractNonZeroCount>( this, "Non-Zero Count" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractCrest>( this, "Crest" ) );
+    */
 }
 
 
 void ciXtract::update( const float *pcmData )
 {
-	for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
-        mPcmData.get()[k] = pcmData[k];
+    for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
+        mPcmDataRaw.get()[k] = pcmData[k];
+    
+    xtract_windowed( mPcmDataRaw.get(), CIXTRACT_PCM_SIZE, mWindowFunc, mPcmData.get() );
+    
+    
+//	for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
+//        mPcmData.get()[k] = pcmData[k];
 
     vector<ciXtractFeatureRef>::iterator    it;
     
+    int frameN = getElapsedFrames();
+    
     for( it = mFeatures.begin(); it!=mFeatures.end(); ++it )
         if ( (*it)->isEnable() )
-            (*it)->update();
+            (*it)->update( frameN );
             
     if ( isCalibrating() )
         updateCalibration();
@@ -258,8 +280,8 @@ void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, bool drawRaw, C
     
     rect.y1 += 10;
     
-    std::shared_ptr<double> data    = drawRaw ? feature->getResultsRaw() : feature->getResults();
-    float                   step    = rect.getWidth() / feature->getResultsN();
+    std::shared_ptr<double> data    = drawRaw ? feature->getDataRaw() : feature->getData();
+    float                   step    = rect.getWidth() / feature->getDataSize();
     float                   h       = rect.getHeight();
     float                   val, barY;
     
@@ -272,7 +294,7 @@ void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, bool drawRaw, C
     
     glBegin( GL_QUADS );
     
-    for( int i = 0; i < feature->getResultsN(); i++ )
+    for( int i = 0; i < feature->getDataSize(); i++ )
     {
         val     = ( data.get()[i] - feature->getMin() ) / ( feature->getMax() - feature->getMin() );
         val     = math<float>::clamp( val, 0.0f, 1.0f );

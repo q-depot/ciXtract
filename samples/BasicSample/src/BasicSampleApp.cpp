@@ -7,6 +7,7 @@
 
 #include "cinder/audio/Context.h"
 #include "cinder/audio/MonitorNode.h"
+#include "cinder/params/Params.h"
 
 #include "ciXtract.h"
 
@@ -32,6 +33,8 @@ public:
 	audio::MonitorNodeRef           mMonitorNode;
     audio::Buffer                   mPcmBuffer;
     
+    params::InterfaceGl             mParams;
+    float                           mGain, mOffset, mDamping;
 };
 
 
@@ -80,8 +83,15 @@ void BasicSampleApp::setup()
     // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
     for( auto k=0; k < XTRACT_FEATURES; k++ )
         mXtract->enableFeature( (xtract_features_)k );
+
+    mGain       = 1.0f;
+    mOffset     = 0.0f;
+    mDamping    = 0.9f;
     
-    mXtract->getFeature( XTRACT_SPECTRUM )->setLog( true );
+    mParams = params::InterfaceGl( "params", Vec2i( 200, 250 ) );
+    mParams.addParam( "Gain", &mGain ).step( 0.01 );
+    mParams.addParam( "Offset", &mOffset ).step( 0.01 ).min( -1.0 ).max( 1.0 );
+    mParams.addParam( "Damping", &mDamping ).step( 0.01 ).max( 1.0 );
 }
 
 
@@ -115,6 +125,10 @@ void BasicSampleApp::draw()
         if ( !mFeatures[k]->isEnable() )
             continue;
         
+        mFeatures[k]->setGain( mGain );
+        mFeatures[k]->setOffset( mOffset );
+        mFeatures[k]->setDamping( mDamping );
+        
         rect    = Rectf( pos, pos + widgetSize );
         plotCol = ColorA( 1.0f, rect.y1 / getWindowHeight(), rect.x1 / getWindowWidth(), 1.0f );
         
@@ -124,6 +138,8 @@ void BasicSampleApp::draw()
         if ( pos.y >= getWindowHeight() - widgetSize.y )
             pos = Vec2i( pos.x + widgetSize.x + initPos.x, initPos.y );
     }
+    
+    mParams.draw();
 }
 
 
