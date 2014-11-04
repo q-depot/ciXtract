@@ -603,6 +603,7 @@ ciXtractWaveletF0::ciXtractWaveletF0( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_WAVELET_F0, name, (xtract_features_)CIXTRACT_PCM_FEATURE )
 {
     mEnumStr    = "XTRACT_WAVELET_F0";
+    xtract_init_wavelet_f0_state();
 }
 
 void ciXtractWaveletF0::doUpdate( int frameN )

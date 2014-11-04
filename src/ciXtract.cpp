@@ -31,8 +31,8 @@ ciXtract::ciXtract()
 
 ciXtract::~ciXtract()
 {
-    xtract_free_fft();
-    xtract_free_window( mWindowFunc );
+//    xtract_free_fft();
+//    xtract_free_window( mWindowFunc );
 }
 
 
@@ -41,7 +41,7 @@ void ciXtract::initFeatures()
     mWindowFunc = xtract_init_window( CIXTRACT_PCM_SIZE, XTRACT_HANN );
     
     mFeatures.push_back( ciXtractFeature::create<ciXtractSpectrum>( this, "Spectrum" ) );
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractAutocorrelation>( this, "Auto Correlation" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractAutocorrelation>( this, "Auto Correlation" ) );
     
 //    mFeatures.push_back( ciXtractFeature::create<ciXtractAutocorrelationFft>( this, "Auto Correlation Fft" ) );
     
@@ -52,9 +52,9 @@ void ciXtract::initFeatures()
 //    mFeatures.push_back( ciXtractFeature::create<ciXtractWaveletF0>( this, "Wavelet F0" ) );
 //    mFeatures.push_back( ciXtractFeature::create<ciXtractPeakSpectrum>( this, "Peak Spectrum" ) );
 //    mFeatures.push_back( ciXtractFeature::create<ciXtractSubBands>( this, "Sub Bands" ) );
-    mFeatures.push_back( ciXtractFeature::create<ciXtractMfcc>( this, "Mfcc" ) );
-    mFeatures.push_back( ciXtractFeature::create<ciXtractBark>( this, "Bark" ) );
-    mFeatures.push_back( ciXtractFeature::create<ciXtractMean>( this, "Mean" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractMfcc>( this, "Mfcc" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractBark>( this, "Bark" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractMean>( this, "Mean" ) );
     
 /*
     mFeatures.push_back( ciXtractFeature::create<ciXtractVariance>( this, "Variance" ) );
