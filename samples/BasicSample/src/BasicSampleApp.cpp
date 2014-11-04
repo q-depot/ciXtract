@@ -113,7 +113,7 @@ void BasicSampleApp::setup()
     mParams.addParam( "Offset",     &mOffset,   "min=-1.0 max=1.0 step=0.01" );
     mParams.addParam( "Damping",    &mDamping,  "min=0.0 max=0.99 step=0.01" );
 
-    return;
+//    return;
     
     FeatureParamRef                 p;
     std::vector<FeatureParamRef>    featureParams;
@@ -124,15 +124,14 @@ void BasicSampleApp::setup()
         
         if ( featureParams.empty() )
             continue;
-    
-        mParams.addSeparator("AAA" + to_string(k) );
-        mParams.addText("bb " + to_string(k) );
+        
+        mParams.addText( mFeatures[k]->getName() );
         
         for( size_t i=0; i < featureParams.size(); i++ )
         {
             p = featureParams[i];
             if( p )
-                mParams.addParam( p->getName(), p->getValuePtr() );
+                mParams.addParam( to_string(k) + " " + p->getName(), p->getValuePtr() ).group( mFeatures[k]->getName() );
         }
     }
     

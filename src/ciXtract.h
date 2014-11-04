@@ -14,7 +14,8 @@
 
 #pragma once
 #include "cinder/app/App.h"
-#include "ciXtractFeature.h"
+#include "ciXtractScalarFeature.h"
+#include "ciXtractVectorFeature.h"
 
 using namespace ci;
 using namespace ci::app;

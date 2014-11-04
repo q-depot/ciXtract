@@ -12,6 +12,8 @@
 		00B784B40FF439BC000DE1D7 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B00FF439BC000DE1D7 /* AudioToolbox.framework */; };
 		00B784B50FF439BC000DE1D7 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B10FF439BC000DE1D7 /* AudioUnit.framework */; };
 		00B784B60FF439BC000DE1D7 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B20FF439BC000DE1D7 /* CoreAudio.framework */; };
+		105ED7AF1A08CF4600032938 /* ciXtractScalarFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 105ED7AB1A08CF4600032938 /* ciXtractScalarFeature.cpp */; };
+		105ED7B01A08CF4600032938 /* ciXtractVectorFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 105ED7AD1A08CF4600032938 /* ciXtractVectorFeature.cpp */; };
 		2F614EEF90124371BE92E108 /* delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D5387C02F3A4B68BECC06A1 /* delta.c */; };
 		3DA6105ED2EE485C957BD760 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 6F4C8AD18C3B49EB82F5DB29 /* CinderApp.icns */; };
 		505681FBDBA3412C80C2CA2A /* libxtract.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E70BA8278B64CBE81B8AE45 /* libxtract.c */; };
@@ -38,6 +40,10 @@
 		00B784B10FF439BC000DE1D7 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		00B784B20FF439BC000DE1D7 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		105ED7AB1A08CF4600032938 /* ciXtractScalarFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ciXtractScalarFeature.cpp; path = ../../../src/ciXtractScalarFeature.cpp; sourceTree = "<group>"; };
+		105ED7AC1A08CF4600032938 /* ciXtractScalarFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ciXtractScalarFeature.h; path = ../../../src/ciXtractScalarFeature.h; sourceTree = "<group>"; };
+		105ED7AD1A08CF4600032938 /* ciXtractVectorFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ciXtractVectorFeature.cpp; path = ../../../src/ciXtractVectorFeature.cpp; sourceTree = "<group>"; };
+		105ED7AE1A08CF4600032938 /* ciXtractVectorFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ciXtractVectorFeature.h; path = ../../../src/ciXtractVectorFeature.h; sourceTree = "<group>"; };
 		11AEBAEB869C42EFB0F11F51 /* ciXtractFeature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ciXtractFeature.h; path = ../../../src/ciXtractFeature.h; sourceTree = "<group>"; };
 		1CC17CA84ADE4B0BBD98D52C /* descriptors.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = descriptors.c; path = ../../../src/LibXtract/src/descriptors.c; sourceTree = "<group>"; };
 		1D5387C02F3A4B68BECC06A1 /* delta.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = delta.c; path = ../../../src/LibXtract/src/delta.c; sourceTree = "<group>"; };
@@ -188,11 +194,15 @@
 		43BF669D0B124C7FBC4C6E3E /* src */ = {
 			isa = PBXGroup;
 			children = (
-				3D810D5DC7C845B6BFAB31AF /* ciXtract.cpp */,
-				C89FCDDB4303431E8FC61FE1 /* ciXtractFeature.cpp */,
-				98B56983C8694B4DA5AF9678 /* LibXtract */,
 				97152736C0914EF0A8D3796D /* ciXtract.h */,
+				3D810D5DC7C845B6BFAB31AF /* ciXtract.cpp */,
 				11AEBAEB869C42EFB0F11F51 /* ciXtractFeature.h */,
+				C89FCDDB4303431E8FC61FE1 /* ciXtractFeature.cpp */,
+				105ED7AB1A08CF4600032938 /* ciXtractScalarFeature.cpp */,
+				105ED7AC1A08CF4600032938 /* ciXtractScalarFeature.h */,
+				105ED7AD1A08CF4600032938 /* ciXtractVectorFeature.cpp */,
+				105ED7AE1A08CF4600032938 /* ciXtractVectorFeature.h */,
+				98B56983C8694B4DA5AF9678 /* LibXtract */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -335,11 +345,13 @@
 				9D63FCDE6A514F4E8D21743F /* ciXtract.cpp in Sources */,
 				FAA62B3F6B774305AB5E9806 /* ciXtractFeature.cpp in Sources */,
 				2F614EEF90124371BE92E108 /* delta.c in Sources */,
+				105ED7AF1A08CF4600032938 /* ciXtractScalarFeature.cpp in Sources */,
 				D473653397D140ECBAC7191D /* descriptors.c in Sources */,
 				F593AF45EB054DD6B7756956 /* fini.c in Sources */,
 				6A7E72AD7A3348499CE6DC4F /* helper.c in Sources */,
 				D875FF65BC81450280B3D802 /* init.c in Sources */,
 				505681FBDBA3412C80C2CA2A /* libxtract.c in Sources */,
+				105ED7B01A08CF4600032938 /* ciXtractVectorFeature.cpp in Sources */,
 				8CC2B277B72C439F856DBE09 /* scalar.c in Sources */,
 				D08BD2AF44464936BE930E48 /* vector.c in Sources */,
 				F506D56FBBE042F285B50718 /* window.c in Sources */,
