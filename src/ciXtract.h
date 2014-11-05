@@ -91,7 +91,6 @@ public:
     //! draw the feature data
     static void drawData(   ciXtractFeatureRef  feature,
                             Rectf               rect,
-                            bool                drawRaw     = false,
                             ci::ColorA          plotCol     = ci::ColorA::white(),
                             ci::ColorA          bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
                             ci::ColorA          labelCol    = ci::ColorA::white() );

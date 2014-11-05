@@ -31,32 +31,41 @@ ciXtract::ciXtract()
 
 ciXtract::~ciXtract()
 {
-//    xtract_free_fft();
+    mFeatures.clear();
+    
+    console() << getElapsedSeconds() << " ~ciXtract()" << endl;
+    xtract_free_fft();
 //    xtract_free_window( mWindowFunc );
 }
 
 
 void ciXtract::initFeatures()
 {
-    mWindowFunc = xtract_init_window( CIXTRACT_PCM_SIZE, XTRACT_HANN );
+//    mWindowFunc = xtract_init_window( CIXTRACT_PCM_SIZE, XTRACT_HANN );
+
     
+    // Vector features
     mFeatures.push_back( ciXtractFeature::create<ciXtractSpectrum>( this, "Spectrum" ) );
-    mFeatures.push_back( ciXtractFeature::create<ciXtractAutocorrelation>( this, "Auto Correlation" ) );
-    
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractAutocorrelationFft>( this, "Auto Correlation Fft" ) );
-    
-     
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractHarmonicSpectrum>( this, "Harmonic Spectrum" ) );
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractF0>( this, "F0" ) );
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractFailsafeF0>( this, "Failsafe F0" ) );
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractWaveletF0>( this, "Wavelet F0" ) );
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractPeakSpectrum>( this, "Peak Spectrum" ) );
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractSubBands>( this, "Sub Bands" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractAutocorrelationFft>( this, "Auto Correlation Fft" ) ); // doesn't work, ever will!
 //    mFeatures.push_back( ciXtractFeature::create<ciXtractMfcc>( this, "Mfcc" ) );
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractBark>( this, "Bark" ) );
-//    mFeatures.push_back( ciXtractFeature::create<ciXtractMean>( this, "Mean" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractDct>( this, "Dct" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractAutocorrelation>( this, "Auto Correlation" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractAmdf>( this, "Amdf" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractAsdf>( this, "Asdf" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractBark>( this, "Bark" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractPeakSpectrum>( this, "Peak Spectrum" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractHarmonicSpectrum>( this, "Harmonic Spectrum" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractLpc>( this, "Lpc" ) );
+    //    lpcc
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractSubBands>( this, "Sub Bands" ) );
+    /*
+    // Scalar features
+    mFeatures.push_back( ciXtractFeature::create<ciXtractF0>( this, "F0" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractFailsafeF0>( this, "Failsafe F0" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractWaveletF0>( this, "Wavelet F0" ) );
+    mFeatures.push_back( ciXtractFeature::create<ciXtractMean>( this, "Mean" ) );
     
-/*
+
     mFeatures.push_back( ciXtractFeature::create<ciXtractVariance>( this, "Variance" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractStandardDeviation>( this, "Standard Deviation" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractAverageDeviation>( this, "Average Deviation" ) );
@@ -70,13 +79,13 @@ void ciXtract::initFeatures()
     mFeatures.push_back( ciXtractFeature::create<ciXtractSpectralCentroid>( this, "Spectral Centroid" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractIrregularityK>( this, "Irregularity K" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractIrregularityJ>( this, "Irregularity J" ) );
-    mFeatures.push_back( ciXtractFeature::create<ciXtractTristimulus1>( this, "Tristimulus 1" ) );
-  */
-    /*
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractTristimulus1>( this, "Tristimulus 1" ) );
+  
+  
     mFeatures.push_back( ciXtractFeature::create<ciXtractSmoothness>( this, "Smoothness" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractSpread>( this, "Spread" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractZcr>( this, "Zcr" ) );
-    mFeatures.push_back( ciXtractFeature::create<ciXtractRolloff>( this, "Rolloff" ) );
+//    mFeatures.push_back( ciXtractFeature::create<ciXtractRolloff>( this, "Rolloff" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractLoudness>( this, "Loudness" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractFlatness>( this, "Flatness" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractFlatnessDb>( this, "Flatness Db" ) );
@@ -92,20 +101,20 @@ void ciXtract::initFeatures()
     mFeatures.push_back( ciXtractFeature::create<ciXtractSum>( this, "Sum" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractNonZeroCount>( this, "Non-Zero Count" ) );
     mFeatures.push_back( ciXtractFeature::create<ciXtractCrest>( this, "Crest" ) );
-    */
+     */
 }
 
 
 void ciXtract::update( const float *pcmData )
 {
-    for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
-        mPcmDataRaw.get()[k] = pcmData[k];
+//    for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
+//        mPcmDataRaw.get()[k] = pcmData[k];
     
-    xtract_windowed( mPcmDataRaw.get(), CIXTRACT_PCM_SIZE, mWindowFunc, mPcmData.get() );
+//    xtract_windowed( mPcmDataRaw.get(), CIXTRACT_PCM_SIZE, mWindowFunc, mPcmData.get() );
     
     
-//	for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
-//        mPcmData.get()[k] = pcmData[k];
+	for( size_t k=0; k < CIXTRACT_PCM_SIZE; k++ )
+        mPcmData.get()[k] = pcmData[k];
 
     vector<ciXtractFeatureRef>::iterator    it;
     
@@ -115,8 +124,8 @@ void ciXtract::update( const float *pcmData )
         if ( (*it)->isEnable() )
             (*it)->update( frameN );
             
-    if ( isCalibrating() )
-        updateCalibration();
+//    if ( isCalibrating() )
+//        updateCalibration();
 }
 
 
@@ -253,16 +262,17 @@ void ciXtract::drawPcm( ci::Rectf rect, const float *pcmData, size_t pcmSize )
     
     gl::translate( rect.x1, rect.y1 + rect.getHeight() * 0.5f );
     
-	float   scale       = rect.getWidth() / (float)pcmSize;
+	float   scale   = rect.getWidth() / (float)pcmSize;
+	float   x, y;
     
 	PolyLine<Vec2f>	leftBufferLine;
     
     gl::color( Color::gray( 0.4f ) );
-	
+
 	for( int i = 0; i < pcmSize; i++ )
     {
-		float x = i * scale;
-        float y = pcmData[i] * rect.getHeight() * 0.5f;
+		x = i * scale;
+        y = pcmData[i] * rect.getHeight() * 0.5f;
 		leftBufferLine.push_back( Vec2f( x , y) );
 	}
     
@@ -272,7 +282,7 @@ void ciXtract::drawPcm( ci::Rectf rect, const float *pcmData, size_t pcmSize )
 }
 
 
-void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, bool drawRaw, ColorA plotCol, ColorA bgCol, ColorA labelCol )
+void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, ColorA plotCol, ColorA bgCol, ColorA labelCol )
 {
     glPushMatrix();
     
@@ -280,7 +290,7 @@ void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, bool drawRaw, C
     
     rect.y1 += 10;
     
-    std::shared_ptr<double> data    = drawRaw ? feature->getDataRaw() : feature->getData();
+    std::shared_ptr<double> data    = feature->getData();
     float                   step    = rect.getWidth() / feature->getDataSize();
     float                   h       = rect.getHeight();
     float                   val, barY;
@@ -296,7 +306,7 @@ void ciXtract::drawData( ciXtractFeatureRef feature, Rectf rect, bool drawRaw, C
     
     for( int i = 0; i < feature->getDataSize(); i++ )
     {
-        val     = ( data.get()[i] - feature->getMin() ) / ( feature->getMax() - feature->getMin() );
+        val     = data.get()[i];
         val     = math<float>::clamp( val, 0.0f, 1.0f );
         barY    = h * val;
         

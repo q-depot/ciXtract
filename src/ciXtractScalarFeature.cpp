@@ -263,8 +263,8 @@ ciXtractTristimulus1::ciXtractTristimulus1( ciXtract *xtract, std::string name )
 
 void ciXtractTristimulus1::doUpdate( int frameN )
 {
-    xtract_tristimulus_1( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
-    
+//    xtract_tristimulus_1( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
+    console() << "fix xtract_tristimulus_1" << endl;
 }
 
 
@@ -368,14 +368,14 @@ void ciXtractFlatness::doUpdate( int frameN )
 ciXtractFlatnessDb::ciXtractFlatnessDb( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_FLATNESS_DB, name, (xtract_features_)CIXTRACT_NO_FEATURE )
 {
-	mDependencies.push_back( XTRACT_FLATNESS );
-    
+    mDependencies.push_back( XTRACT_FLATNESS );
     mEnumStr    = "XTRACT_FLATNESS_DB";
 }
 
 void ciXtractFlatnessDb::doUpdate( int frameN )
 {
-    xtract_flatness_db( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
+    mArgd[0] = mXtract->getFeatureDataRaw(XTRACT_FLATNESS).get()[0];
+    xtract_flatness_db( NULL, 0, mArgd, mDataRaw.get() );
 }
 
 
@@ -431,7 +431,7 @@ void ciXtractSpectralInharmonicity::doUpdate( int frameN )
 {
     mArgd[0] = mXtract->getFeatureDataRaw( XTRACT_F0 ).get()[0];
 
-    xtract_spectral_inharmonicity( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
+    xtract_spectral_inharmonicity( mInputBuffer.data.get(), mInputBuffer.dataSize, mArgd, mDataRaw.get() );
 }
 
 

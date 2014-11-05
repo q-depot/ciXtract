@@ -1,37 +1,32 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version             = "1.0" encoding="UTF-8" ?>
 <cinder>
-	
-	<block
-		name="ciXtract"
-		id="uk.nocte.cixtract"
-		author="Andrea Cuius"
-		summary="LibXtract Cinder block"
-		git="ssh://git@bitbucket.org/q_bit/cixtract.git"
-		library="https://github.com/jamiebullock/LibXtract/"
-		>
-		<supports os="msw" />
-		<supports os="macosx" />
-	
-		<sourcePattern>src/*.cpp</sourcePattern>	
-		<sourcePattern>src/LibXtract/src/*.c</sourcePattern>
-		<sourcePattern>src/LibXtract/src/dywapitchtrack/*.c</sourcePattern>
-	
-		<headerPattern>src/*.h</headerPattern>	
-		<headerPattern>src/LibXtract/src/*.h</headerPattern>
-		<headerPattern>src/LibXtract/src/dywapitchtrack/*.h</headerPattern>
-		<headerPattern>src/LibXtract/xtract/*.h</headerPattern>
-	
-		<includePath>src</includePath>
-		<includePath>src/LibXtract/xtract</includePath>
-		
-		<platform os="msw">
-			<sourcePattern>src/LibXtract/src/ooura/*.c</sourcePattern>
-			<headerPattern>src/LibXtract/src/ooura/*.h</headerPattern>
-		</platform>
-		
-	</block>
-	
-	<template>templates/ciXtractBasic/template.xml</template>
-	<template>templates/ciXtractBasicRender/template.xml</template>
-	
+
+    <block
+        name              = "ciXtract"
+        id                = "uk.nocte.cixtract"
+        author            = "Andrea Cuius"
+        summary           = "LibXtract Cinder block"
+        git               = "ssh://git@bitbucket.org/q_bit/cixtract.git"
+        library           = "https://github.com/jamiebullock/LibXtract/"
+        >
+        <!-- <supports os = "msw" /> -->
+        <!-- <supports os= "macosx" /> -->
+
+        <sourcePattern>src/*.cpp</sourcePattern>
+        <headerPattern>src/*.h</headerPattern>
+        <headerPattern>src/xtract/*.h</headerPattern>
+
+        <includePath>src</includePath>
+        <includePath>src/xtract</includePath>
+
+    <platform os="macosx">
+        <platform config="Debug">
+            <staticLibrary>lib/macosx/LibXtract_d.a</staticLibrary>
+        </platform>
+        <platform config="Release">
+            <staticLibrary>lib/macosx/LibXtract.a</staticLibrary>
+        </platform>
+    </platform>
+        
+    </block>        
 </cinder>

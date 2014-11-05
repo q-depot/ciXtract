@@ -50,20 +50,7 @@ void ciXtractSpectrum::doUpdate( int frameN )
     xtract_spectrum( mInputBuffer.data.get(), mInputBuffer.dataSize, mArgd, mDataRaw.get() );
 }
 
-// Autocorrelation                                                                                  //
-// ------------------------------------------------------------------------------------------------ //
-ciXtractAutocorrelation::ciXtractAutocorrelation( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_FFT_SIZE, CIXTRACT_FFT_SIZE * 2 )
-{
-    mEnumStr    = "XTRACT_AUTOCORRELATION";
-    
-    xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
-}
 
-void ciXtractAutocorrelation::doUpdate( int frameN )
-{
-    xtract_autocorrelation( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
-}
 
 // AutoCorrelationFft                                                                               //
 // ------------------------------------------------------------------------------------------------ //
@@ -78,64 +65,6 @@ ciXtractAutocorrelationFft::ciXtractAutocorrelationFft( ciXtract *xtract, std::s
 void ciXtractAutocorrelationFft::doUpdate( int frameN )
 {
     xtract_autocorrelation_fft( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
-}
-
-
-// Harmonic Spectrum                                                                                //
-// ------------------------------------------------------------------------------------------------ //
-ciXtractHarmonicSpectrum::ciXtractHarmonicSpectrum( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_HARMONIC_SPECTRUM, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_FFT_SIZE, CIXTRACT_FFT_SIZE * 2 )
-{
-	mDependencies.push_back( XTRACT_F0 );
-
-    mEnumStr                = "XTRACT_HARMONIC_SPECTRUM";
-    mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.3f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
-}
-
-void ciXtractHarmonicSpectrum::doUpdate( int frameN )
-{
-    mArgd[0] = *mXtract->getFeatureDataRaw(XTRACT_F0).get();
-    mArgd[1] = mParams["threshold"].val;
-
-    xtract_harmonic_spectrum( mInputBuffer.data.get(), mInputBuffer.dataSize, mArgd, mDataRaw.get() );
-}
-
-// Peak Spectrum                                                                                    //
-// ------------------------------------------------------------------------------------------------ //
-ciXtractPeakSpectrum::ciXtractPeakSpectrum( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_PEAK_SPECTRUM, name, XTRACT_SPECTRUM, CIXTRACT_FFT_SIZE, CIXTRACT_PCM_SIZE )
-{
-	mDependencies.push_back( XTRACT_SPECTRUM );
-
-    mEnumStr                = "XTRACT_PEAK_SPECTRUM";
-
-    mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
-}
-
-void ciXtractPeakSpectrum::doUpdate( int frameN )
-{
-    mArgd[0] = CIXTRACT_SAMPLERATE_N;
-    mArgd[1] = mParams["threshold"].val;
-    xtract_peak_spectrum( mInputBuffer.data.get(), mInputBuffer.dataSize, mArgd, mDataRaw.get() );
-}
-
-// Bark
-// ------------------------------------------------------------------------------------------------ //
-ciXtractBark::ciXtractBark( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_BARK_COEFFICIENTS, name, XTRACT_SPECTRUM, XTRACT_BARK_BANDS )
-{
-    mEnumStr                = "XTRACT_BARK_COEFFICIENTS";
-    mBandLimits             = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
-    mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
-    
-    xtract_init_bark( CIXTRACT_FFT_SIZE, CIXTRACT_SAMPLERATE >> 1, mBandLimits.get() );
-}
-
-void ciXtractBark::doUpdate( int frameN )
-{
-    mArgd[0]    = CIXTRACT_SAMPLERATE_N;
-    mArgd[1]    = mParams["threshold"].val;
-    xtract_bark_coefficients( mInputBuffer.data.get(), mInputBuffer.dataSize, mBandLimits.get(), mDataRaw.get() );
 }
 
 // Mfcc
@@ -163,6 +92,142 @@ void ciXtractMfcc::doUpdate( int frameN )
 {
     xtract_mfcc( mInputBuffer.data.get(), mInputBuffer.dataSize, &mMelFilters, mDataRaw.get() );
 }
+
+
+// Dct                                                                                              //
+// ------------------------------------------------------------------------------------------------ //
+ciXtractDct::ciXtractDct( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_DCT, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE, CIXTRACT_PCM_SIZE )
+{
+    mEnumStr    = "XTRACT_DCT";
+}
+
+void ciXtractDct::doUpdate( int frameN )
+{
+    xtract_dct( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
+}
+
+
+// Autocorrelation                                                                                  //
+// ------------------------------------------------------------------------------------------------ //
+ciXtractAutocorrelation::ciXtractAutocorrelation( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_FFT_SIZE, CIXTRACT_FFT_SIZE * 2 )
+{
+    mEnumStr    = "XTRACT_AUTOCORRELATION";
+    
+    xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
+}
+
+void ciXtractAutocorrelation::doUpdate( int frameN )
+{
+    xtract_autocorrelation( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
+}
+
+
+// Amdf                                                                                             //
+// ------------------------------------------------------------------------------------------------ //
+
+ciXtractAmdf::ciXtractAmdf( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_AMDF, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
+{
+    mEnumStr    = "XTRACT_AMDF";
+}
+
+void ciXtractAmdf::doUpdate( int frameN )
+{
+    xtract_amdf( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
+}
+
+
+// Asdf                                                                                             //
+// ------------------------------------------------------------------------------------------------ //
+ciXtractAsdf::ciXtractAsdf( ciXtract *xtract, std::string name ) : ciXtractFeature( xtract, XTRACT_ASDF, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
+{
+    mEnumStr    = "XTRACT_ASDF";
+}
+
+void ciXtractAsdf::doUpdate( int frameN )
+{
+    xtract_asdf( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
+}
+
+
+// Bark                                                                                             //
+// ------------------------------------------------------------------------------------------------ //
+ciXtractBark::ciXtractBark( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_BARK_COEFFICIENTS, name, XTRACT_SPECTRUM, XTRACT_BARK_BANDS )
+{
+    mEnumStr                = "XTRACT_BARK_COEFFICIENTS";
+    mBandLimits             = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
+    mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
+    
+    xtract_init_bark( CIXTRACT_FFT_SIZE, CIXTRACT_SAMPLERATE >> 1, mBandLimits.get() );
+}
+
+void ciXtractBark::doUpdate( int frameN )
+{
+    mArgd[0]    = CIXTRACT_SAMPLERATE_N;
+    mArgd[1]    = mParams["threshold"].val;
+    xtract_bark_coefficients( mInputBuffer.data.get(), mInputBuffer.dataSize, mBandLimits.get(), mDataRaw.get() );
+}
+
+
+// Peak Spectrum                                                                                    //
+// ------------------------------------------------------------------------------------------------ //
+ciXtractPeakSpectrum::ciXtractPeakSpectrum( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_PEAK_SPECTRUM, name, XTRACT_SPECTRUM, CIXTRACT_FFT_SIZE, CIXTRACT_PCM_SIZE )
+{
+	mDependencies.push_back( XTRACT_SPECTRUM );
+    
+    mEnumStr                = "XTRACT_PEAK_SPECTRUM";
+    
+    mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
+}
+
+void ciXtractPeakSpectrum::doUpdate( int frameN )
+{
+    mArgd[0] = CIXTRACT_SAMPLERATE_N;
+    mArgd[1] = mParams["threshold"].val;
+    xtract_peak_spectrum( mInputBuffer.data.get(), mInputBuffer.dataSize, mArgd, mDataRaw.get() );
+}
+
+
+// Harmonic Spectrum                                                                                //
+// ------------------------------------------------------------------------------------------------ //
+ciXtractHarmonicSpectrum::ciXtractHarmonicSpectrum( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_HARMONIC_SPECTRUM, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_FFT_SIZE, CIXTRACT_FFT_SIZE * 2 )
+{
+	mDependencies.push_back( XTRACT_F0 );
+    
+    mEnumStr                = "XTRACT_HARMONIC_SPECTRUM";
+    mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.3f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
+}
+
+void ciXtractHarmonicSpectrum::doUpdate( int frameN )
+{
+    mArgd[0] = *mXtract->getFeatureDataRaw(XTRACT_F0).get();
+    mArgd[1] = mParams["threshold"].val;
+    
+    xtract_harmonic_spectrum( mInputBuffer.data.get(), mInputBuffer.dataSize, mArgd, mDataRaw.get() );
+}
+
+
+// Lpc
+// ------------------------------------------------------------------------------------------------ //
+ciXtractLpc::ciXtractLpc( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_LPC, name, XTRACT_AUTOCORRELATION, 2 * ( CIXTRACT_PCM_SIZE - 1 ) )
+{
+    mEnumStr = "XTRACT_LPC";
+}
+
+void ciXtractLpc::doUpdate( int frameN )
+{
+    xtract_lpc( mInputBuffer.data.get(), mInputBuffer.dataSize, mArgd, mDataRaw.get() );
+}
+
+
+// Lpcc
+// ------------------------------------------------------------------------------------------------ //
 
 // Sub Bands
 // ------------------------------------------------------------------------------------------------ //

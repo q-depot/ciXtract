@@ -182,9 +182,9 @@ int xtract_irregularity_j(const double *data, const int N, const void *argv, dou
 
 /** \brief Calculate the Tristimulus of an input vector using a method described by Pollard and Jansson (1982)
  * 
- * \param *data: a pointer to the first element in an array of doubles representing the magnitude coefficients of the harmonic spectrum of an audio vector e.g. a pointer to the first half of the array pointed to by *result from xtract_harmonics(). The amplitudes of the peak spectrum (e.g. *result from xtract_peak_spectrum()) can be used if one wishes to consider all partials not just harmonics.
+ * \param *data: a pointer to the first element in an array of doubles representing a harmonic spectrum of size N/2, and a frequency spectrum of size N/2 (This is the output format of xtract_harmonic_spectrum())
  * \param N: the number of elements to be considered
- * \param *argv: a pointer to NULL
+ * \param *argv: a pointer to a double representing the fundamental frequency of the input vector.
  * \param *result: the tristimulus of N values from the array pointed to by *data
  *
  * These three functions provide the first, second and third order tristimulus formulae
@@ -324,9 +324,9 @@ int xtract_power(const double *data, const int N, const void *argv, double *resu
 /* Odd to even harmonic ratio */
 /** \brief Extract the Odd to even harmonic ratio of an input vector 
  * 
- * \param *data: a pointer to the first element in an array of doubles representing the amplitudes of the harmonic spectrum of an audio vector. It is sufficient to pass in a pointer to the first half of the array pointed to by *result from xtract_harmonic_spectrum().
- * \param N: the number of elements to be considered. If using the array pointed to by *result from xtract_harmonics, N should equal half the total array size i.e., just the amplitudes of the peaks.
- * \param *argv: a pointer to NULL
+ * \param *data: a pointer to the first element in an array of doubles representing a harmonic spectrum of size N/2, and a frequency spectrum of size N/2 (This is the output format of xtract_harmonic_spectrum())
+ * \param N: the number of elements to be considered. 
+ * \param *argv: a pointer to a double representing the fundamental frequency of the input vector.
  * \param *result: the even/odd harmonic ratio of N values from the array pointed to by *data
  */
 int xtract_odd_even_ratio(const double *data, const int N, const void *argv, double *result);
@@ -353,8 +353,13 @@ int xtract_spectral_slope(const double *data, const int N, const void *argv, dou
  * 
  * \param *data: a pointer to the first element in an array of doubles
  * \param N: the number of elements to be considered
- * \param *argv: a pointer to a double representing the lower limit for the search. i.e. (*result > *argv) returns 1.
+ * \param *argv: a pointer to a double representing the lower limit for the search. All values in the array pointed to by *data that are below or equal to this threshold will be ignored.
  * \param *result: a pointer to a value representing the lowest component in *data that falls above a given threshold. 
+ *
+ * \return XTRACT_SUCCESS is a lowest value was found or XTRACT_NO_VALUE if all values 
+ * in the array pointed to by *data are below or equal to the threshold set with *argv
+ *
+ * \note If XTRACT_NO_VALUE is returned, *result will be set to DBL_MAX
  * 
  */
 int xtract_lowest_value(const double *data, const int N, const void *argv, double *result);
@@ -381,10 +386,8 @@ int xtract_sum(const double *data, const int N, const void *argv, double *result
 
 /** \brief Extract the Pitch of an input vector using Harmonic Product Spectrum (HPS) analysis
  * 
- * \warning {This function doesn't work properly}
- * 
- * \param *data: a pointer to the first element in an array of doubles representing the magnitude coefficients from the spectrum of an audio vector, (e.g. the first half of the array pointed to by *result from xtract_spectrum().
- * \param N: the number of elements to be considered
+ * \param *data: a pointer to the first element in an array of doubles representing the spectrum of an audio vector (e.g. *result from  xtract_spectrum). It is expected that the first half of the array pointed to by *data will contain amplitudes for each frequecy bin, and the second half will contain the respective frequencies
+ * \param N: The length of the vector pointed to by *data.
  * \param *argv: a pointer to NULL
  * \param *result: the pitch of N values from the array pointed to by *data
  */
@@ -431,6 +434,19 @@ int xtract_failsafe_f0(const double *data, const int N, const void *argv, double
  */
 int xtract_wavelet_f0(const double *data, const int N, const void *argv, double *result);
 
+    
+/** \brief Convenience function to convert a frequency in Hertz to a "pitch" value in MIDI cents
+ *
+ * \param *data: not used
+ * \param N: not used
+ * \param *argv: a pointer to a double-precision floating point value representing a frequency in Hertz
+ * \param *result: a pointer to a double-precision floating point value representing a "pitch" in MIDI cents
+ * \return if *argv value causes a *result within the range 0..127, XTRACT_SUCCESS will be returned, otherwise XTRACT_ARGUMENT_ERROR
+ *
+ */
+int xtract_midicent(const double *data, const int N, const void *argv, double *result);
+
+    
 /** \brief Extract the number of non-zero elements in an input vector
  * 
  * \param *data: a pointer to the first element in an array of doubles
@@ -441,6 +457,20 @@ int xtract_wavelet_f0(const double *data, const int N, const void *argv, double 
  */
 int xtract_nonzero_count(const double *data, const int N, const void *argv, double *result);
 
+/**
+ *  \brief Return XTRACT_SUCCESS if the 'current' value is considered a peak
+ *
+ *  @param data   a pointer to an array containing time series as provided by *result from xtract_last_n() where the Nth value is considered the 'current' value
+ *  @param N      an integer representing the number of elements in the time series
+ *  @param argv   a pointer to a double representing the threshold, whereby the current value will be considered a peak if it is above the average of the last N values (*data) by the threshold
+ *  @param result a pointer to a copy of the current value if the current value is considered a peak
+ *
+ *
+ *  @return XTRACT_SUCCESS if a peak was found or XTRACT_NO_RESULT if not
+ */
+int xtract_peak(const double *data, const int N, const void *argv, double *result);
+
+    
 /** @} */
 
 #ifdef __cplusplus

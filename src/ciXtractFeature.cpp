@@ -21,6 +21,7 @@ ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ feature, st
 {
     mMin            = 0.0f;
     mMax            = 1.0f;
+    
     mIsEnable       = false;
     mGain           = 1.0f;
     mOffset         = 0.0f;
@@ -46,8 +47,15 @@ void ciXtractFeature::update( int frameN )
 {
     // check dependencies
     if ( isUpdated(frameN) || !checkDependencies( frameN ) )
+    {
+        if ( isUpdated(frameN) )
+            console() << getName() << " isUpdated" << endl;
+        
+        if ( !checkDependencies( frameN ) )
+            console() << getName() << " missing deps" << endl;
+        
         return;
-    
+    }
     // call sub-class update
     doUpdate( frameN );
     
@@ -59,18 +67,26 @@ void ciXtractFeature::update( int frameN )
 
 void ciXtractFeature::processData( int frameN )
 {
-    float                   val;
+    float val;
     
     for( size_t i=0; i < mDataSize; i++ )
     {
         // clamp min-max range
-        val = ( mDataRaw.get()[i] - mMin ) / ( mMax - mMin );
+//        val = ( mDataRaw.get()[i] - mMin ) / ( mMax - mMin );
+        val = mDataRaw.get()[i];
+
+//        if ( val < mMin )
+//            mMin = val;
+//        if ( val > mMax )
+//            mMax = val;
+        
+        val = ( val - mMin ) / ( mMax - mMin );
         
         // this function doesn't work properly.
         // val = min( (float)(i + 25) / (float)mResultsN, 1.0f ) * 100 * log10( 1.0f + val );
 
-        if ( mIsLog )
-            val = 0.01f * audio::linearToDecibel( val );
+//        if ( mIsLog )
+//            val = 0.01f * audio::linearToDecibel( val );
     
         val = mOffset + mGain * val;
         
@@ -130,6 +146,7 @@ bool ciXtractFeature::checkDependencies( int frameN )
         if ( !dep->isUpdated( frameN ) )
             dep->update( frameN );
     }
+    
     return true;
 }
 

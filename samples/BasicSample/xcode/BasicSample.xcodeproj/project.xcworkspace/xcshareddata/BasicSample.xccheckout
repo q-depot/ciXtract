@@ -5,48 +5,36 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>963D2BD1-2877-4524-AC0A-34DFF2934976</string>
+	<string>145B4851-208A-4EBF-B5D4-65701E9BD0A0</string>
 	<key>IDESourceControlProjectName</key>
 	<string>BasicSample</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>1DC23196-A7DD-4F59-92A9-396772DAAB32</key>
+		<key>08D9B838-9F36-4B67-86BB-7EB654189D37</key>
 		<string>ssh://github.com/q-depot/ciXtract.git</string>
-		<key>6E548C4C-04FC-42CA-9E6B-88A8D4D2ACB1</key>
-		<string>ssh://github.com/q-depot/LibXtract.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>samples/BasicSample/xcode/BasicSample.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>1DC23196-A7DD-4F59-92A9-396772DAAB32</key>
+		<key>08D9B838-9F36-4B67-86BB-7EB654189D37</key>
 		<string>../../../../..</string>
-		<key>6E548C4C-04FC-42CA-9E6B-88A8D4D2ACB1</key>
-		<string>../../../../../src/LibXtract</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>ssh://github.com/q-depot/ciXtract.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>1DC23196-A7DD-4F59-92A9-396772DAAB32</string>
+	<string>08D9B838-9F36-4B67-86BB-7EB654189D37</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>1DC23196-A7DD-4F59-92A9-396772DAAB32</string>
+			<string>08D9B838-9F36-4B67-86BB-7EB654189D37</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ciXtract</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>6E548C4C-04FC-42CA-9E6B-88A8D4D2ACB1</string>
-			<key>IDESourceControlWCCName</key>
-			<string>LibXtract</string>
 		</dict>
 	</array>
 </dict>
