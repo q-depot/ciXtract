@@ -2,7 +2,7 @@
  *  ciXtractVectorFeature.cpp
  *
  *  Created by Andrea Cuius
- *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
+ *  Nocte Studio Ltd. Copyright 2014 . All rights reserved.
  *
  *  www.nocte.co.uk
  *
@@ -17,13 +17,16 @@ using namespace ci::app;
 using namespace std;
 
 
+//XTRACT_AUTOCORRELATION_FFT ||
+//x->feature == XTRACT_SPECTRUM ||
+//x->feature == XTRACT_DCT){
+
+
 // Spectrum                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_SPECTRUM, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_FFT_SIZE, CIXTRACT_FFT_SIZE * 2 )
 {
-    mEnumStr    = "XTRACT_SPECTRUM";
-    
 	std::map<std::string,double> opts;
 	opts["Magnitude"]		= XTRACT_MAGNITUDE_SPECTRUM;
 	opts["Log Magnitude"]	= XTRACT_LOG_MAGNITUDE_SPECTRUM;
@@ -57,8 +60,6 @@ void ciXtractSpectrum::doUpdate( int frameN )
 ciXtractAutocorrelationFft::ciXtractAutocorrelationFft( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_AUTOCORRELATION_FFT, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
 {
-    mEnumStr    = "XTRACT_AUTOCORRELATION_FFT";
-    
     xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
 }
 
@@ -72,13 +73,12 @@ void ciXtractAutocorrelationFft::doUpdate( int frameN )
 ciXtractMfcc::ciXtractMfcc( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_MFCC, name, XTRACT_SPECTRUM, CIXTRACT_MFCC_FREQ_BANDS )
 {
-    mEnumStr                    = "XTRACT_MFCC";
     mMelFilters.n_filters       = CIXTRACT_MFCC_FREQ_BANDS;
     mMelFilters.filters         = (double **)malloc(CIXTRACT_MFCC_FREQ_BANDS * sizeof(double *));
     for( int n = 0; n < CIXTRACT_MFCC_FREQ_BANDS; ++n )
         mMelFilters.filters[n] = (double *)malloc(CIXTRACT_PCM_SIZE * sizeof(double));
     
-    xtract_init_mfcc( CIXTRACT_FFT_SIZE, CIXTRACT_SAMPLERATE >> 1, XTRACT_EQUAL_GAIN, CIXTRACT_MFCC_FREQ_MIN, CIXTRACT_MFCC_FREQ_MAX, mMelFilters.n_filters, mMelFilters.filters );
+    xtract_init_mfcc( CIXTRACT_PCM_SIZE, CIXTRACT_SAMPLERATE >> 1, XTRACT_EQUAL_GAIN, CIXTRACT_MFCC_FREQ_MIN, CIXTRACT_MFCC_FREQ_MAX, mMelFilters.n_filters, mMelFilters.filters );
 }
 
 ciXtractMfcc::~ciXtractMfcc()
@@ -97,9 +97,9 @@ void ciXtractMfcc::doUpdate( int frameN )
 // Dct                                                                                              //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractDct::ciXtractDct( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_DCT, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE, CIXTRACT_PCM_SIZE )
+: ciXtractFeature( xtract, XTRACT_DCT, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
 {
-    mEnumStr    = "XTRACT_DCT";
+    xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_DCT );
 }
 
 void ciXtractDct::doUpdate( int frameN )
@@ -111,10 +111,8 @@ void ciXtractDct::doUpdate( int frameN )
 // Autocorrelation                                                                                  //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractAutocorrelation::ciXtractAutocorrelation( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_FFT_SIZE, CIXTRACT_FFT_SIZE * 2 )
+: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
 {
-    mEnumStr    = "XTRACT_AUTOCORRELATION";
-    
     xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
 }
 
@@ -128,10 +126,7 @@ void ciXtractAutocorrelation::doUpdate( int frameN )
 // ------------------------------------------------------------------------------------------------ //
 
 ciXtractAmdf::ciXtractAmdf( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_AMDF, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
-{
-    mEnumStr    = "XTRACT_AMDF";
-}
+: ciXtractFeature( xtract, XTRACT_AMDF, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE ) {}
 
 void ciXtractAmdf::doUpdate( int frameN )
 {
@@ -141,10 +136,8 @@ void ciXtractAmdf::doUpdate( int frameN )
 
 // Asdf                                                                                             //
 // ------------------------------------------------------------------------------------------------ //
-ciXtractAsdf::ciXtractAsdf( ciXtract *xtract, std::string name ) : ciXtractFeature( xtract, XTRACT_ASDF, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
-{
-    mEnumStr    = "XTRACT_ASDF";
-}
+ciXtractAsdf::ciXtractAsdf( ciXtract *xtract, std::string name )
+: ciXtractFeature( xtract, XTRACT_ASDF, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE ) {}
 
 void ciXtractAsdf::doUpdate( int frameN )
 {
@@ -157,7 +150,6 @@ void ciXtractAsdf::doUpdate( int frameN )
 ciXtractBark::ciXtractBark( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_BARK_COEFFICIENTS, name, XTRACT_SPECTRUM, XTRACT_BARK_BANDS )
 {
-    mEnumStr                = "XTRACT_BARK_COEFFICIENTS";
     mBandLimits             = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
     mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
     
@@ -179,8 +171,6 @@ ciXtractPeakSpectrum::ciXtractPeakSpectrum( ciXtract *xtract, std::string name )
 {
 	mDependencies.push_back( XTRACT_SPECTRUM );
     
-    mEnumStr                = "XTRACT_PEAK_SPECTRUM";
-    
     mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
 }
 
@@ -195,11 +185,10 @@ void ciXtractPeakSpectrum::doUpdate( int frameN )
 // Harmonic Spectrum                                                                                //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractHarmonicSpectrum::ciXtractHarmonicSpectrum( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_HARMONIC_SPECTRUM, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_FFT_SIZE, CIXTRACT_FFT_SIZE * 2 )
+: ciXtractFeature( xtract, XTRACT_HARMONIC_SPECTRUM, name, XTRACT_PEAK_SPECTRUM, CIXTRACT_FFT_SIZE )
 {
 	mDependencies.push_back( XTRACT_F0 );
     
-    mEnumStr                = "XTRACT_HARMONIC_SPECTRUM";
     mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.3f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
 }
 
@@ -215,10 +204,7 @@ void ciXtractHarmonicSpectrum::doUpdate( int frameN )
 // Lpc
 // ------------------------------------------------------------------------------------------------ //
 ciXtractLpc::ciXtractLpc( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_LPC, name, XTRACT_AUTOCORRELATION, 2 * ( CIXTRACT_PCM_SIZE - 1 ) )
-{
-    mEnumStr = "XTRACT_LPC";
-}
+: ciXtractFeature( xtract, XTRACT_LPC, name, XTRACT_AUTOCORRELATION, 2 * ( CIXTRACT_PCM_SIZE - 1 ) ) {}
 
 void ciXtractLpc::doUpdate( int frameN )
 {
@@ -234,8 +220,6 @@ void ciXtractLpc::doUpdate( int frameN )
 ciXtractSubBands::ciXtractSubBands( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_SUBBANDS, name, XTRACT_SPECTRUM, CIXTRACT_SUBBANDS_N )
 {
-    mEnumStr				= "XTRACT_SUBBANDS";
-	
 	// params
 	std::map<std::string,double> funcOpts;
 	funcOpts["Sum"]			= XTRACT_SUM;

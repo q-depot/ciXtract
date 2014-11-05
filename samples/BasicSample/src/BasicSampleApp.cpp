@@ -4,8 +4,10 @@
 #include "cinder/audio/Context.h"
 #include "cinder/audio/MonitorNode.h"
 #include "cinder/params/Params.h"
+#include "cinder/gl/TextureFont.h"
 
 #include "ciXtract.h"
+#include "ciXtractUtilities.h"
 
 
 using namespace ci;
@@ -14,7 +16,7 @@ using namespace std;
 
 class BasicSampleApp : public AppNative {
   public:
-    void shutdown();
+
     void prepareSettings(Settings *settings);
 	void setup();
 	void update();
@@ -29,16 +31,11 @@ class BasicSampleApp : public AppNative {
 	audio::MonitorNodeRef           mMonitorNode;
     audio::Buffer                   mPcmBuffer;
     
-//    params::InterfaceGl             mParams;
-    float                           mGain, mOffset, mDamping;
-    
+    params::InterfaceGl             mParams;
+    float                           mGain, mOffset, mDamping, mPcmGain;
+  
+    gl::TextureFontRef              mFont;
 };
-
-
-void BasicSampleApp::shutdown()
-{
-    console() << getElapsedSeconds() << " shutting down" << endl;
-}
 
 
 void BasicSampleApp::prepareSettings(Settings *settings)
@@ -50,6 +47,8 @@ void BasicSampleApp::prepareSettings(Settings *settings)
 
 void BasicSampleApp::setup()
 {
+    mFont = gl::TextureFont::create( Font( "Arial", 12 ) );
+    
     auto ctx = audio::Context::master();
 
     vector<audio::DeviceRef> devices = audio::Device::getInputDevices();
@@ -84,17 +83,21 @@ void BasicSampleApp::setup()
 
     // Features are disabled by default, call enableFeature() to enable each feature and its dependencies
     // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
-    for( auto k=0; k < XTRACT_FEATURES; k++ )
-        mXtract->enableFeature( (xtract_features_)k );
+    mXtract->enableAllFeatures();
+    
+    //    for( auto k=0; k < XTRACT_FEATURES; k++ )
+//        mXtract->enableFeature( (xtract_features_)k );
 
     mGain       = 25.0f;
     mOffset     = 0.0f;
     mDamping    = 0.9f;
+    mPcmGain    = 1.0f;
 
-//    mParams = params::InterfaceGl( "params", Vec2i( 200, 250 ) );
-//    mParams.addParam( "Gain", &mGain ).step( 0.01 );
-//    mParams.addParam( "Offset", &mOffset ).step( 0.01 ).min( -1.0 ).max( 1.0 );
-//    mParams.addParam( "Damping", &mDamping ).step( 0.01 ).max( 1.0 );
+    mParams = params::InterfaceGl( "params", Vec2i( 200, 250 ) );
+    mParams.addParam( "Gain", &mGain ).step( 0.01 );
+    mParams.addParam( "Offset", &mOffset ).step( 0.01 ).min( -1.0 ).max( 1.0 );
+    mParams.addParam( "Damping", &mDamping ).step( 0.01 ).max( 1.0 );
+    mParams.addParam( "PcmGain", &mPcmGain ).step( 0.01 );
 }
 
 
@@ -103,7 +106,7 @@ void BasicSampleApp::update()
     mPcmBuffer = mMonitorNode->getBuffer();
     
     if ( !mPcmBuffer.isEmpty() )
-        mXtract->update( mPcmBuffer.getData() );
+        mXtract->update( mPcmBuffer.getData(), mPcmGain );
     else
         console() << "no PCM buffer" << endl;
 }
@@ -115,9 +118,8 @@ void BasicSampleApp::draw()
     
 	gl::clear( Color::gray( 0.1f ) );
     
-    ciXtract::drawPcm( Rectf( 0, 0, getWindowWidth(), 60 ), mPcmBuffer.getData(), mPcmBuffer.getSize() / mPcmBuffer.getNumChannels() );
+    ciXtractUtilities::drawPcm( Rectf( 0, 0, getWindowWidth(), 60 ), &mPcmBuffer );
     
-
      Vec2i   widgetSize  = Vec2f( 160, 40 );
      Vec2f   initPos     = Vec2f( 15, 100 );
      Vec2f   pos         = initPos;
@@ -125,7 +127,6 @@ void BasicSampleApp::draw()
      ColorA  labelCol    = Color::gray( 0.35f );
      ColorA  plotCol;
      Rectf   rect;
-     
      
      for( auto k=0; k < mFeatures.size(); k++ )
      {
@@ -139,16 +140,20 @@ void BasicSampleApp::draw()
          rect    = Rectf( pos, pos + widgetSize );
          plotCol = ColorA( 1.0f, rect.y1 / getWindowHeight(), rect.x1 / getWindowWidth(), 1.0f );
          
-         ciXtract::drawData( mFeatures[k], rect, plotCol, bgCol, labelCol );
+         ciXtractUtilities::drawData( mFeatures[k], rect, mFont, plotCol, bgCol, labelCol );
          
          pos.y += widgetSize.y + 25;
          if ( pos.y >= getWindowHeight() - widgetSize.y )
              pos = Vec2i( pos.x + widgetSize.x + initPos.x, initPos.y );
      }
     
-//    mParams.draw();
+    mParams.draw();
     
-    gl::drawString( to_string( getAverageFps() ), Vec2f( getWindowWidth() - 80, 15 ) );
+    mFont->drawString( to_string( getAverageFps() ), Vec2f( getWindowWidth() - 80, 15 ) );
+    mFont->drawString( "F0 " + to_string( mXtract->getFeatureDataRaw(XTRACT_F0).get()[0] ), Vec2f( getWindowWidth() - 150, 35 ) );
+    mFont->drawString( "Failsafe_F0 " + to_string( mXtract->getFeatureDataRaw(XTRACT_FAILSAFE_F0).get()[0] ), Vec2f( getWindowWidth() - 150, 55 ) );
+    mFont->drawString( "Wavelet_F0 " + to_string( mXtract->getFeatureDataRaw(XTRACT_WAVELET_F0).get()[0] ), Vec2f( getWindowWidth() - 150, 75 ) );
+//    gl::drawString( to_string( getAverageFps() ), Vec2f( getWindowWidth() - 80, 15 ) );
 }
 
 

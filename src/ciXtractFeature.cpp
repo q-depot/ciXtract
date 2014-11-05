@@ -2,7 +2,7 @@
  *  ciXtractFeature.cpp
  *
  *  Created by Andrea Cuius
- *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
+ *  Nocte Studio Ltd. Copyright 2014 . All rights reserved.
  *
  *  www.nocte.co.uk
  *
@@ -21,6 +21,8 @@ ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ feature, st
 {
     mMin            = 0.0f;
     mMax            = 1.0f;
+//    mMin = std::numeric_limits<double>::max();
+//    mMax = std::numeric_limits<double>::lowest();
     
     mIsEnable       = false;
     mGain           = 1.0f;
@@ -37,7 +39,10 @@ ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ feature, st
     mData    = std::shared_ptr<double>( new double[mDataSize] );
     
     for( uint32_t k=0; k < mDataSize; k++ )
-        mData.get()[k] = 0.0;
+    {
+        mDataRaw.get()[k]   = 0.0;
+        mData.get()[k]      = 0.0;
+    }
     
     mDependencies.push_back( inputFeature );
 }
@@ -47,15 +52,8 @@ void ciXtractFeature::update( int frameN )
 {
     // check dependencies
     if ( isUpdated(frameN) || !checkDependencies( frameN ) )
-    {
-        if ( isUpdated(frameN) )
-            console() << getName() << " isUpdated" << endl;
-        
-        if ( !checkDependencies( frameN ) )
-            console() << getName() << " missing deps" << endl;
-        
         return;
-    }
+    
     // call sub-class update
     doUpdate( frameN );
     
@@ -71,14 +69,20 @@ void ciXtractFeature::processData( int frameN )
     
     for( size_t i=0; i < mDataSize; i++ )
     {
+//        mData.get()[i] = mOffset + mGain * mDataRaw.get()[i];
+//        continue;
+        
+        val = mOffset + mGain * mDataRaw.get()[i];
+        
+        
         // clamp min-max range
 //        val = ( mDataRaw.get()[i] - mMin ) / ( mMax - mMin );
-        val = mDataRaw.get()[i];
+//        val = mDataRaw.get()[i];
 
-//        if ( val < mMin )
-//            mMin = val;
-//        if ( val > mMax )
-//            mMax = val;
+//        if ( mDataRaw.get()[i] > mMax )
+//            mMax = mDataRaw.get()[i];
+//        if ( mDataRaw.get()[i] < mMin )
+//            mMin = mDataRaw.get()[i];
         
         val = ( val - mMin ) / ( mMax - mMin );
         
@@ -88,7 +92,7 @@ void ciXtractFeature::processData( int frameN )
 //        if ( mIsLog )
 //            val = 0.01f * audio::linearToDecibel( val );
     
-        val = mOffset + mGain * val;
+//        val = mOffset + mGain * val;
         
         val = math<float>::clamp( val, 0.0f, 1.0f );
         
@@ -117,11 +121,14 @@ bool ciXtractFeature::checkDependencies( int frameN )
             dep = mXtract->getFeature( mInputFeature );
             if ( !dep )
             {
-                console() << "dependencies check failed: missing input " << mInputFeature << endl;
+                // INPUT NOT FOUND! disable this feature and all the features that depend on it
+                console() << "ciXtractFeature::checkDependencies(): feature " << getName() << "missing input " << mInputFeature << endl;
+                console() << "ciXtractFeature::checkDependencies(): disable feature " << getName() << endl;
+                mXtract->disableFeature( mFeature );
                 return false;
             }
             mInputBuffer.data       = dep->getDataRaw();
-            mInputBuffer.dataSize   = dep->getBufferSize();
+            mInputBuffer.dataSize   = dep->getDataSize(); // dep->getBufferSize();
         }
         else
         {
@@ -139,7 +146,10 @@ bool ciXtractFeature::checkDependencies( int frameN )
         dep = mXtract->getFeature( mDependencies[k] );
         if ( !dep )
         {
-            console() << "dependencies check failed: missing dep " << mDependencies[k] << endl;
+            // DEPENDENCY NOT FOUND! disable this feature and all the features that depend on it
+            console() << "ciXtractFeature::checkDependencies(): feature " << getName() << "missing dependency " << mInputFeature << endl;
+            console() << "ciXtractFeature::checkDependencies(): disable feature " << getName() << endl;
+            mXtract->disableFeature( mFeature );
             return false;
         }
         

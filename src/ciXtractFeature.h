@@ -2,7 +2,7 @@
  *  ciXtractFeature.h
  *
  *  Created by Andrea Cuius
- *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
+ *  Nocte Studio Ltd. Copyright 2014 . All rights reserved.
  *
  *  www.nocte.co.uk
  *
@@ -38,8 +38,8 @@ struct ciXtractFeatureParam {
 };
 
 
-#define CIXTRACT_PCM_SIZE           1024
-#define CIXTRACT_FFT_SIZE           512
+#define CIXTRACT_PCM_SIZE           512//1024
+#define CIXTRACT_FFT_SIZE           256
 #define CIXTRACT_SAMPLERATE         44100
 #define CIXTRACT_SAMPLERATE_N       CIXTRACT_SAMPLERATE / (double)CIXTRACT_PCM_SIZE
 
@@ -62,7 +62,6 @@ struct ciXtractFeatureParam {
 	#endif
 #endif
 
-/*
 static const std::string xtract_features_names[XTRACT_FEATURES] = {
     "XTRACT_MEAN",
     "XTRACT_VARIANCE",
@@ -105,6 +104,7 @@ static const std::string xtract_features_names[XTRACT_FEATURES] = {
     "XTRACT_F0",
     "XTRACT_FAILSAFE_F0",
     "XTRACT_WAVELET_F0",
+    "XTRACT_MIDICENT",
     "XTRACT_LNORM",
     "XTRACT_FLUX",
     "XTRACT_ATTACK_TIME",
@@ -123,10 +123,9 @@ static const std::string xtract_features_names[XTRACT_FEATURES] = {
     "XTRACT_LPC",
     "XTRACT_LPCC",
     "XTRACT_SUBBANDS",
-    "XTRACT_WINDOWE"
+    "XTRACT_WINDOWED",
+    "XTRACT_SMOOTHE"
 };
-*/
-
 
 struct InputDataBuffer {
     
@@ -208,8 +207,6 @@ public:
         mParams[name].val = val;
     }
     
-    std::string getEnumStr() { return mEnumStr; }
-    
     float   getGain()       { return mGain; }
     float   getOffset()     { return mOffset; }
     float   getDamping()    { return mDamping; }
@@ -243,7 +240,6 @@ protected:
     ciXtract                        *mXtract;
     xtract_features_                mFeature;
     std::string                     mName;
-    std::string                     mEnumStr;
     std::vector<xtract_features_>   mDependencies;
 
     xtract_features_                mInputFeature;

@@ -2,7 +2,7 @@
  *  ciXtractScalarFeature.cpp
  *
  *  Created by Andrea Cuius
- *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
+ *  Nocte Studio Ltd. Copyright 2014 . All rights reserved.
  *
  *  www.nocte.co.uk
  *
@@ -16,14 +16,10 @@ using namespace ci::app;
 using namespace std;
 
 
-
 // Mean                                                                                             //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractMean::ciXtractMean( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_MEAN, name, (xtract_features_)CIXTRACT_PCM_FEATURE )
-{
-    mEnumStr    = "XTRACT_MEAN";
-}
+: ciXtractFeature( xtract, XTRACT_MEAN, name, (xtract_features_)CIXTRACT_PCM_FEATURE ) {}
 
 void ciXtractMean::doUpdate( int frameN )
 {
@@ -37,8 +33,6 @@ ciXtractVariance::ciXtractVariance( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_VARIANCE, name, (xtract_features_)CIXTRACT_PCM_FEATURE )
 {
 	mDependencies.push_back( XTRACT_MEAN );
-    
-    mEnumStr    = "XTRACT_VARIANCE";
 }
 
 void ciXtractVariance::doUpdate( int frameN )
@@ -54,8 +48,6 @@ ciXtractStandardDeviation::ciXtractStandardDeviation( ciXtract *xtract, std::str
 : ciXtractFeature( xtract, XTRACT_STANDARD_DEVIATION, name, (xtract_features_)CIXTRACT_PCM_FEATURE )
 {
 	mDependencies.push_back( XTRACT_VARIANCE );
-    
-    mEnumStr    = "XTRACT_STANDARD_DEVIATION";
 }
 
 void ciXtractStandardDeviation::doUpdate( int frameN )
@@ -71,8 +63,6 @@ ciXtractAverageDeviation::ciXtractAverageDeviation( ciXtract *xtract, std::strin
 : ciXtractFeature( xtract, XTRACT_AVERAGE_DEVIATION, name, (xtract_features_)CIXTRACT_PCM_FEATURE )
 {
 	mDependencies.push_back( XTRACT_MEAN );
-    
-    mEnumStr    = "XTRACT_AVERAGE_DEVIATION";
 }
 
 void ciXtractAverageDeviation::doUpdate( int frameN )
@@ -89,8 +79,6 @@ ciXtractSkewness::ciXtractSkewness( ciXtract *xtract, std::string name )
 {
 	mDependencies.push_back( XTRACT_MEAN );
 	mDependencies.push_back( XTRACT_STANDARD_DEVIATION );
-    
-    mEnumStr    = "XTRACT_SKEWNESS";
 }
 
 void ciXtractSkewness::doUpdate( int frameN )
@@ -109,8 +97,6 @@ ciXtractKurtosis::ciXtractKurtosis( ciXtract *xtract, std::string name )
 {
 	mDependencies.push_back( XTRACT_MEAN );
 	mDependencies.push_back( XTRACT_STANDARD_DEVIATION );
-    
-    mEnumStr    = "XTRACT_KURTOSIS";
 }
 
 void ciXtractKurtosis::doUpdate( int frameN )
@@ -125,10 +111,7 @@ void ciXtractKurtosis::doUpdate( int frameN )
 // Spectral Mean                                                                                    //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralMean::ciXtractSpectralMean( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_MEAN, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_SPECTRAL_MEAN";
-}
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_MEAN, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractSpectralMean::doUpdate( int frameN )
 {
@@ -142,8 +125,6 @@ ciXtractSpectralVariance::ciXtractSpectralVariance( ciXtract *xtract, std::strin
 : ciXtractFeature( xtract, XTRACT_SPECTRAL_VARIANCE, name, XTRACT_SPECTRUM )
 {
 	mDependencies.push_back( XTRACT_SPECTRAL_MEAN );
-    
-    mEnumStr    = "XTRACT_SPECTRAL_VARIANCE";
 }
 
 void ciXtractSpectralVariance::doUpdate( int frameN )
@@ -160,8 +141,6 @@ ciXtractSpectralStandardDeviation::ciXtractSpectralStandardDeviation( ciXtract *
 : ciXtractFeature( xtract, XTRACT_SPECTRAL_STANDARD_DEVIATION, name, XTRACT_SPECTRUM )
 {
 	mDependencies.push_back( XTRACT_SPECTRAL_VARIANCE );
-    
-    mEnumStr    = "XTRACT_SPECTRAL_STANDARD_DEVIATION";
 }
 
 void ciXtractSpectralStandardDeviation::doUpdate( int frameN )
@@ -179,8 +158,7 @@ ciXtractSpectralSkewness::ciXtractSpectralSkewness( ciXtract *xtract, std::strin
 {
 	mDependencies.push_back( XTRACT_SPECTRAL_MEAN );
 	mDependencies.push_back( XTRACT_SPECTRAL_STANDARD_DEVIATION );
-    
-    mEnumStr    = "XTRACT_SPECTRAL_SKEWNESS";}
+}
 
 void ciXtractSpectralSkewness::doUpdate( int frameN )
 {
@@ -198,8 +176,6 @@ ciXtractSpectralKurtosis::ciXtractSpectralKurtosis( ciXtract *xtract, std::strin
 {
 	mDependencies.push_back( XTRACT_SPECTRAL_MEAN );
 	mDependencies.push_back( XTRACT_SPECTRAL_STANDARD_DEVIATION );
-    
-    mEnumStr    = "XTRACT_SPECTRAL_KURTOSIS";
 }
 
 void ciXtractSpectralKurtosis::doUpdate( int frameN )
@@ -214,10 +190,7 @@ void ciXtractSpectralKurtosis::doUpdate( int frameN )
 // Spectral Centroid                                                                                //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralCentroid::ciXtractSpectralCentroid( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_CENTROID, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_SPECTRAL_CENTROID";
-}
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_CENTROID, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractSpectralCentroid::doUpdate( int frameN )
 {
@@ -228,10 +201,7 @@ void ciXtractSpectralCentroid::doUpdate( int frameN )
 // Irregularity K                                                                                   //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractIrregularityK::ciXtractIrregularityK( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_IRREGULARITY_K, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_IRREGULARITY_K";
-}
+: ciXtractFeature( xtract, XTRACT_IRREGULARITY_K, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractIrregularityK::doUpdate( int frameN )
 {
@@ -242,10 +212,7 @@ void ciXtractIrregularityK::doUpdate( int frameN )
 // Irregularity J                                                                                   //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractIrregularityJ::ciXtractIrregularityJ( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_IRREGULARITY_J, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_IRREGULARITY_J";
-}
+: ciXtractFeature( xtract, XTRACT_IRREGULARITY_J, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractIrregularityJ::doUpdate( int frameN )
 {
@@ -258,23 +225,20 @@ void ciXtractIrregularityJ::doUpdate( int frameN )
 ciXtractTristimulus1::ciXtractTristimulus1( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_TRISTIMULUS_1, name, XTRACT_HARMONIC_SPECTRUM )
 {
-    mEnumStr    = "XTRACT_TRISTIMULUS_1";
+    mDependencies.push_back( XTRACT_F0 );
 }
 
 void ciXtractTristimulus1::doUpdate( int frameN )
 {
-//    xtract_tristimulus_1( mInputBuffer.data.get(), mInputBuffer.dataSize, NULL, mDataRaw.get() );
-    console() << "fix xtract_tristimulus_1" << endl;
+    mArgd[0] = mXtract->getFeatureDataRaw( XTRACT_F0 ).get()[0];
+    xtract_tristimulus_1( mInputBuffer.data.get(), mInputBuffer.dataSize, mArgd, mDataRaw.get() );
 }
 
 
 // Smoothness                                                                                       //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSmoothness::ciXtractSmoothness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SMOOTHNESS, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_SMOOTHNESS";
-}
+: ciXtractFeature( xtract, XTRACT_SMOOTHNESS, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractSmoothness::doUpdate( int frameN )
 {
@@ -289,8 +253,6 @@ ciXtractSpread::ciXtractSpread( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_SPREAD, name, XTRACT_SPECTRUM )
 {
 	mDependencies.push_back( XTRACT_SPECTRAL_CENTROID );
-    
-    mEnumStr    = "XTRACT_SPREAD";
 }
 
 void ciXtractSpread::doUpdate( int frameN )
@@ -303,10 +265,7 @@ void ciXtractSpread::doUpdate( int frameN )
 // Zcr                                                                                              //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractZcr::ciXtractZcr( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_ZCR, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_ZCR";
-}
+: ciXtractFeature( xtract, XTRACT_ZCR, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractZcr::doUpdate( int frameN )
 {
@@ -320,7 +279,6 @@ void ciXtractZcr::doUpdate( int frameN )
 ciXtractRolloff::ciXtractRolloff( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_ROLLOFF, name, XTRACT_SPECTRUM )
 {
-    mEnumStr                = "XTRACT_ROLLOFF";
     mParams["threshold"]    = ciXtractFeature::createFeatureParam( 15.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
 }
 
@@ -338,10 +296,7 @@ void ciXtractRolloff::doUpdate( int frameN )
 // Loudness                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractLoudness::ciXtractLoudness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_LOUDNESS, name, XTRACT_BARK_COEFFICIENTS )
-{
-    mEnumStr    = "XTRACT_LOUDNESS";
-}
+: ciXtractFeature( xtract, XTRACT_LOUDNESS, name, XTRACT_BARK_COEFFICIENTS ) {}
 
 void ciXtractLoudness::doUpdate( int frameN )
 {
@@ -352,10 +307,7 @@ void ciXtractLoudness::doUpdate( int frameN )
 // Flatness                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractFlatness::ciXtractFlatness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_FLATNESS, name, XTRACT_SPECTRUM )                                     // can also be computed with BARKS
-{
-    mEnumStr    = "XTRACT_FLATNESS";
-}
+: ciXtractFeature( xtract, XTRACT_FLATNESS, name, XTRACT_SPECTRUM ) {}                              // can also be computed with BARKS
 
 void ciXtractFlatness::doUpdate( int frameN )
 {
@@ -369,7 +321,6 @@ ciXtractFlatnessDb::ciXtractFlatnessDb( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_FLATNESS_DB, name, (xtract_features_)CIXTRACT_NO_FEATURE )
 {
     mDependencies.push_back( XTRACT_FLATNESS );
-    mEnumStr    = "XTRACT_FLATNESS_DB";
 }
 
 void ciXtractFlatnessDb::doUpdate( int frameN )
@@ -385,8 +336,6 @@ ciXtractTonality::ciXtractTonality( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_TONALITY, name, (xtract_features_)CIXTRACT_NO_FEATURE )
 {
 	mDependencies.push_back( XTRACT_FLATNESS_DB );
-    
-    mEnumStr    = "XTRACT_TONALITY";
 }
 
 void ciXtractTonality::doUpdate( int frameN )
@@ -406,10 +355,7 @@ void ciXtractTonality::doUpdate( int frameN )
 // RMS Amplitude                                                                                    //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractRmsAmplitude::ciXtractRmsAmplitude( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_RMS_AMPLITUDE, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_RMS_AMPLITUDE";
-}
+: ciXtractFeature( xtract, XTRACT_RMS_AMPLITUDE, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractRmsAmplitude::doUpdate( int frameN )
 {
@@ -423,8 +369,6 @@ ciXtractSpectralInharmonicity::ciXtractSpectralInharmonicity( ciXtract *xtract, 
 : ciXtractFeature( xtract, XTRACT_SPECTRAL_INHARMONICITY, name, XTRACT_PEAK_SPECTRUM )
 {
 	mDependencies.push_back( XTRACT_F0 );
-    
-    mEnumStr    = "XTRACT_SPECTRAL_INHARMONICITY";
 }
 
 void ciXtractSpectralInharmonicity::doUpdate( int frameN )
@@ -442,8 +386,6 @@ ciXtractCrest::ciXtractCrest( ciXtract *xtract, std::string name )
 {
 	mDependencies.push_back( XTRACT_HIGHEST_VALUE );
 	mDependencies.push_back( XTRACT_MEAN );
-    
-    mEnumStr    = "XTRACT_CREST";
 }
 
 void ciXtractCrest::doUpdate( int frameN )
@@ -458,10 +400,7 @@ void ciXtractCrest::doUpdate( int frameN )
 // Power                                                                                            //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractPower::ciXtractPower( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_POWER, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_POWER";
-}
+: ciXtractFeature( xtract, XTRACT_POWER, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractPower::doUpdate( int frameN )
 {
@@ -475,7 +414,6 @@ ciXtractOddEvenRatio::ciXtractOddEvenRatio( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_ODD_EVEN_RATIO, name, XTRACT_HARMONIC_SPECTRUM )
 {
     mDependencies.push_back( XTRACT_F0 );
-    mEnumStr    = "XTRACT_ODD_EVEN_RATIO";
 }
 
 
@@ -489,10 +427,7 @@ void ciXtractOddEvenRatio::doUpdate( int frameN )
 // Sharpness                                                                                        //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSharpness::ciXtractSharpness( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SHARPNESS, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_SHARPNESS";
-}
+: ciXtractFeature( xtract, XTRACT_SHARPNESS, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractSharpness::doUpdate( int frameN )
 {
@@ -503,10 +438,7 @@ void ciXtractSharpness::doUpdate( int frameN )
 // Spectral Slope                                                                                   //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectralSlope::ciXtractSpectralSlope( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SPECTRAL_SLOPE, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_SPECTRAL_SLOPE";
-}
+: ciXtractFeature( xtract, XTRACT_SPECTRAL_SLOPE, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractSpectralSlope::doUpdate( int frameN )
 {
@@ -519,7 +451,6 @@ void ciXtractSpectralSlope::doUpdate( int frameN )
 ciXtractLowestValue::ciXtractLowestValue( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_LOWEST_VALUE, name, XTRACT_SPECTRUM )
 {
-    mEnumStr                = "XTRACT_LOWEST_VALUE";
     mParams["lower_limit"]  = ciXtractFeature::createFeatureParam( 0.2f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
 }
 
@@ -534,10 +465,7 @@ void ciXtractLowestValue::doUpdate( int frameN )
 // Highest Value                                                                                    //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractHighestValue::ciXtractHighestValue( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_HIGHEST_VALUE, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_HIGHEST_VALUE";
-}
+: ciXtractFeature( xtract, XTRACT_HIGHEST_VALUE, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractHighestValue::doUpdate( int frameN )
 {
@@ -548,10 +476,7 @@ void ciXtractHighestValue::doUpdate( int frameN )
 // Sum                                                                                              //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSum::ciXtractSum( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_SUM, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_SUM";
-}
+: ciXtractFeature( xtract, XTRACT_SUM, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractSum::doUpdate( int frameN )
 {
@@ -568,10 +493,7 @@ void ciXtractSum::doUpdate( int frameN )
 // F0                                                                                               //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractF0::ciXtractF0( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_F0, name, (xtract_features_)CIXTRACT_PCM_FEATURE )
-{
-    mEnumStr    = "XTRACT_F0";
-}
+: ciXtractFeature( xtract, XTRACT_F0, name, (xtract_features_)CIXTRACT_PCM_FEATURE ) {}
 
 void ciXtractF0::doUpdate( int frameN )
 {
@@ -584,15 +506,11 @@ void ciXtractF0::doUpdate( int frameN )
 // ------------------------------------------------------------------------------------------------ //
 
 ciXtractFailsafeF0::ciXtractFailsafeF0( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_FAILSAFE_F0, name, (xtract_features_)CIXTRACT_PCM_FEATURE )
-{
-    mEnumStr    = "XTRACT_FAILSAFE_F0";
-}
+: ciXtractFeature( xtract, XTRACT_FAILSAFE_F0, name, (xtract_features_)CIXTRACT_PCM_FEATURE ) {}
 
 void ciXtractFailsafeF0::doUpdate( int frameN )
 {
     mArgd[0] = CIXTRACT_SAMPLERATE;
-
     xtract_failsafe_f0( mInputBuffer.data.get(), mInputBuffer.dataSize, mArgd, mDataRaw.get() );
 }
 
@@ -602,7 +520,6 @@ void ciXtractFailsafeF0::doUpdate( int frameN )
 ciXtractWaveletF0::ciXtractWaveletF0( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_WAVELET_F0, name, (xtract_features_)CIXTRACT_PCM_FEATURE )
 {
-    mEnumStr    = "XTRACT_WAVELET_F0";
     xtract_init_wavelet_f0_state();
 }
 
@@ -616,10 +533,7 @@ void ciXtractWaveletF0::doUpdate( int frameN )
 // Non-Zero Count                                                                                   //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractNonZeroCount::ciXtractNonZeroCount( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_NONZERO_COUNT, name, XTRACT_SPECTRUM )
-{
-    mEnumStr    = "XTRACT_NONZERO_COUNT";
-}
+: ciXtractFeature( xtract, XTRACT_NONZERO_COUNT, name, XTRACT_SPECTRUM ) {}
 
 void ciXtractNonZeroCount::doUpdate( int frameN )
 {

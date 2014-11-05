@@ -2,7 +2,7 @@
  *  ciXtract.h
  *
  *  Created by Andrea Cuius
- *  Nocte Studio Ltd. Copyright 2013 . All rights reserved.
+ *  Nocte Studio Ltd. Copyright 2014 . All rights reserved.
  *
  *  www.nocte.co.uk
  *
@@ -21,8 +21,6 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define CI_XTRACT_CALIBRATION_DURATION 3.0f
-
 class ciXtract;
 typedef std::shared_ptr<ciXtract>       ciXtractRef;
 
@@ -36,10 +34,10 @@ public:
     ~ciXtract();
     
     //! process the data
-    void update( const float *pcmData );
+    void update( const float *pcmData, float pcmGain = 1.0f );
     
     //! enable a feature
-    void enableFeature( xtract_features_ feature );
+    bool enableFeature( xtract_features_ feature );
     
     //! disable a feature
     void disableFeature( xtract_features_ feature );
@@ -65,35 +63,18 @@ public:
         return getFeature(feature)->getData();
     }
 
-    // The calibration is very rough and it doesn't work for all the features
-
-    //! return true if there is any feature calibration in progress
-    bool isCalibrating() { return !mCalibrationFeatures.empty(); }
-
-    //! calibrate all the features at once
-    void calibrateFeatures();
-    
-    //! calibrate a feature
-    void calibrateFeature( ciXtractFeatureRef feature );
-    
-    //! calibrate a feature
-    void calibrateFeature( xtract_features_ featureEnum );
-    
     //! get PCM data
     std::shared_ptr<double> getPcmData() { return mPcmData; }
     
     //! list all the available features, the enumarators can be used to identify or toggle the features
     void listFeatures();
     
-    //! draw the PCM waveform
-	static void drawPcm( ci::Rectf rect, const float *pcmData, size_t pcmSize );
-
-    //! draw the feature data
-    static void drawData(   ciXtractFeatureRef  feature,
-                            Rectf               rect,
-                            ci::ColorA          plotCol     = ci::ColorA::white(),
-                            ci::ColorA          bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
-                            ci::ColorA          labelCol    = ci::ColorA::white() );
+    void enableAllFeatures()
+    {
+        for( size_t k=0; k < mFeatures.size(); k++ )
+            enableFeature( mFeatures[k]->getEnum() );
+    }
+    
     
 private:
     
@@ -103,23 +84,13 @@ private:
     
     bool featureDependsOn( xtract_features_ this_feature, xtract_features_ test_feature );
     
-    void updateCalibration();
-    
     
 private:
     
-    struct ciXtractFeatureCalibration
-    {
-        ciXtractFeatureRef  feature;
-        double              StartedAt;
-    };
+    std::vector<ciXtractFeatureRef>     mFeatures;
+    std::shared_ptr<double>             mPcmData, mPcmDataRaw;
+    double                              *mWindowFunc;
     
-    std::vector<ciXtractFeatureRef>             mFeatures;
-    std::vector<ciXtractFeatureCalibration>     mCalibrationFeatures;
-    
-    std::shared_ptr<double>                     mPcmData, mPcmDataRaw;
-    
-    double                                      *mWindowFunc;
 };
 
 #endif
