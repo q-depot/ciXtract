@@ -1,3 +1,0 @@
-[submodule "src/LibXtract"]
-	path = src/LibXtract
-	url = git@github.com:q-depot/LibXtract.git
