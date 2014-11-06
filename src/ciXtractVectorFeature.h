@@ -38,6 +38,7 @@ public:
     ciXtractSpectrum( ciXtract *xtract, std::string name );
     ~ciXtractSpectrum() {}
     void doUpdate( int frameN );
+    void enable( bool isEnable );
 };
 
 
@@ -48,6 +49,7 @@ public:
     ciXtractAutocorrelationFft( ciXtract *xtract, std::string name );
     ~ciXtractAutocorrelationFft() {}
     void doUpdate( int frameN );
+    void enable( bool isEnable );
 };
 
 
@@ -58,6 +60,7 @@ public:
     ciXtractMfcc( ciXtract *xtract, std::string name );
     ~ciXtractMfcc();
     void doUpdate( int frameN );
+    void enable( bool isEnable );
     
 private:
     xtract_mel_filter   mMelFilters;
@@ -71,6 +74,7 @@ public:
     ciXtractDct( ciXtract *xtract, std::string name );
     ~ciXtractDct() {}
     void doUpdate( int frameN );
+    void enable( bool isEnable );
 };
 
 
@@ -81,6 +85,7 @@ public:
     ciXtractAutocorrelation( ciXtract *xtract, std::string name );
     ~ciXtractAutocorrelation() {}
     void doUpdate( int frameN );
+    void enable( bool isEnable );
 };
 
 
@@ -111,6 +116,7 @@ public:
     ciXtractBark( ciXtract *xtract, std::string name );
     ~ciXtractBark() {}
     void doUpdate( int frameN );
+    void enable( bool isEnable );
     
 private:
     std::shared_ptr<int>    mBandLimits;

@@ -17,11 +17,6 @@ using namespace ci::app;
 using namespace std;
 
 
-//XTRACT_AUTOCORRELATION_FFT ||
-//x->feature == XTRACT_SPECTRUM ||
-//x->feature == XTRACT_DCT){
-
-
 // Spectrum                                                                                         //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract, std::string name )
@@ -38,9 +33,16 @@ ciXtractSpectrum::ciXtractSpectrum( ciXtract *xtract, std::string name )
     mParams["norm"]			= ciXtractFeature::createFeatureParam( false, CI_XTRACT_PARAM_BOOL, std::map<std::string,double>() );
 	mParams["type"]			= ciXtractFeature::createFeatureParam( XTRACT_MAGNITUDE_SPECTRUM, CI_XTRACT_PARAM_ENUM, opts ); 
     
-	xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_SPECTRUM );
     
     setLog( true );
+}
+
+void ciXtractSpectrum::enable( bool isEnable )
+{
+    if ( !mIsInit )
+        xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_SPECTRUM );
+    
+    ciXtractFeature::enable(isEnable);
 }
 
 void ciXtractSpectrum::doUpdate( int frameN )
@@ -58,9 +60,14 @@ void ciXtractSpectrum::doUpdate( int frameN )
 // AutoCorrelationFft                                                                               //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractAutocorrelationFft::ciXtractAutocorrelationFft( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION_FFT, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
+: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION_FFT, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE ) {}
+
+void ciXtractAutocorrelationFft::enable( bool isEnable )
 {
-    xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
+    if ( !mIsInit )
+        xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
+    
+    ciXtractFeature::enable(isEnable);
 }
 
 void ciXtractAutocorrelationFft::doUpdate( int frameN )
@@ -71,14 +78,22 @@ void ciXtractAutocorrelationFft::doUpdate( int frameN )
 // Mfcc
 // ------------------------------------------------------------------------------------------------ //
 ciXtractMfcc::ciXtractMfcc( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_MFCC, name, XTRACT_SPECTRUM, CIXTRACT_MFCC_FREQ_BANDS )
+: ciXtractFeature( xtract, XTRACT_MFCC, name, XTRACT_SPECTRUM, CIXTRACT_MFCC_FREQ_BANDS ) {}
+
+void ciXtractMfcc::enable( bool isEnable )
 {
-    mMelFilters.n_filters       = CIXTRACT_MFCC_FREQ_BANDS;
-    mMelFilters.filters         = (double **)malloc(CIXTRACT_MFCC_FREQ_BANDS * sizeof(double *));
-    for( int n = 0; n < CIXTRACT_MFCC_FREQ_BANDS; ++n )
-        mMelFilters.filters[n] = (double *)malloc(CIXTRACT_PCM_SIZE * sizeof(double));
+    if ( !mIsInit )
+    {
+        mMelFilters.n_filters       = CIXTRACT_MFCC_FREQ_BANDS;
+        mMelFilters.filters         = (double **)malloc(CIXTRACT_MFCC_FREQ_BANDS * sizeof(double *));
+        for( int n = 0; n < CIXTRACT_MFCC_FREQ_BANDS; ++n )
+            mMelFilters.filters[n] = (double *)malloc(CIXTRACT_PCM_SIZE * sizeof(double));
+        
+        xtract_init_mfcc( CIXTRACT_PCM_SIZE, CIXTRACT_SAMPLERATE >> 1, XTRACT_EQUAL_GAIN,
+                          CIXTRACT_MFCC_FREQ_MIN, CIXTRACT_MFCC_FREQ_MAX, mMelFilters.n_filters, mMelFilters.filters );
+    }
     
-    xtract_init_mfcc( CIXTRACT_PCM_SIZE, CIXTRACT_SAMPLERATE >> 1, XTRACT_EQUAL_GAIN, CIXTRACT_MFCC_FREQ_MIN, CIXTRACT_MFCC_FREQ_MAX, mMelFilters.n_filters, mMelFilters.filters );
+    ciXtractFeature::enable(isEnable);
 }
 
 ciXtractMfcc::~ciXtractMfcc()
@@ -97,9 +112,14 @@ void ciXtractMfcc::doUpdate( int frameN )
 // Dct                                                                                              //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractDct::ciXtractDct( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_DCT, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
+: ciXtractFeature( xtract, XTRACT_DCT, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE ) {}
+
+void ciXtractDct::enable( bool isEnable )
 {
-    xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_DCT );
+    if ( !mIsInit )
+        xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_DCT );
+    
+    ciXtractFeature::enable(isEnable);
 }
 
 void ciXtractDct::doUpdate( int frameN )
@@ -111,9 +131,14 @@ void ciXtractDct::doUpdate( int frameN )
 // Autocorrelation                                                                                  //
 // ------------------------------------------------------------------------------------------------ //
 ciXtractAutocorrelation::ciXtractAutocorrelation( ciXtract *xtract, std::string name )
-: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE )
+: ciXtractFeature( xtract, XTRACT_AUTOCORRELATION, name, (xtract_features_)CIXTRACT_PCM_FEATURE, CIXTRACT_PCM_SIZE ) {}
+
+void ciXtractAutocorrelation::enable( bool isEnable )
 {
-    xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
+    if ( !mIsInit )
+        xtract_init_fft( CIXTRACT_PCM_SIZE, XTRACT_AUTOCORRELATION_FFT );
+    
+    ciXtractFeature::enable(isEnable);
 }
 
 void ciXtractAutocorrelation::doUpdate( int frameN )
@@ -152,8 +177,14 @@ ciXtractBark::ciXtractBark( ciXtract *xtract, std::string name )
 {
     mBandLimits             = std::shared_ptr<int>( new int[ XTRACT_BARK_BANDS ] );
     mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
+}
+
+void ciXtractBark::enable( bool isEnable )
+{
+    if ( !mIsInit )
+        xtract_init_bark( CIXTRACT_FFT_SIZE, CIXTRACT_SAMPLERATE >> 1, mBandLimits.get() );
     
-    xtract_init_bark( CIXTRACT_FFT_SIZE, CIXTRACT_SAMPLERATE >> 1, mBandLimits.get() );
+    ciXtractFeature::enable(isEnable);
 }
 
 void ciXtractBark::doUpdate( int frameN )
@@ -169,9 +200,7 @@ void ciXtractBark::doUpdate( int frameN )
 ciXtractPeakSpectrum::ciXtractPeakSpectrum( ciXtract *xtract, std::string name )
 : ciXtractFeature( xtract, XTRACT_PEAK_SPECTRUM, name, XTRACT_SPECTRUM, CIXTRACT_FFT_SIZE, CIXTRACT_PCM_SIZE )
 {
-	mDependencies.push_back( XTRACT_SPECTRUM );
-    
-    mParams["threshold"]    = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
+    mParams["threshold"] = ciXtractFeature::createFeatureParam( 0.0f, CI_XTRACT_PARAM_DOUBLE, std::map<std::string,double>() );
 }
 
 void ciXtractPeakSpectrum::doUpdate( int frameN )

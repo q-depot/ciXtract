@@ -194,12 +194,12 @@
 			children = (
 				E765135CC8A24C37AB35BB83 /* ciXtract.h */,
 				9801F9C5569A416881E8A5AC /* ciXtract.cpp */,
-				304F76CFFBD04ADDA2337E05 /* ciXtractFeature.cpp */,
-				9A4EF9A81F884CCB84C833CD /* ciXtractScalarFeature.cpp */,
-				71209538BD3E4FA29A2F98BB /* ciXtractVectorFeature.cpp */,
 				002E2CF698F14563A0B1EA40 /* ciXtractFeature.h */,
+				304F76CFFBD04ADDA2337E05 /* ciXtractFeature.cpp */,
 				8A159C9452804D038F451C33 /* ciXtractScalarFeature.h */,
+				9A4EF9A81F884CCB84C833CD /* ciXtractScalarFeature.cpp */,
 				3770A214FE9A4F4989FD2A1F /* ciXtractVectorFeature.h */,
+				71209538BD3E4FA29A2F98BB /* ciXtractVectorFeature.cpp */,
 				10C395051A0A7B8A003BCC77 /* ciXtractUtilities.h */,
 				8BBE04184637473FA0F269DB /* xtract */,
 			);

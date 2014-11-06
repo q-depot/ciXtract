@@ -84,20 +84,18 @@ void BasicSampleApp::setup()
     // Features are disabled by default, call enableFeature() to enable each feature and its dependencies
     // You may notice a couple of "FEATURE NOT FOUND!" messages in the console, some LibXtract features are not supported yet.
     mXtract->enableAllFeatures();
-    
-    //    for( auto k=0; k < XTRACT_FEATURES; k++ )
-//        mXtract->enableFeature( (xtract_features_)k );
 
-    mGain       = 25.0f;
+    mGain       = 1.0f;
     mOffset     = 0.0f;
-    mDamping    = 0.9f;
+    mDamping    = 0.02f;
     mPcmGain    = 1.0f;
 
-    mParams = params::InterfaceGl( "params", Vec2i( 200, 250 ) );
-    mParams.addParam( "Gain", &mGain ).step( 0.01 );
-    mParams.addParam( "Offset", &mOffset ).step( 0.01 ).min( -1.0 ).max( 1.0 );
-    mParams.addParam( "Damping", &mDamping ).step( 0.01 ).max( 1.0 );
-    mParams.addParam( "PcmGain", &mPcmGain ).step( 0.01 );
+    mParams = params::InterfaceGl( "params", Vec2i( 230, 250 ) );
+    mParams.setPosition( Vec2i( getWindowWidth() - 270, 90 ) );
+    mParams.addParam( "Features Gain",      &mGain ).step( 0.01 );
+    mParams.addParam( "Features Offset",    &mOffset ).step( 0.01 ).min( -1.0 ).max( 1.0 );
+    mParams.addParam( "Features Damping",   &mDamping ).step( 0.01 ).max( 1.0 );
+    mParams.addParam( "Pcm Gain",           &mPcmGain ).step( 0.01 );
 }
 
 
@@ -143,17 +141,13 @@ void BasicSampleApp::draw()
          ciXtractUtilities::drawData( mFeatures[k], rect, mFont, plotCol, bgCol, labelCol );
          
          pos.y += widgetSize.y + 25;
-         if ( pos.y >= getWindowHeight() - widgetSize.y )
+         if ( pos.y >= getWindowHeight() - widgetSize.y * 2 )
              pos = Vec2i( pos.x + widgetSize.x + initPos.x, initPos.y );
      }
     
     mParams.draw();
     
     mFont->drawString( to_string( getAverageFps() ), Vec2f( getWindowWidth() - 80, 15 ) );
-    mFont->drawString( "F0 " + to_string( mXtract->getFeatureDataRaw(XTRACT_F0).get()[0] ), Vec2f( getWindowWidth() - 150, 35 ) );
-    mFont->drawString( "Failsafe_F0 " + to_string( mXtract->getFeatureDataRaw(XTRACT_FAILSAFE_F0).get()[0] ), Vec2f( getWindowWidth() - 150, 55 ) );
-    mFont->drawString( "Wavelet_F0 " + to_string( mXtract->getFeatureDataRaw(XTRACT_WAVELET_F0).get()[0] ), Vec2f( getWindowWidth() - 150, 75 ) );
-//    gl::drawString( to_string( getAverageFps() ), Vec2f( getWindowWidth() - 80, 15 ) );
 }
 
 

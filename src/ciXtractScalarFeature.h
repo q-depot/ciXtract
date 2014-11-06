@@ -24,9 +24,6 @@ public:
     ciXtractF0( ciXtract *xtract, std::string name );
     ~ciXtractF0() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Failsafe F0
@@ -49,8 +46,7 @@ public:
     ciXtractWaveletF0( ciXtract *xtract, std::string name );
     ~ciXtractWaveletF0() {}
     void doUpdate( int frameN );
-    
-private:
+    void enable( bool isEnable );
 };
 
 // Mean
@@ -60,9 +56,6 @@ public:
     ciXtractMean( ciXtract *xtract, std::string name );
     ~ciXtractMean() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Variance
@@ -71,11 +64,7 @@ class ciXtractVariance : public ciXtractFeature {
 public:
     ciXtractVariance( ciXtract *xtract, std::string name );
     ~ciXtractVariance() {}
-    void doUpdate( int frameN );
-    
-private:
-    
-};
+    void doUpdate( int frameN );};
 
 // Standard Deviation
 class ciXtractStandardDeviation : public ciXtractFeature {
@@ -83,11 +72,7 @@ class ciXtractStandardDeviation : public ciXtractFeature {
 public:
     ciXtractStandardDeviation( ciXtract *xtract, std::string name );
     ~ciXtractStandardDeviation() {}
-    void doUpdate( int frameN );
-    
-private:
-    
-};
+    void doUpdate( int frameN );};
 
 // Average Deviation
 class ciXtractAverageDeviation : public ciXtractFeature {
@@ -96,8 +81,6 @@ public:
     ciXtractAverageDeviation( ciXtract *xtract, std::string name );
     ~ciXtractAverageDeviation() {}
     void doUpdate( int frameN );
-    
-private:
 };
 
 // Skewness
@@ -107,9 +90,6 @@ public:
     ciXtractSkewness( ciXtract *xtract, std::string name );
     ~ciXtractSkewness() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Kurtosis
@@ -119,9 +99,6 @@ public:
     ciXtractKurtosis( ciXtract *xtract, std::string name );
     ~ciXtractKurtosis() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Spectral Mean
@@ -131,9 +108,6 @@ public:
     ciXtractSpectralMean( ciXtract *xtract, std::string name );
     ~ciXtractSpectralMean() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Spectral Variance
@@ -143,9 +117,6 @@ public:
     ciXtractSpectralVariance( ciXtract *xtract, std::string name );
     ~ciXtractSpectralVariance() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Spectral Standard Deviation
@@ -155,9 +126,6 @@ public:
     ciXtractSpectralStandardDeviation( ciXtract *xtract, std::string name );
     ~ciXtractSpectralStandardDeviation() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Spectral Skewness
@@ -167,9 +135,6 @@ public:
     ciXtractSpectralSkewness( ciXtract *xtract, std::string name );
     ~ciXtractSpectralSkewness() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Spectral Kurtosis
@@ -179,9 +144,6 @@ public:
     ciXtractSpectralKurtosis( ciXtract *xtract, std::string name );
     ~ciXtractSpectralKurtosis() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Spectral Centroid
@@ -191,9 +153,6 @@ public:
     ciXtractSpectralCentroid( ciXtract *xtract, std::string name );
     ~ciXtractSpectralCentroid() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Irregularity K
@@ -203,9 +162,6 @@ public:
     ciXtractIrregularityK( ciXtract *xtract, std::string name );
     ~ciXtractIrregularityK() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Irregularity J
@@ -215,9 +171,6 @@ public:
     ciXtractIrregularityJ( ciXtract *xtract, std::string name );
     ~ciXtractIrregularityJ() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Tristimulus 1
@@ -227,9 +180,6 @@ public:
     ciXtractTristimulus1( ciXtract *xtract, std::string name );
     ~ciXtractTristimulus1() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Smoothness
@@ -239,9 +189,6 @@ public:
     ciXtractSmoothness( ciXtract *xtract, std::string name );
     ~ciXtractSmoothness() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Spread
@@ -251,9 +198,6 @@ public:
     ciXtractSpread( ciXtract *xtract, std::string name );
     ~ciXtractSpread() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Zcr
@@ -263,9 +207,6 @@ public:
     ciXtractZcr( ciXtract *xtract, std::string name );
     ~ciXtractZcr() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 /*
@@ -289,9 +230,6 @@ public:
     ciXtractLoudness( ciXtract *xtract, std::string name );
     ~ciXtractLoudness() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Flatness
@@ -301,9 +239,6 @@ public:
     ciXtractFlatness( ciXtract *xtract, std::string name );
     ~ciXtractFlatness() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Flatness Db
@@ -313,9 +248,6 @@ public:
     ciXtractFlatnessDb( ciXtract *xtract, std::string name );
     ~ciXtractFlatnessDb() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Tonality
@@ -325,9 +257,6 @@ public:
     ciXtractTonality( ciXtract *xtract, std::string name );
     ~ciXtractTonality() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // RMS Amplitude
@@ -337,9 +266,6 @@ public:
     ciXtractRmsAmplitude( ciXtract *xtract, std::string name );
     ~ciXtractRmsAmplitude() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Spectral Inharmonicity Amplitude
@@ -349,9 +275,6 @@ public:
     ciXtractSpectralInharmonicity( ciXtract *xtract, std::string name );
     ~ciXtractSpectralInharmonicity() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Crest
@@ -361,9 +284,6 @@ public:
     ciXtractCrest( ciXtract *xtract, std::string name );
     ~ciXtractCrest() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Power
@@ -373,9 +293,6 @@ public:
     ciXtractPower( ciXtract *xtract, std::string name );
     ~ciXtractPower() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Odd Even Ratio
@@ -385,9 +302,6 @@ public:
     ciXtractOddEvenRatio( ciXtract *xtract, std::string name );
     ~ciXtractOddEvenRatio() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Sharpness
@@ -397,9 +311,6 @@ public:
     ciXtractSharpness( ciXtract *xtract, std::string name );
     ~ciXtractSharpness() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Spectral Slope
@@ -409,9 +320,6 @@ public:
     ciXtractSpectralSlope( ciXtract *xtract, std::string name );
     ~ciXtractSpectralSlope() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Lowest Value
@@ -421,9 +329,6 @@ public:
     ciXtractLowestValue( ciXtract *xtract, std::string name );
     ~ciXtractLowestValue() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Highest Value
@@ -433,9 +338,6 @@ public:
     ciXtractHighestValue( ciXtract *xtract, std::string name );
     ~ciXtractHighestValue() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Sum
@@ -445,9 +347,6 @@ public:
     ciXtractSum( ciXtract *xtract, std::string name );
     ~ciXtractSum() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 // Non-Zero Count
@@ -457,9 +356,6 @@ public:
     ciXtractNonZeroCount( ciXtract *xtract, std::string name );
     ~ciXtractNonZeroCount() {}
     void doUpdate( int frameN );
-    
-private:
-    
 };
 
 

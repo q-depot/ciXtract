@@ -131,13 +131,13 @@ bool ciXtract::enableFeature( xtract_features_ feature )
     if ( !f )
         return false;
 
-    vector<xtract_features_> dependencies = f->mDependencies;
+    vector<xtract_features_> dependencies = f->getDependencies();
     for( size_t k=0; k < dependencies.size(); k++ )
         if ( dependencies[k] < XTRACT_FEATURES )                // ignore PCM and NO_FEATURE enums
             if ( !enableFeature( dependencies[k] ) )
                 return false;
     
-    f->mIsEnable = true;
+    f->enable(true);
     
     return true;
 }
@@ -149,13 +149,13 @@ void ciXtract::disableFeature( xtract_features_ feature )
     if ( !f )
         return;
     
-    f->mIsEnable = false;
+    f->enable(false);
     
     // disable all features that depends on this one
     std::vector<ciXtractFeatureRef>::iterator it;
     for( it = mFeatures.begin(); it != mFeatures.end(); ++it )
-        if ( featureDependsOn( (*it)->mFeature, feature ) )
-            disableFeature( (*it)->mFeature );
+        if ( featureDependsOn( (*it)->getEnum(), feature ) )
+            disableFeature( (*it)->getEnum() );
 }
 
 
@@ -178,7 +178,7 @@ bool ciXtract::featureDependsOn( xtract_features_ this_feature, xtract_features_
     if ( !f )
         return false;
     
-    vector<xtract_features_> dependencies = f->mDependencies;
+    vector<xtract_features_> dependencies = f->getDependencies();
     for( size_t i=0; i < dependencies.size(); i++ )
         if ( test_feature == dependencies[i] )
             return true;

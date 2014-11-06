@@ -137,7 +137,7 @@ class ciXtractFeature {
 
 public:
     
-    friend class ciXtract;
+//    friend class ciXtract;
     
     template <class T>
     static ciXtractFeatureRef create( ciXtract *xtract, std::string enumStr )
@@ -150,6 +150,8 @@ public:
     virtual void processData( int frameN );
 
     virtual void doUpdate( int frameN ) { ci::app::console() << "NEVER CALL THIS!" << std::endl; }
+    
+    virtual void enable( bool isEnable );
     
     bool isEnable() { return mIsEnable; }
     
@@ -168,38 +170,6 @@ public:
     double getDataValue( int k ) { return mData.get()[ k % mDataSize ]; }
     double getDataValueRaw( int k ) { return mDataRaw.get()[ k % mDataSize ]; }
     
-    void resetCalibration()
-    {    
-        mMin = std::numeric_limits<double>::max();
-        mMax = -std::numeric_limits<double>::max();
-    }
-    
-    void calibrate()
-    {
-        if ( !mIsEnable )
-            return;
-
-        double val;
-        
-            
-        for( uint32_t k=0; k < mDataSize; k++ )
-        {
-            val = mDataRaw.get()[k];
-
-            if ( isnan(val) || isinf(val) )
-                continue;
-
-            if ( val > mMax )
-                mMax = val;
-            
-            else if ( val < mMin )
-                mMin = val;
-        }
-        
-        if ( mMin == mMax )
-            mMax += 0.001f;
-    }
-    
     std::map<std::string,ciXtractFeatureParam>  getParams() { return mParams; }
     
     void setParam( std::string name, double val )
@@ -216,6 +186,8 @@ public:
     void setOffset( float val )     { mOffset = val; }
     void setDamping( float val )    { mDamping = val; }
     void setLog( bool isLog )       { mIsLog = isLog; }
+    
+    std::vector<xtract_features_> getDependencies() { return mDependencies; }
     
 protected:
     
@@ -258,6 +230,7 @@ protected:
     double                          mMax;
     
     bool                            mIsEnable;
+    bool                            mIsInit;
     double                          mArgd[4];
 
     std::map<std::string,ciXtractFeatureParam>    mParams;

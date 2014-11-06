@@ -21,10 +21,8 @@ ciXtractFeature::ciXtractFeature( ciXtract *xtract, xtract_features_ feature, st
 {
     mMin            = 0.0f;
     mMax            = 1.0f;
-//    mMin = std::numeric_limits<double>::max();
-//    mMax = std::numeric_limits<double>::lowest();
-    
     mIsEnable       = false;
+    mIsInit         = false;
     mGain           = 1.0f;
     mOffset         = 0.0f;
     mDamping        = 0.96f;
@@ -69,40 +67,27 @@ void ciXtractFeature::processData( int frameN )
     
     for( size_t i=0; i < mDataSize; i++ )
     {
-//        mData.get()[i] = mOffset + mGain * mDataRaw.get()[i];
-//        continue;
+        /*
+        val = mDataRaw.get()[i];
         
-        val = mOffset + mGain * mDataRaw.get()[i];
+        if ( mIsLog )
+            val = 0.005f * audio::linearToDecibel( val );
+            
+        val = mOffset + mGain * val;
         
+        */
         
-        // clamp min-max range
-//        val = ( mDataRaw.get()[i] - mMin ) / ( mMax - mMin );
-//        val = mDataRaw.get()[i];
-
-//        if ( mDataRaw.get()[i] > mMax )
-//            mMax = mDataRaw.get()[i];
-//        if ( mDataRaw.get()[i] < mMin )
-//            mMin = mDataRaw.get()[i];
+        val = mGain * mDataRaw.get()[i];
         
-        val = ( val - mMin ) / ( mMax - mMin );
+        if ( mIsLog )
+            val = 0.005f * audio::linearToDecibel( val );
         
-        // this function doesn't work properly.
-        // val = min( (float)(i + 25) / (float)mResultsN, 1.0f ) * 100 * log10( 1.0f + val );
-
-//        if ( mIsLog )
-//            val = 0.01f * audio::linearToDecibel( val );
-    
-//        val = mOffset + mGain * val;
+        val     += mOffset;
+        val     = ( val - mMin ) / ( mMax - mMin );
+        val     = math<float>::clamp( val, 0.0f, 1.0f );
         
-        val = math<float>::clamp( val, 0.0f, 1.0f );
-        
-        if ( mDamping > 0.0f )
-        {
-            if (  val >= mData.get()[i] )
-                mData.get()[i] = val;
-            else
-                mData.get()[i] *= mDamping;
-        }
+        if ( mDamping > 0.0f && val < mData.get()[i] )
+            mData.get()[i] = std::max( 0.0, mData.get()[i] - mDamping );
         else
             mData.get()[i] = val;
     }
@@ -113,28 +98,11 @@ bool ciXtractFeature::checkDependencies( int frameN )
 {
     ciXtractFeatureRef dep;
     
-    // input data
     if ( mInputFeature != CIXTRACT_NO_FEATURE && !mInputBuffer.data )
     {
-        if ( mInputFeature < XTRACT_FEATURES )
-        {
-            dep = mXtract->getFeature( mInputFeature );
-            if ( !dep )
-            {
-                // INPUT NOT FOUND! disable this feature and all the features that depend on it
-                console() << "ciXtractFeature::checkDependencies(): feature " << getName() << "missing input " << mInputFeature << endl;
-                console() << "ciXtractFeature::checkDependencies(): disable feature " << getName() << endl;
-                mXtract->disableFeature( mFeature );
-                return false;
-            }
-            mInputBuffer.data       = dep->getDataRaw();
-            mInputBuffer.dataSize   = dep->getDataSize(); // dep->getBufferSize();
-        }
-        else
-        {
-            mInputBuffer.data       = mXtract->getPcmData();
-            mInputBuffer.dataSize   = CIXTRACT_PCM_SIZE;
-        }
+        console() << "ciXtractFeature::checkDependencies(): feature " << getName() << "missing input " << mInputFeature << endl;
+        mXtract->disableFeature( mFeature );
+        return false;
     }
     
     // extra dependencies
@@ -144,11 +112,10 @@ bool ciXtractFeature::checkDependencies( int frameN )
             continue;
         
         dep = mXtract->getFeature( mDependencies[k] );
-        if ( !dep )
+        
+        if ( !dep )                                         // DEPENDENCY NOT FOUND! disable this feature and all the features that depend on it
         {
-            // DEPENDENCY NOT FOUND! disable this feature and all the features that depend on it
             console() << "ciXtractFeature::checkDependencies(): feature " << getName() << "missing dependency " << mInputFeature << endl;
-            console() << "ciXtractFeature::checkDependencies(): disable feature " << getName() << endl;
             mXtract->disableFeature( mFeature );
             return false;
         }
@@ -160,3 +127,40 @@ bool ciXtractFeature::checkDependencies( int frameN )
     return true;
 }
 
+
+void ciXtractFeature::enable( bool isEnable )
+{
+    mIsEnable = isEnable;
+    
+    if ( mIsEnable )    console() << "ciXtract enable feature: " << getName() << endl;
+    else                console() << "ciXtract disable feature: " << getName() << endl;
+    
+    if ( !mIsEnable || mIsInit )
+        return;
+    
+    mIsInit = true;
+    
+    ciXtractFeatureRef dep;
+
+    // input data
+    if ( mInputFeature != CIXTRACT_NO_FEATURE && !mInputBuffer.data )
+    {
+        if ( mInputFeature < XTRACT_FEATURES )
+        {
+            dep = mXtract->getFeature( mInputFeature );
+            if ( !dep )
+            {
+                // INPUT NOT FOUND! disable this feature and all the features that depend on it
+                console() << "ciXtractFeature::checkDependencies(): feature " << getName() << "missing input " << mInputFeature << endl;
+                mXtract->disableFeature( mFeature );
+            }
+            mInputBuffer.data       = dep->getDataRaw();
+            mInputBuffer.dataSize   = dep->getDataSize();
+        }
+        else
+        {
+            mInputBuffer.data       = mXtract->getPcmData();
+            mInputBuffer.dataSize   = CIXTRACT_PCM_SIZE;
+        }
+    }
+}
