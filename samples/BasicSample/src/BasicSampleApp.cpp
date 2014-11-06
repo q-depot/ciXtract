@@ -101,6 +101,7 @@ void BasicSampleApp::setup()
     mParams.addParam( "Features Gain",      &mGain ).step( 0.01f );
     mParams.addParam( "Features Offset",    &mOffset ).step( 0.01f ).min( -1.0f ).max( 1.0f );
     mParams.addParam( "Features Damping",   &mDamping ).step( 0.01f ).max( 1.0f );
+    mParams.addSeparator();
     mParams.addParam( "Pcm Gain",           &mPcmGain ).step( 0.01f );
 }
 

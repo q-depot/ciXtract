@@ -19,23 +19,27 @@
         <includePath>src</includePath>
         <includePath>src/xtract</includePath>
 
-    <platform os="macosx">
-        <platform config="Debug">
-            <staticLibrary>lib/macosx/LibXtract_d.a</staticLibrary>
+        <platform os="macosx">
+            <platform config="Debug">
+                <staticLibrary>lib/macosx/LibXtract_d.a</staticLibrary>
+            </platform>
+            <platform config="Release">
+                <staticLibrary>lib/macosx/LibXtract.a</staticLibrary>
+            </platform>
         </platform>
-        <platform config="Release">
-            <staticLibrary>lib/macosx/LibXtract.a</staticLibrary>
-        </platform>
-    </platform>
 
-    <platform os="msw">
-        <platform config="Debug">
-            <staticLibrary>lib/msw/LibXtract_d.lib</staticLibrary>
+        <platform os="msw">
+            <platform config="Debug">
+                <staticLibrary>lib/msw/LibXtract_d.lib</staticLibrary>
+            </platform>
+            <platform config="Release">
+                <staticLibrary>lib/msw/LibXtract.lib</staticLibrary>
+            </platform>
         </platform>
-        <platform config="Release">
-            <staticLibrary>lib/msw/LibXtract.lib</staticLibrary>
-        </platform>
-    </platform>
         
     </block>        
+    
+	
+	<template>templates/ciXtractBasic/template.xml</template>
+	
 </cinder>
