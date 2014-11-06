@@ -8,7 +8,6 @@
  *
  */
 
-
 #ifndef CI_XTRACT_FEATURE
 #define CI_XTRACT_FEATURE
 
@@ -17,6 +16,7 @@
 #include <map>
 #include <vector>
 #include "xtract/libxtract.h"
+#include "cinder/app/AppNative.h"
 
 class ciXtractFeature;
 typedef std::shared_ptr<ciXtractFeature>       ciXtractFeatureRef;
@@ -52,14 +52,13 @@ struct ciXtractFeatureParam {
 #define CIXTRACT_PCM_FEATURE        XTRACT_FEATURES
 #define CIXTRACT_NO_FEATURE         ( XTRACT_FEATURES + 1 )
 
-
 #ifdef _MSC_VER
-	#ifndef isnan
-		#define isnan(x) ((x)!=(x)) 
-	#endif
-	#ifndef isinf
-		#define isinf(x) ((x)!=(x)) 
-	#endif
+    #ifndef isnan
+        #define isnan(x) ((x)!=(x)) 
+    #endif
+    #ifndef isinf
+        #define isinf(x) ((x)!=(x)) 
+    #endif
 #endif
 
 static const std::string xtract_features_names[XTRACT_FEATURES] = {
@@ -136,9 +135,7 @@ struct InputDataBuffer {
 class ciXtractFeature {
 
 public:
-    
-//    friend class ciXtract;
-    
+
     template <class T>
     static ciXtractFeatureRef create( ciXtract *xtract, std::string enumStr )
     {

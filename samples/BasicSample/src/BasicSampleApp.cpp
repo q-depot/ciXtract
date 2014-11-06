@@ -18,17 +18,17 @@ class BasicSampleApp : public AppNative {
   public:
 
     void prepareSettings(Settings *settings);
-	void setup();
-	void update();
-	void draw();
+    void setup();
+    void update();
+    void draw();
     
     
     ciXtractRef                     mXtract;
     
     vector<ciXtractFeatureRef>      mFeatures;
     
-	audio::InputDeviceNodeRef		mInputDeviceNode;
-	audio::MonitorNodeRef           mMonitorNode;
+    audio::InputDeviceNodeRef       mInputDeviceNode;
+    audio::MonitorNodeRef           mMonitorNode;
     audio::Buffer                   mPcmBuffer;
     
     params::InterfaceGl             mParams;
@@ -40,8 +40,8 @@ class BasicSampleApp : public AppNative {
 
 void BasicSampleApp::prepareSettings(Settings *settings)
 {
-	settings->setTitle("ciXtract Sample");
-	settings->setWindowSize( 1200, 800 );
+    settings->setTitle("ciXtract Sample");
+    settings->setWindowSize( 1200, 800 );
 }
 
 
@@ -53,15 +53,21 @@ void BasicSampleApp::setup()
 
     vector<audio::DeviceRef> devices = audio::Device::getInputDevices();
     console() << "List audio devices:" << endl;
-    for( auto k=0; k < devices.size(); k++ )
-    console() << devices[k]->getName() << endl;
+    for( size_t k=0; k < devices.size(); k++ )
+        console() << devices[k]->getName() << endl;
 
     // find and initialise a device by name
-    audio::DeviceRef dev    = audio::Device::findDeviceByName( "Soundflower (2ch)" );
-    mInputDeviceNode        = ctx->createInputDeviceNode( dev );
+     audio::DeviceRef dev;
 
-    // initialise default input device
-    // mInputDeviceNode = ctx->createInputDeviceNode();
+     dev = audio::Device::findDeviceByName( "Soundflower (2ch)" );                              // on OSX i use Soundflower to hijack the system audio
+     
+     if ( !dev )                                                                                
+         dev = audio::Device::findDeviceByName( "CABLE Output (VB-Audio Virtual Cable)" );      // on Windows there is similar tool called VB Cable
+    
+     if ( !dev )                                                                                // initialise default input device
+        mInputDeviceNode = ctx->createInputDeviceNode();
+     else
+         mInputDeviceNode = ctx->createInputDeviceNode( dev );
 
     // initialise MonitorNode to get the PCM data
     auto monitorFormat = audio::MonitorNode::Format().windowSize( CIXTRACT_PCM_SIZE );
@@ -92,10 +98,10 @@ void BasicSampleApp::setup()
 
     mParams = params::InterfaceGl( "params", Vec2i( 230, 250 ) );
     mParams.setPosition( Vec2i( getWindowWidth() - 270, 90 ) );
-    mParams.addParam( "Features Gain",      &mGain ).step( 0.01 );
-    mParams.addParam( "Features Offset",    &mOffset ).step( 0.01 ).min( -1.0 ).max( 1.0 );
-    mParams.addParam( "Features Damping",   &mDamping ).step( 0.01 ).max( 1.0 );
-    mParams.addParam( "Pcm Gain",           &mPcmGain ).step( 0.01 );
+    mParams.addParam( "Features Gain",      &mGain ).step( 0.01f );
+    mParams.addParam( "Features Offset",    &mOffset ).step( 0.01f ).min( -1.0f ).max( 1.0f );
+    mParams.addParam( "Features Damping",   &mDamping ).step( 0.01f ).max( 1.0f );
+    mParams.addParam( "Pcm Gain",           &mPcmGain ).step( 0.01f );
 }
 
 
@@ -114,19 +120,19 @@ void BasicSampleApp::draw()
 {
     gl::enableAlphaBlending();
     
-	gl::clear( Color::gray( 0.1f ) );
+    gl::clear( Color::gray( 0.1f ) );
     
-    ciXtractUtilities::drawPcm( Rectf( 0, 0, getWindowWidth(), 60 ), &mPcmBuffer );
+    ciXtractUtilities::drawPcm( Rectf( 0.0f, 0.0f, getWindowWidth(), 60.0f ), &mPcmBuffer );
     
-     Vec2i   widgetSize  = Vec2f( 160, 40 );
-     Vec2f   initPos     = Vec2f( 15, 100 );
+     Vec2f   widgetSize  = Vec2f( 160.0f, 40.0f );
+     Vec2f   initPos     = Vec2f( 15.0f, 100.0f );
      Vec2f   pos         = initPos;
      ColorA  bgCol       = ColorA( 0.0f, 0.0f, 0.0f, 0.1f );
      ColorA  labelCol    = Color::gray( 0.35f );
      ColorA  plotCol;
      Rectf   rect;
      
-     for( auto k=0; k < mFeatures.size(); k++ )
+     for( size_t k=0; k < mFeatures.size(); k++ )
      {
          if ( !mFeatures[k]->isEnable() )
              continue;
@@ -152,6 +158,3 @@ void BasicSampleApp::draw()
 
 
 CINDER_APP_NATIVE( BasicSampleApp, RendererGl )
-
-
-

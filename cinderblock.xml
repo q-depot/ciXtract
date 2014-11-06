@@ -27,6 +27,15 @@
             <staticLibrary>lib/macosx/LibXtract.a</staticLibrary>
         </platform>
     </platform>
+
+    <platform os="msw">
+        <platform config="Debug">
+            <staticLibrary>lib/msw/LibXtract_d.lib</staticLibrary>
+        </platform>
+        <platform config="Release">
+            <staticLibrary>lib/msw/LibXtract.lib</staticLibrary>
+        </platform>
+    </platform>
         
     </block>        
 </cinder>

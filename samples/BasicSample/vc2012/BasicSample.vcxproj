@@ -10,7 +10,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5BCF1B7F-6A97-40F1-8496-C19F2E811750}</ProjectGuid>
+    <ProjectGuid>{5F17C0EC-4733-4410-B62D-D27EC739AF06}</ProjectGuid>
     <RootNamespace>BasicSample</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -63,7 +63,7 @@
       <AdditionalIncludeDirectories>"..\..\..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;%(AdditionalDependencies);..\..\..\lib\msw\LibXtract_d.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>"..\..\..\..\..\\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -90,7 +90,7 @@
       <AdditionalIncludeDirectories>"..\..\..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;%(AdditionalDependencies);..\..\..\lib\msw\LibXtract.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>"..\..\..\..\..\\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>

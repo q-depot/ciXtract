@@ -62,7 +62,7 @@ namespace ciXtractUtilities {
         std::shared_ptr<double> data    = feature->getData();
         float                   step    = rect.getWidth() / feature->getDataSize();
         float                   h       = rect.getHeight();
-        float                   val, barY;
+        float                  val, barY;
         
         gl::color( bgCol );
         gl::drawSolidRect( rect );
@@ -73,9 +73,9 @@ namespace ciXtractUtilities {
         
         glBegin( GL_QUADS );
         
-        for( int i = 0; i < feature->getDataSize(); i++ )
+        for( size_t i = 0; i < feature->getDataSize(); i++ )
         {
-            val     = data.get()[i];
+            val     = (float)data.get()[i];
             val     = math<float>::clamp( val, 0.0f, 1.0f );
             barY    = h * val;
             

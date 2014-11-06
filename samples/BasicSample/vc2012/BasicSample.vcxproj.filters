@@ -13,16 +13,16 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
     <Filter Include="Blocks">
-      <UniqueIdentifier>{179FA8FF-CDA9-45EA-BE52-ED9720203251}</UniqueIdentifier>
+      <UniqueIdentifier>{1FB7BD64-B1DD-41C7-8495-D5B2D5FEC281}</UniqueIdentifier>
     </Filter>
     <Filter Include="Blocks\ciXtract">
-      <UniqueIdentifier>{A0480371-B23F-4273-BF3C-402D01956D71}</UniqueIdentifier>
+      <UniqueIdentifier>{00BE67D3-844C-444D-9949-C554F60D627F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Blocks\ciXtract\src">
-      <UniqueIdentifier>{94C91097-DF82-4B76-AB68-A11CC0C42B01}</UniqueIdentifier>
+      <UniqueIdentifier>{C53C4706-43BB-46CE-B207-862C22AFE38B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Blocks\ciXtract\src\xtract">
-      <UniqueIdentifier>{3E697622-F171-454E-AD06-597D7F389920}</UniqueIdentifier>
+      <UniqueIdentifier>{71117630-2D16-464F-8EA2-CCEFDE5054C9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -63,7 +63,7 @@ void ciXtractFeature::update( int frameN )
 
 void ciXtractFeature::processData( int frameN )
 {
-    float val;
+    double val;
     
     for( size_t i=0; i < mDataSize; i++ )
     {
@@ -80,11 +80,11 @@ void ciXtractFeature::processData( int frameN )
         val = mGain * mDataRaw.get()[i];
         
         if ( mIsLog )
-            val = 0.005f * audio::linearToDecibel( val );
+            val = 0.005 * audio::linearToDecibel( val );
         
         val     += mOffset;
         val     = ( val - mMin ) / ( mMax - mMin );
-        val     = math<float>::clamp( val, 0.0f, 1.0f );
+        val     = math<double>::clamp( val, 0.0, 1.0 );
         
         if ( mDamping > 0.0f && val < mData.get()[i] )
             mData.get()[i] = std::max( 0.0, mData.get()[i] - mDamping );
