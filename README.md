@@ -1,127 +1,115 @@
 #ciXtract
 ciXtract is a CinderBlock for [LibXtract](https://github.com/jamiebullock/LibXtract), a real-time audio feature extraction library developed by [Jamie Bullock](http://jamiebullock.com/).
 
-![ciXtract Sample](http://nocte.co.uk/depot/github_ciXtract_basic.png)
-
 ##Notes
-**Status: Alpha**
 
-**Requires Cinder >= 0.8.5**
+**Requires Cinder >= 0.8.6**
 
-The source code includes Xcode examples and CinderBlock templates.
-The code has been tested on OSX only, but it should work on Windows too, the main difference is that LibXtract uses ooura on windows to get the Fft.
+This CinderBlock includes the Xcode and VS2012 examples and the CinderBlock template.  
+There are several issues related to LibXtract, some of the features are either inaccurate or not working yet.  
+On Windows seems there is a problem witht the last bin in the Fft, I'll update the block as soon as these issues are fixed in LibXtract
 
 
 ##Get the code
-LibXtract is included as a git submodule, to clone the respository use the "--recursive" option:
+LibXtract is included as headers + precompiled static library for OSX and Windows.
 
-cd CINDER_PATH/blocks
+`cd CINDER_PATH/blocks`
 
-git clone --recursive git://github.com/q-depot/ciXtract.git
+`git clone git://github.com/q-depot/ciXtract.git`
 
 
 ##How to use it
-A working example can be found in the Samples folder, you can also use the TinderBox template to generate a new one.
 
 ```c++
+// include the headers
+#include "cinder/audio/Context.h"
+#include "cinder/audio/MonitorNode.h"
+
 #include "ciXtract.h"
+#include "ciXtractUtilities.h"
+```
 
-// ...
+```c++
+ciXtractRef                     mXtract;			// declare a ciXtract object
+vector<ciXtractFeatureRef>      mFeatures;			// declare a vector to save a reference of the features
 
-audio::Input                	mInput;
-ciXtractRef                 	mXtract;
-vector<ciXtractFeatureRef>  	mFeatures;
+audio::InputDeviceNodeRef       mInputDeviceNode;	// this is what you need to get the PCM buffer using the Cinder audio api
+audio::MonitorNodeRef           mMonitorNode;
+audio::Buffer                   mPcmBuffer;
+```
 
-// ...
-	
-void ciXtractBasicRenderApp::setup()
+```c++
+void TestApp::setup()
 {
 	// Initialise the audio input
-    const std::vector<audio::InputDeviceRef>& devices = audio::Input::getDevices();
-	for( std::vector<audio::InputDeviceRef>::const_iterator iter = devices.begin(); iter != devices.end(); ++iter )
-    {
-        if ( (*iter)->getName() == "Soundflower (2ch)" )
-        {
-            mInput = audio::Input( *iter );
-            mInput.start();
-            break;
-        }
-	}
- 
-    if ( !mInput )
-        exit(-1);
- 
-	// initialise ciXtract
-    mXtract     = ciXtract::create( mInput );
-	
-	// ciXtract always have a reference to the feature even if it's not enable(the values are simply not updated)
+    auto ctx = audio::Context::master();
+
+    vector<audio::DeviceRef> devices = audio::Device::getInputDevices();
+    console() << "List audio devices:" << endl;
+    for( size_t k=0; k < devices.size(); k++ )
+        console() << devices[k]->getName() << endl;
+
+    // find and initialise a device by name
+     audio::DeviceRef dev;
+
+     dev = audio::Device::findDeviceByName( "Soundflower (2ch)" );                              // on OSX i use Soundflower to hijack the system audio
+     
+     if ( !dev )                                                                                
+         dev = audio::Device::findDeviceByName( "CABLE Output (VB-Audio Virtual Cable)" );      // on Windows there is similar tool called VB Cable
+    
+     if ( !dev )                                                                                // initialise default input device
+        mInputDeviceNode = ctx->createInputDeviceNode();
+     else
+         mInputDeviceNode = ctx->createInputDeviceNode( dev );
+
+    // initialise MonitorNode to get the PCM data
+    auto monitorFormat = audio::MonitorNode::Format().windowSize( CIXTRACT_PCM_SIZE );
+    mMonitorNode = ctx->makeNode( new audio::MonitorNode( monitorFormat ) );
+
+    // pipe the input device into the MonitorNode
+    mInputDeviceNode >> mMonitorNode;
+
+    // InputDeviceNode (and all InputNode subclasses) need to be enabled()'s to process audio. So does the Context:
+    mInputDeviceNode->enable();
+    ctx->enable();
+
+
+    // Initialise ciXtract
+    mXtract     = ciXtract::create();
     mFeatures   = mXtract->getFeatures();
-    
-	// By default all the features are disable.
-	// you can use enableFeature( xtract_features_ feature ) to enable each feature and its own dependencies
-	// xtract_features_ is defined libxtract.h
-	mXtract->enableFeature( XTRACT_SPECTRUM );
-	
-	// .. Or you can enable all the features using XTRACT_FEATURES, also defined in libxtract.h
-    // for( auto k=0; k < XTRACT_FEATURES; k++ )
-    //   mXtract->enableFeature( (xtract_features_)k );
-}
 
+    // List all available features, this prints out the enumerator that can be used to get the feature
+    mXtract->listFeatures();
 
-void ciXtractBasicRenderApp::update()
-{
-	mXtract->update();
-}
-
-
-void ciXtractBasicRenderApp::draw()
-{
-	// ...
-	
-    ciXtractFeatureRef  feature;
-    
-    for( auto k=0; k < mFeatures.size(); k++ )
-    {
-		/*
-        feature = mFeatures[k];
-		feature->getType()
-		feature->isEnable();
-		feature->getName();
-		feature->getResult();
-		feature->getResultN();
-		*/
-		
-		// do something ..
-    }
+    // Features are disabled by default, call enableFeature( feature_enum ) or enableAllFeatures()
+    mXtract->enableAllFeatures();
 }
 ```
-
-##Data results and auto calibration
-ciXtract always return the raw data.
-I've added a simple auto calibration function that samples the results for 3 seconds and set the maximum and minimum values. This is a bit rough and doesn't always work properly, also some features like F0 don't need to be calibrated, this is more a quick way to display something on screen. It's usually better to manually find and set the range and use two values gain and offset to adjust the results.
 
 ```c++
-mXtract->calibrateFeatures();	// calibrate all features
+void TestApp::update()
+{
+	mPcmBuffer = mMonitorNode->getBuffer();
+    
+    float pcmGain = 2.0f;
 
-or
-
-mXtract->calibrateFeature( XTRACT_SPECTRUM );
-
-..
-
-float min = feature->getResultMin();
-float max = feature->getResultMax();
+    if ( !mPcmBuffer.isEmpty() )								// ensure the PCM buffer exists
+        mXtract->update( mPcmBuffer.getData(), pcmGain );		// update ciXtract, optionally you can pass the gain for the PCM signal
+}
 ```
 
-##Samples
-####BasicSample
-This sample is generated using the ciXtractBasicRender template and it shows all the available features in ciXtract.
+```c++
+void TestApp::draw()
+{
+	// draw the PCM and a feature using the ciXtractUtilities
 
-####XtractSenderOSCApp
-This is simple app that implements ciXtract and send the results via OSC using the feature name as OSC address. This app doesn't visualise the results, it's meant to be a lightweight components running in the background crunching numbers, it's up to the OSC recipient to adjust(gain, offset, damping etc..) and visualise the data.
-The app comes with a xml settings file(assets/default.xml) which can be used to configure OSC(host, port), input device and enable or disable features.
+    ciXtractUtilities::drawPcm( Rectf( 0.0f, 0.0f, getWindowWidth(), 60.0f ), &mPcmBuffer );	// draw the PCM buffer
 
-![XtractSenderOSC App](http://nocte.co.uk/depot/github_ciXtract_senderOSC.png)
+	ciXtractFeatureRef feature = mXtract->getFeature( XTRACT_SPECTRUM );						// get a feature
+	ciXtractUtilities::drawData( feature, Rectf( 15, 15, 200, 90 ), mFont );					// draw the feature, you must pass a TextureFontRef
+																								// optionally you can specify plot/bg/label colors
+}
+```
 
 ##About LibXtract
 > LibXtract is a simple, portable, lightweight library of audio feature extraction functions. The purpose of the library is to provide a relatively exhaustive set of feature extraction primatives that are designed to be 'cascaded' to create a extraction hierarchies.
@@ -130,70 +118,7 @@ The app comes with a xml settings file(assets/default.xml) which can be used to 
 
 [LIBXTRACT: A LIGHTWEIGHT LIBRARY FOR AUDIO FEATURE EXTRACTION](https://s3-eu-west-1.amazonaws.com/papers/LibXtract-_a_lightweight_feature_extraction_library.pdf)
 
-##Supported Features
-
-###Vector Features
-* XTRACT_SPECTRUM
-* XTRACT_AUTOCORRELATION
-* ~~XTRACT_AUTOCORRELATION_FFT~~ Doesn't work properly, don't use it.
-* XTRACT_HARMONIC_SPECTRUM
-* XTRACT_PEAK_SPECTRUM
-* XTRACT_SUBBANDS
-* XTRACT_MFCC
-* XTRACT_BARK_COEFFICIENTS
-
-###Scalar Features
-
-* XTRACT_F0
-* XTRACT_FAILSAFE_F0
-* XTRACT_WAVELET_F0
-* XTRACT_MEAN
-* XTRACT_VARIANCE
-* XTRACT_STANDARD_DEVIATION
-* XTRACT_AVERAGE_DEVIATION
-* XTRACT_SKEWNESS
-* XTRACT_KURTOSIS
-* XTRACT_SPECTRAL_MEAN
-* XTRACT_SPECTRAL_VARIANCE
-* XTRACT_SPECTRAL_STANDARD_DEVIATION
-* XTRACT_SPECTRAL_SKEWNESS
-* XTRACT_SPECTRAL_KURTOSIS
-* XTRACT_SPECTRAL_CENTROID
-* XTRACT_IRREGULARITY_K
-* XTRACT_IRREGULARITY_J
-* XTRACT_TRISTIMULUS_1
-* XTRACT_SMOOTHNESS
-* XTRACT_SPREAD
-* XTRACT_ZCR
-* XTRACT_ROLLOFF
-* XTRACT_LOUDNESS
-* XTRACT_FLATNESS
-* XTRACT_FLATNESS_DB
-* XTRACT_TONALITY
-* XTRACT_RMS_AMPLITUDE
-* XTRACT_SPECTRAL_INHARMONICITY
-* XTRACT_POWER
-* XTRACT_ODD_EVEN_RATIO
-* XTRACT_SHARPNESS
-* XTRACT_SPECTRAL_SLOPE
-* XTRACT_LOWEST_VALUE
-* XTRACT_HIGHEST_VALUE
-* XTRACT_SUM
-* XTRACT_NONZERO_COUNT
-* XTRACT_CREST
-
-
-#Known Issues
-
-* Auto correlation Fft doesn't work properly and crash often.
-* F0 functions don't work below 100Hz, this seems to be a limit in LibXtract depending on the resolution.
-* Auto-calibration sucks!
-
-
-#Support
-Support and discussions are on the [ciXtract Github issues page](https://github.com/q-depot/ciXtract/issues), please feel free to report an issue or ask any questions.
-If you have a question related to LibXtract please consider to use the [LibXtract issues page](https://github.com/jamiebullock/LibXtract/issues) instead
-
+[LibXtract documentation](http://jamiebullock.github.io/LibXtract/documentation/modules.html)
 
 #Disclaimer
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
