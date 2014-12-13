@@ -5,7 +5,7 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>145B4851-208A-4EBF-B5D4-65701E9BD0A0</string>
+	<string>0E002C88-F6B2-4288-ABD8-0DC6F73BCAA8</string>
 	<key>IDESourceControlProjectName</key>
 	<string>BasicSample</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
@@ -21,7 +21,7 @@
 		<string>../../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/q-depot/ciXtract.git</string>
+	<string>git://github.com/cinder/Cinder.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>

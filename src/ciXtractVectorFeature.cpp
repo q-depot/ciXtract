@@ -2,7 +2,8 @@
  *  ciXtractVectorFeature.cpp
  *
  *  Created by Andrea Cuius
- *  Nocte Studio Ltd. Copyright 2014 . All rights reserved.
+ *  The MIT License (MIT)
+ *  Copyright (c) 2014 Nocte Studio Ltd.
  *
  *  www.nocte.co.uk
  *
@@ -98,6 +99,9 @@ void ciXtractMfcc::enable( bool isEnable )
 
 ciXtractMfcc::~ciXtractMfcc()
 {
+    if ( !mIsInit )
+        return;
+    
     for( auto n = 0; n < CIXTRACT_MFCC_FREQ_BANDS; ++n )
         free( mMelFilters.filters[n] );
     free( mMelFilters.filters );

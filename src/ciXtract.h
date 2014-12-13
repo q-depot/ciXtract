@@ -2,7 +2,8 @@
  *  ciXtract.h
  *
  *  Created by Andrea Cuius
- *  Nocte Studio Ltd. Copyright 2014 . All rights reserved.
+ *  The MIT License (MIT)
+ *  Copyright (c) 2014 Nocte Studio Ltd.
  *
  *  www.nocte.co.uk
  *
@@ -47,6 +48,17 @@ public:
     
     //! return all the available features
     std::vector<ciXtractFeatureRef> getFeatures() { return mFeatures; };
+    
+    //! return all the features enabled
+    std::vector<ciXtractFeatureRef> getActiveFeatures()
+    {
+        std::vector<ciXtractFeatureRef> features;
+        for( size_t k=0; k < mFeatures.size(); k++ )
+            if ( mFeatures[k]->isEnable() )
+                features.push_back( mFeatures[k] );
+        
+        return features;
+    };
     
     //! get a specific feature
     ciXtractFeatureRef getFeature( xtract_features_ feature );
