@@ -10,29 +10,41 @@
 	<string>BasicSample</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>08D9B838-9F36-4B67-86BB-7EB654189D37</key>
-		<string>ssh://github.com/q-depot/ciXtract.git</string>
+		<key>171EB59F3B24BD1FD5738DB4574788045B4A18E1</key>
+		<string>github.com:q-depot/ciXtract.git</string>
+		<key>AD4B458D0D225ED63FAE0155615993B7D3ECE020</key>
+		<string>git://github.com/cinder/Cinder.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>samples/BasicSample/xcode/BasicSample.xcodeproj/project.xcworkspace</string>
+	<string>samples/BasicSample/xcode/BasicSample.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>08D9B838-9F36-4B67-86BB-7EB654189D37</key>
+		<key>171EB59F3B24BD1FD5738DB4574788045B4A18E1</key>
 		<string>../../../../..</string>
+		<key>AD4B458D0D225ED63FAE0155615993B7D3ECE020</key>
+		<string>../../../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/q-depot/ciXtract.git</string>
+	<string>github.com:q-depot/ciXtract.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>08D9B838-9F36-4B67-86BB-7EB654189D37</string>
+	<string>171EB59F3B24BD1FD5738DB4574788045B4A18E1</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>08D9B838-9F36-4B67-86BB-7EB654189D37</string>
+			<string>AD4B458D0D225ED63FAE0155615993B7D3ECE020</string>
+			<key>IDESourceControlWCCName</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>171EB59F3B24BD1FD5738DB4574788045B4A18E1</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ciXtract</string>
 		</dict>

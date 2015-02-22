@@ -51,6 +51,18 @@ public:
     //! get a specific feature
     ciXtractFeatureRef getFeature( xtract_features_ feature );
     
+    //! get all the features currently active
+    std::vector<ciXtractFeatureRef> getActiveFeatures()
+    {
+        std::vector<ciXtractFeatureRef> features;
+        
+        for( size_t k=0; k < mFeatures.size(); k++ )
+            if ( mFeatures[k]->isEnable() )
+                features.push_back( mFeatures[k] );
+        
+        return features;
+    }
+    
     //! get raw feature results
     std::shared_ptr<double> getFeatureDataRaw( xtract_features_ feature )
     {

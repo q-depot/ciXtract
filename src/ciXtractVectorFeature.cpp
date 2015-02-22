@@ -98,6 +98,9 @@ void ciXtractMfcc::enable( bool isEnable )
 
 ciXtractMfcc::~ciXtractMfcc()
 {
+    if ( !mIsInit )
+        return;
+    
     for( auto n = 0; n < CIXTRACT_MFCC_FREQ_BANDS; ++n )
         free( mMelFilters.filters[n] );
     free( mMelFilters.filters );
