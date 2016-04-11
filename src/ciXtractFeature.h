@@ -16,7 +16,7 @@
 #include <map>
 #include <vector>
 #include "xtract/libxtract.h"
-#include "cinder/app/AppNative.h"
+#include "cinder/app/App.h"
 
 class ciXtractFeature;
 typedef std::shared_ptr<ciXtractFeature>       ciXtractFeatureRef;

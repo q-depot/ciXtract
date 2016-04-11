@@ -1,5 +1,7 @@
-#include "cinder/app/AppNative.h"
+#include "cinder/app/App.h"
 #include "cinder/gl/gl.h"
+#include "cinder/app/RendererGl.h"
+
 
 #include "cinder/audio/Context.h"
 #include "cinder/audio/MonitorNode.h"
@@ -14,7 +16,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-class BasicSampleApp : public AppNative {
+class BasicSampleApp : public App {
   public:
 
     void prepareSettings(Settings *settings);
@@ -56,19 +58,19 @@ void BasicSampleApp::setup()
     for( size_t k=0; k < devices.size(); k++ )
         console() << devices[k]->getName() << endl;
 
-    // find and initialise a device by name
-     audio::DeviceRef dev;
+    //// find and initialise a device by name
+    // audio::DeviceRef dev;
 
-     dev = audio::Device::findDeviceByName( "Soundflower (2ch)" );                              // on OSX i use Soundflower to hijack the system audio
-     
-     if ( !dev )                                                                                
-         dev = audio::Device::findDeviceByName( "CABLE Output (VB-Audio Virtual Cable)" );      // on Windows there is similar tool called VB Cable
-    
-     if ( !dev )                                                                                // initialise default input device
-        mInputDeviceNode = ctx->createInputDeviceNode();
-     else
-         mInputDeviceNode = ctx->createInputDeviceNode( dev );
-
+    // dev = audio::Device::findDeviceByName( "Soundflower (2ch)" );                              // on OSX i use Soundflower to hijack the system audio
+    // 
+    // if ( !dev )                                                                                
+    //     dev = audio::Device::findDeviceByName( "CABLE Output (VB-Audio Virtual Cable)" );      // on Windows there is similar tool called VB Cable
+    //
+    // if ( !dev )                                                                                // initialise default input device
+    //    mInputDeviceNode = ctx->createInputDeviceNode();
+    // else
+    // 
+	mInputDeviceNode = ctx->createInputDeviceNode(devices.at(0));
     // initialise MonitorNode to get the PCM data
     auto monitorFormat = audio::MonitorNode::Format().windowSize( CIXTRACT_PCM_SIZE );
     mMonitorNode = ctx->makeNode( new audio::MonitorNode( monitorFormat ) );
@@ -96,8 +98,8 @@ void BasicSampleApp::setup()
     mDamping    = 0.02f;
     mPcmGain    = 1.0f;
 
-    mParams = params::InterfaceGl( "params", Vec2i( 230, 250 ) );
-    mParams.setPosition( Vec2i( getWindowWidth() - 270, 90 ) );
+	mParams = params::InterfaceGl("params", vec2(230, 250));
+	mParams.setPosition(vec2(getWindowWidth() - 270, 90));
     mParams.addParam( "Features Gain",      &mGain ).step( 0.01f );
     mParams.addParam( "Features Offset",    &mOffset ).step( 0.01f ).min( -1.0f ).max( 1.0f );
     mParams.addParam( "Features Damping",   &mDamping ).step( 0.01f ).max( 1.0f );
@@ -114,6 +116,8 @@ void BasicSampleApp::update()
         mXtract->update( mPcmBuffer.getData(), mPcmGain );
     else
         console() << "no PCM buffer" << endl;
+
+	console() << mXtract->getFeature(xtract_features_::XTRACT_LOUDNESS)->getDataValue(0) << endl;
 }
 
 
@@ -125,9 +129,9 @@ void BasicSampleApp::draw()
     
     ciXtractUtilities::drawPcm( Rectf( 0.0f, 0.0f, getWindowWidth(), 60.0f ), &mPcmBuffer );
     
-     Vec2f   widgetSize  = Vec2f( 160.0f, 40.0f );
-     Vec2f   initPos     = Vec2f( 15.0f, 100.0f );
-     Vec2f   pos         = initPos;
+	vec2   widgetSize = vec2(160.0f, 40.0f);
+	vec2   initPos = vec2(15.0f, 100.0f);
+	vec2   pos = initPos;
      ColorA  bgCol       = ColorA( 0.0f, 0.0f, 0.0f, 0.1f );
      ColorA  labelCol    = Color::gray( 0.35f );
      ColorA  plotCol;
@@ -149,13 +153,13 @@ void BasicSampleApp::draw()
          
          pos.y += widgetSize.y + 25;
          if ( pos.y >= getWindowHeight() - widgetSize.y * 2 )
-             pos = Vec2i( pos.x + widgetSize.x + initPos.x, initPos.y );
+             pos = vec2( pos.x + widgetSize.x + initPos.x, initPos.y );
      }
     
     mParams.draw();
     
-    mFont->drawString( to_string( getAverageFps() ), Vec2f( getWindowWidth() - 80, 15 ) );
+    mFont->drawString( to_string( getAverageFps() ), vec2( getWindowWidth() - 80, 15 ) );
 }
 
 
-CINDER_APP_NATIVE( BasicSampleApp, RendererGl )
+CINDER_APP(BasicSampleApp, RendererGl)
