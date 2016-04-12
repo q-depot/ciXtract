@@ -8,6 +8,8 @@
  *
  */
 
+#include "cinder/PolyLine.h"
+#include "cinder/gl/gl.h"
 
 #ifndef CI_XTRACT_UTILITIES
 #define CI_XTRACT_UTILITIES
@@ -26,7 +28,8 @@ namespace ciXtractUtilities {
         float   scale   = rect.getWidth() / (float)pcmSize;
         float   x, y;
         
-        PolyLine<Vec2f>	leftBufferLine;
+        ci::PolyLine2f	leftBufferLine;
+		
         
         gl::color( Color::gray( 0.4f ) );
         
@@ -34,7 +37,7 @@ namespace ciXtractUtilities {
         {
             x = i * scale;
             y = buff->getData()[i] * rect.getHeight() * 0.5f;
-            leftBufferLine.push_back( Vec2f( x , y) );
+            leftBufferLine.push_back( vec2( x , y) );
         }
         
         gl::draw( leftBufferLine );
@@ -51,8 +54,8 @@ namespace ciXtractUtilities {
                             ci::ColorA          bgCol       = ci::ColorA( 1.0f, 1.0f, 1.0f, 0.1f ),
                             ci::ColorA          labelCol    = ci::ColorA::white() )
     {
-        glPushMatrix();
-        
+		
+		gl::ScopedMatrices m;
         gl::color( labelCol );
         
         font->drawString( feature->getName(), rect.getUpperLeft() );
@@ -71,23 +74,26 @@ namespace ciXtractUtilities {
         
         gl::color( plotCol );
         
-        glBegin( GL_QUADS );
+		/*gl::begin(GL_QUADS);*/
+        
         
         for( size_t i = 0; i < feature->getDataSize(); i++ )
         {
             val     = (float)data.get()[i];
             val     = math<float>::clamp( val, 0.0f, 1.0f );
             barY    = h * val;
-            
-            glVertex2f( i * step,           h );
-            glVertex2f( ( i + 1 ) * step,   h );
-            glVertex2f( ( i + 1 ) * step,   h-barY );
-            glVertex2f( i * step,           h-barY );
+			
+			/*gl::vertex(i * step, h);
+			gl::vertex((i + 1) * step, h);
+			gl::vertex((i + 1) * step, h - barY);
+			gl::vertex(i * step, h - barY);*/
+			auto r = Rectf(i * step, h, (i + 1) * step, h - barY);
+			gl::drawSolidRect(r);
         }
         
-        glEnd();
+		/*gl::end();*/
         
-        gl::popMatrices();
+        //gl::popMatrices();
     }
 
 };
